@@ -162,32 +162,6 @@
     };
   }
 
-  /* ── Vine frame: clone corners & measure stroke lengths ───────────── */
-
-  function setupVineFrame(letterEl) {
-    var vineFrame = letterEl.querySelector('.letter__vine-frame');
-    if (!vineFrame) return;
-
-    var src = vineFrame.querySelector('[data-vine-src]');
-    if (!src) return;
-
-    var corners = ['tr', 'bl', 'br'];
-    for (var i = 0; i < corners.length; i++) {
-      var clone = src.cloneNode(true);
-      clone.removeAttribute('data-vine-src');
-      clone.classList.remove('letter__vine--tl');
-      clone.classList.add('letter__vine--' + corners[i]);
-      vineFrame.appendChild(clone);
-    }
-  }
-
-  function measureVinePaths(letterEl) {
-    var paths = letterEl.querySelectorAll('.vine__stem, .vine__tendril');
-    for (var i = 0; i < paths.length; i++) {
-      var len = paths[i].getTotalLength();
-      paths[i].style.setProperty('--path-len', len);
-    }
-  }
 
   /* ── Static fallback (reduced motion / no-JS graceful degradation) ─ */
 
@@ -206,9 +180,9 @@
       ornaments[j].classList.add('is-drawn');
     }
 
-    var vineFrame = letterEl.querySelector('.letter__vine-frame');
-    if (vineFrame) {
-      vineFrame.classList.add('is-growing');
+    var borderFrame = letterEl.querySelector('.letter__border-frame');
+    if (borderFrame) {
+      borderFrame.classList.add('is-visible');
     }
 
     var chars = letterEl.querySelectorAll('.char-wrap > span');
@@ -226,8 +200,6 @@
       return null;
     }
 
-    setupVineFrame(letterEl);
-
     if (prefersReducedMotion()) {
       showStatic(letterEl);
       return null;
@@ -236,8 +208,6 @@
     var config = getConfig();
 
     letterEl.classList.add('letter--animated');
-
-    measureVinePaths(letterEl);
 
     var titleEl = document.getElementById('letterTitle');
     if (titleEl) {
@@ -280,19 +250,16 @@
       }
     }, { rootMargin: rootMargin, threshold: threshold });
 
-    /* Ornament + vine observer (triggers slightly earlier for a seamless feel) */
+    /* Ornament + border observer (triggers slightly earlier for a seamless feel) */
     var ornamentObserver = new IntersectionObserver(function (entries) {
       for (var i = 0; i < entries.length; i++) {
         if (!entries[i].isIntersecting) {
           continue;
         }
-        var target = entries[i].target;
-        if (target.classList.contains('letter__vine-frame')) {
-          target.classList.add('is-growing');
-        } else {
-          target.classList.add('is-drawn');
-        }
-        ornamentObserver.unobserve(target);
+        entries[i].target.classList.add(
+          entries[i].target.classList.contains('letter__border-frame') ? 'is-visible' : 'is-drawn'
+        );
+        ornamentObserver.unobserve(entries[i].target);
       }
     }, { rootMargin: '0px 0px -5% 0px', threshold: 0.05 });
 
@@ -308,10 +275,10 @@
       ornamentObserver.observe(ornaments[j]);
     }
 
-    /* Observe vine frame */
-    var vineFrame = letterEl.querySelector('.letter__vine-frame');
-    if (vineFrame) {
-      ornamentObserver.observe(vineFrame);
+    /* Observe border frame */
+    var borderFrame = letterEl.querySelector('.letter__border-frame');
+    if (borderFrame) {
+      ornamentObserver.observe(borderFrame);
     }
 
     /* Photo parallax */

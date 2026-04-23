@@ -178,144 +178,68 @@
 
 
 /* ══════════════════════════════════════════════════════════════════════
-   Vine Border Frame (growing ivy + blooming flowers)
+   Border Frame (double-line with rounded corners)
    ══════════════════════════════════════════════════════════════════════ */
-
-/* ── Stacking context so vine sits behind content ──────────────────── */
 
 .letter__inner {
   isolation: isolate;
 }
 
-/* ── Frame container ───────────────────────────────────────────────── */
-
-.letter__vine-frame {
+.letter__border-frame {
   position: absolute;
-  top: clamp(-12px, -3vw, -20px);
-  left: clamp(8px, 2vw, 14px);
-  right: clamp(8px, 2vw, 14px);
-  bottom: clamp(-12px, -3vw, -20px);
+  top: clamp(-16px, -4vw, -24px);
+  left: clamp(6px, 1.5vw, 12px);
+  right: clamp(6px, 1.5vw, 12px);
+  bottom: clamp(-16px, -4vw, -24px);
   pointer-events: none;
   z-index: -1;
 }
 
-.letter__vine-frame::before,
-.letter__vine-frame::after {
+.letter__border-frame::before,
+.letter__border-frame::after {
   content: '';
   position: absolute;
-  border: 1px solid rgba(194, 181, 164, 0.35);
-  border-radius: 1px;
+  border: 1px solid rgba(180, 168, 150, 0.45);
 }
 
-.letter__vine-frame::before { inset: 0; }
-.letter__vine-frame::after  { inset: 5px; border-color: rgba(194, 181, 164, 0.18); }
+.letter__border-frame::before { inset: 0;   border-radius: clamp(10px, 3vw, 16px); }
+.letter__border-frame::after  { inset: 6px; border-radius: clamp(6px, 2vw, 12px); border-color: rgba(180, 168, 150, 0.22); }
 
-/* ── Corner vine SVGs ──────────────────────────────────────────────── */
+/* ── Corner ornaments ─────────────────────────────────────────────── */
 
-.letter__vine {
+.letter__corner {
   position: absolute;
-  z-index: 1;
-  overflow: visible;
-  width: clamp(55px, 17vw, 75px);
-  height: auto;
-  aspect-ratio: 100 / 130;
+  pointer-events: none;
 }
 
-.letter__vine--tl { top: -4px;    left: -4px;  }
-.letter__vine--tr { top: -4px;    right: -4px;  transform: scaleX(-1); }
-.letter__vine--bl { bottom: -4px; left: -4px;   transform: scaleY(-1); }
-.letter__vine--br { bottom: -4px; right: -4px;  transform: scale(-1, -1); }
+.letter__corner--tl {
+  top: -8px;
+  left: -6px;
+  width: clamp(80px, 24vw, 130px);
+  height: auto;
+  opacity: 0.15;
+}
 
-/* ── Vine colors ───────────────────────────────────────────────────── */
+.letter__corner--br {
+  bottom: -8px;
+  right: -6px;
+  width: clamp(80px, 24vw, 130px);
+  height: auto;
+  opacity: 0.15;
+  transform: scale(-1, -1);
+}
 
-.vine__stem   { stroke: #a3b091; stroke-width: 1.2; stroke-linecap: round; }
-.vine__tendril { stroke: #a3b091; stroke-width: 0.7; stroke-linecap: round; }
-.vine__leaf   { fill: #96a484; opacity: 0.9; }
-.vine__leaf:nth-of-type(odd) { fill: #8a9e70; }
-.vine__bud    { fill: #a3b091; }
+/* ── Border frame animated states ─────────────────────────────────── */
 
-.vine__flower ellipse    { fill: #d4aab8; opacity: 0.85; }
-.vine__flower--sm ellipse { fill: #c9a0af; opacity: 0.8; }
-.vine__flower-center     { fill: #dbc396; }
-
-/* ── Vine animated states ──────────────────────────────────────────── */
-
-.letter--animated .letter__vine-frame::before,
-.letter--animated .letter__vine-frame::after {
+.letter--animated .letter__border-frame::before,
+.letter--animated .letter__border-frame::after {
   opacity: 0;
   transition: opacity 0.8s ease;
 }
 
-.letter--animated .letter__vine-frame.is-growing::before,
-.letter--animated .letter__vine-frame.is-growing::after {
+.letter--animated .letter__border-frame.is-visible::before,
+.letter--animated .letter__border-frame.is-visible::after {
   opacity: 1;
-}
-
-.letter--animated .vine__stem {
-  stroke-dasharray: var(--path-len, 300);
-  stroke-dashoffset: var(--path-len, 300);
-  transition: stroke-dashoffset 2.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.letter--animated .vine__tendril {
-  stroke-dasharray: var(--path-len, 50);
-  stroke-dashoffset: var(--path-len, 50);
-  transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1) var(--d, 1.4s);
-}
-
-.letter--animated .letter__vine-frame.is-growing .vine__stem,
-.letter--animated .letter__vine-frame.is-growing .vine__tendril {
-  stroke-dashoffset: 0;
-}
-
-.letter__vine--tr .vine__stem { transition-delay: 0.15s; }
-.letter__vine--bl .vine__stem { transition-delay: 0.08s; }
-.letter__vine--br .vine__stem { transition-delay: 0.22s; }
-
-.letter--animated .vine__leaf {
-  transform-box: fill-box;
-  transform-origin: center bottom;
-  opacity: 0;
-  transform: scale(0) rotate(-30deg);
-}
-
-.letter--animated .vine__flower {
-  transform-box: fill-box;
-  transform-origin: center;
-  opacity: 0;
-  transform: scale(0);
-}
-
-.letter--animated .vine__bud {
-  opacity: 0;
-  transition: opacity 0.5s ease var(--d, 0s);
-}
-
-.letter--animated .letter__vine-frame.is-growing .vine__leaf {
-  animation: vineLeafGrow 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d, 0s) forwards;
-}
-
-.letter--animated .letter__vine-frame.is-growing .vine__flower {
-  animation: vineBloom 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d, 0s) forwards;
-}
-
-.letter--animated .letter__vine-frame.is-growing .vine__bud {
-  opacity: 1;
-}
-
-@keyframes vineLeafGrow {
-  0%   { opacity: 0; transform: scale(0) rotate(-30deg); }
-  50%  { opacity: 0.7; }
-  70%  { transform: scale(1.15) rotate(5deg); }
-  100% { opacity: 0.9; transform: scale(1) rotate(0deg); }
-}
-
-@keyframes vineBloom {
-  0%   { opacity: 0; transform: scale(0) rotate(-45deg); }
-  40%  { opacity: 0.6; }
-  60%  { transform: scale(1.2) rotate(8deg); }
-  80%  { transform: scale(0.95) rotate(-3deg); }
-  100% { opacity: 1; transform: scale(1) rotate(0deg); }
 }
 
 
@@ -441,13 +365,8 @@
   .letter--animated .letter__divider-mark,
   .letter--animated .letter__ornament-strokes path,
   .letter--animated .letter__ornament-dots circle,
-  .letter--animated .vine__stem,
-  .letter--animated .vine__tendril,
-  .letter--animated .vine__leaf,
-  .letter--animated .vine__flower,
-  .letter--animated .vine__bud,
-  .letter--animated .letter__vine-frame::before,
-  .letter--animated .letter__vine-frame::after {
+  .letter--animated .letter__border-frame::before,
+  .letter--animated .letter__border-frame::after {
     transition: none !important;
     animation: none !important;
     opacity: 1 !important;
