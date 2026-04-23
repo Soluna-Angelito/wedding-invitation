@@ -1,0 +1,233 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="정성문 그리고 송나은의 모바일 청첩장입니다." />
+  <meta name="theme-color" content="#eeeae5" />
+  <title>Seong Mun &amp; Na Eun Wedding Invitation</title>
+  <script>document.documentElement.classList.add('js');</script>
+
+  <!-- Fonts -->
+  <link href="https://withjoyandlove.com/lib/font/font.css" rel="stylesheet" />
+  <link href="https://withjoyandlove.com/lib/font/kr/SunBatang/SunBatang.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Noto+Serif+KR:wght@200;300;400;600&display=swap" rel="stylesheet" />
+
+  <!-- ★ Letter Title Font (교체 시 이 @font-face와 letter.css의 --letter-title-font 변수를 함께 수정) -->
+  <link rel="preload" href="assets/fonts/munche_seuki_jung.woff2?v=aeeb64db0c8ff00b" as="font" type="font/woff2" crossorigin />
+  <style>
+    @font-face {
+      font-family: 'munche_seuki_jung';
+      src: url('assets/fonts/munche_seuki_jung.woff2?v=aeeb64db0c8ff00b') format('woff2'),
+           url('assets/fonts/munche_seuki_jung.woff?v=c293183b91d46ab0') format('woff');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+  </style>
+
+  <link rel="stylesheet" href="assets/css/main.css?v=9300eca8684e21cd" />
+  <link rel="stylesheet" href="assets/css/letter.css?v=578e4fa28f52cbab" />
+</head>
+<body>
+  <main class="invitation" id="invitationRoot">
+    <section class="hero" id="hero" aria-label="Wedding hero section">
+      <div class="hero__bg">
+        <img
+          id="heroImage"
+          src="./assets/img/IMG_0002.webp?v=9479b73da2479138"
+          alt="Wedding photo of Seong Mun and Na Eun"
+          decoding="async"
+          fetchpriority="high"
+        />
+      </div>
+
+      <div class="hero__overlay"></div>
+
+      <div class="hero__content">
+        <div class="hero__title-group">
+          <div class="hero__the-wedding" id="theWedding">THE WEDDING OF</div>
+
+          <div class="hero__names-row">
+            <span class="hero__name" id="nameGroom">Seong Mun</span>
+            <span class="hero__ampersand" id="ampersand">&amp;</span>
+            <span class="hero__name" id="nameBride">Na Eun</span>
+          </div>
+        </div>
+
+        <div class="hero__details-group">
+          <div class="hero__korean-names" id="koreanNames">정성문 그리고 송나은</div>
+          <div class="hero__date" id="weddingDate">2026.07.12 Sun 12:00pm</div>
+          <div class="hero__venue" id="weddingVenue">Crest 72 글래스홀</div>
+        </div>
+      </div>
+
+      <button class="hero__scroll" id="scrollArrow" type="button" aria-label="Scroll to invitation content">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
+
+      <div class="hero__waves" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 24 150 28" preserveAspectRatio="none">
+          <defs>
+            <path id="wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+          </defs>
+          <g class="parallax">
+            <use href="#wave" class="wave1" x="48" y="0" fill="rgba(238,234,229,0.7)" />
+            <use href="#wave" class="wave2" x="48" y="3" fill="rgba(238,234,229,0.5)" />
+            <use href="#wave" class="wave3" x="48" y="5" fill="rgba(238,234,229,0.3)" />
+            <use href="#wave" class="wave4" x="48" y="7" fill="#eeeae5" />
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <section class="invitation-content" id="invitationContent" aria-label="Invitation content">
+      <!-- ────────────────────────────────────────────────────────────────
+           Section 02 · Invitation Letter (초대글)
+           ──────────────────────────────────────────────────────────────── -->
+      <section class="letter" id="letter" aria-labelledby="letterTitle">
+        <div class="letter__inner">
+          <!-- Vine border frame (growing ivy + blooming flowers) -->
+          <div class="letter__vine-frame" aria-hidden="true">
+            <svg class="letter__vine letter__vine--tl" viewBox="0 0 100 130" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" focusable="false" data-vine-src>
+              <path class="vine__stem" d="M6,130 C4,112 9,98 7,82 C5,66 11,50 14,38 C17,26 26,14 40,8 C54,2 72,1 100,4"/>
+              <path class="vine__tendril" d="M9,94 C15,90 18,84 15,78" style="--d:1.4s"/>
+              <path class="vine__tendril" d="M18,34 C24,29 27,22 23,17" style="--d:1.9s"/>
+              <path class="vine__tendril" d="M34,12 C30,16 28,21 30,25" style="--d:2.1s"/>
+              <path class="vine__leaf" d="M7,110 Q-1,100 7,90 Q15,100 7,110Z" style="--d:0.6s"/>
+              <path class="vine__leaf" d="M8,70 Q1,61 8,52 Q15,61 8,70Z" style="--d:1.1s"/>
+              <path class="vine__leaf" d="M16,42 Q9,33 16,24 Q23,33 16,42Z" style="--d:1.6s"/>
+              <path class="vine__leaf" d="M58,4 Q52,-3 58,-8 Q64,-3 58,4Z" style="--d:2.1s"/>
+              <path class="vine__leaf" d="M84,3 Q79,-3 84,-7 Q89,-3 84,3Z" style="--d:2.4s"/>
+              <circle class="vine__bud" cx="8" cy="96" r="1.2" style="--d:0.9s"/>
+              <circle class="vine__bud" cx="12" cy="55" r="1" style="--d:1.4s"/>
+              <circle class="vine__bud" cx="48" cy="6" r="0.9" style="--d:2.2s"/>
+              <g class="vine__flower" style="--d:1.8s">
+                <ellipse cx="36" cy="5" rx="4.5" ry="2" transform="rotate(0,36,8)"/>
+                <ellipse cx="36" cy="5" rx="4.5" ry="2" transform="rotate(72,36,8)"/>
+                <ellipse cx="36" cy="5" rx="4.5" ry="2" transform="rotate(144,36,8)"/>
+                <ellipse cx="36" cy="5" rx="4.5" ry="2" transform="rotate(216,36,8)"/>
+                <ellipse cx="36" cy="5" rx="4.5" ry="2" transform="rotate(288,36,8)"/>
+                <circle cx="36" cy="8" r="2" class="vine__flower-center"/>
+              </g>
+              <g class="vine__flower vine__flower--sm" style="--d:1.2s">
+                <ellipse cx="8" cy="84" rx="3" ry="1.3" transform="rotate(-15,8,86)"/>
+                <ellipse cx="8" cy="84" rx="3" ry="1.3" transform="rotate(45,8,86)"/>
+                <ellipse cx="8" cy="84" rx="3" ry="1.3" transform="rotate(105,8,86)"/>
+                <circle cx="8" cy="86" r="1.2" class="vine__flower-center"/>
+              </g>
+              <g class="vine__flower" style="--d:2.5s">
+                <ellipse cx="74" cy="-0.5" rx="3.8" ry="1.7" transform="rotate(0,74,2)"/>
+                <ellipse cx="74" cy="-0.5" rx="3.8" ry="1.7" transform="rotate(72,74,2)"/>
+                <ellipse cx="74" cy="-0.5" rx="3.8" ry="1.7" transform="rotate(144,74,2)"/>
+                <ellipse cx="74" cy="-0.5" rx="3.8" ry="1.7" transform="rotate(216,74,2)"/>
+                <ellipse cx="74" cy="-0.5" rx="3.8" ry="1.7" transform="rotate(288,74,2)"/>
+                <circle cx="74" cy="2" r="1.5" class="vine__flower-center"/>
+              </g>
+            </svg>
+          </div>
+
+          <!-- Top ornament: hand-drawn botanical spray -->
+          <div class="letter__ornament" aria-hidden="true">
+            <svg viewBox="0 0 120 64" xmlns="http://www.w3.org/2000/svg" role="img" focusable="false">
+              <g fill="none" stroke="currentColor" stroke-width="0.9"
+                 stroke-linecap="round" stroke-linejoin="round"
+                 class="letter__ornament-strokes">
+                <path d="M60 6 C 60 18 60 34 60 58" />
+                <path d="M60 18 C 52 15 44 14 34 16 C 42 20 50 21 60 22" />
+                <path d="M60 18 C 68 15 76 14 86 16 C 78 20 70 21 60 22" />
+                <path d="M60 30 C 50 29 42 32 32 38 C 42 38 52 36 60 34" />
+                <path d="M60 30 C 70 29 78 32 88 38 C 78 38 68 36 60 34" />
+                <path d="M60 42 C 54 42 48 45 44 50 C 50 50 56 48 60 46" />
+                <path d="M60 42 C 66 42 72 45 76 50 C 70 50 64 48 60 46" />
+              </g>
+              <g fill="currentColor" class="letter__ornament-dots">
+                <circle cx="60" cy="5" r="1.2" />
+                <circle cx="60" cy="58" r="1.2" />
+              </g>
+            </svg>
+          </div>
+
+          <p class="letter__eyebrow" data-reveal="fade-up">INVITATION</p>
+
+          <h2 class="letter__title" id="letterTitle" data-reveal="chars">결혼합니다</h2>
+
+          <!-- Divider: a thin line that draws outward from a small flower ornament -->
+          <div class="letter__divider" aria-hidden="true" data-reveal="divider">
+            <span class="letter__divider-line letter__divider-line--left"></span>
+            <svg class="letter__divider-mark" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" role="img" focusable="false">
+              <g fill="currentColor">
+                <circle cx="8" cy="8" r="1.4" />
+                <circle cx="8" cy="2.8" r="0.7" />
+                <circle cx="8" cy="13.2" r="0.7" />
+                <circle cx="2.8" cy="8" r="0.7" />
+                <circle cx="13.2" cy="8" r="0.7" />
+              </g>
+            </svg>
+            <span class="letter__divider-line letter__divider-line--right"></span>
+          </div>
+
+          <div class="letter__message" data-reveal="stagger">
+            <p data-reveal-item>서로의 하루에 천천히 스며들어</p>
+            <p data-reveal-item>이제는 하나의 계절이 되었습니다.</p>
+            <p class="letter__message-spacer" aria-hidden="true">&nbsp;</p>
+            <p data-reveal-item>저희 두 사람이 함께 써 내려갈 시간의 첫 장에</p>
+            <p data-reveal-item>따뜻한 발걸음과 축복으로 함께해 주시면</p>
+            <p data-reveal-item>더 없는 기쁨으로 간직하겠습니다.</p>
+          </div>
+
+          <ul class="letter__family" role="list" data-reveal="stagger">
+            <li class="letter__family-row" data-reveal-item>
+              <span class="letter__family-parents"><em>아빠</em> &middot; <em>엄마</em></span>
+              <span class="letter__family-rel">의 아들</span>
+              <span class="letter__family-name">성문</span>
+            </li>
+            <li class="letter__family-row" data-reveal-item>
+              <span class="letter__family-parents"><em>엄마</em> &middot; <em>아빠</em></span>
+              <span class="letter__family-rel">의 딸</span>
+              <span class="letter__family-name">나은</span>
+            </li>
+          </ul>
+
+          <div class="letter__closing" data-reveal="fade-up">
+            <p class="letter__closing-date">2026. 07. 12 &nbsp;SUN &nbsp;12:00 PM</p>
+            <p class="letter__closing-venue">Crest 72 &middot; 글래스홀</p>
+          </div>
+
+          <!-- Bottom ornament (mirrored) -->
+          <div class="letter__ornament letter__ornament--bottom" aria-hidden="true">
+            <svg viewBox="0 0 120 64" xmlns="http://www.w3.org/2000/svg" role="img" focusable="false">
+              <g fill="none" stroke="currentColor" stroke-width="0.9"
+                 stroke-linecap="round" stroke-linejoin="round"
+                 class="letter__ornament-strokes">
+                <path d="M60 58 C 60 46 60 30 60 6" />
+                <path d="M60 46 C 52 49 44 50 34 48 C 42 44 50 43 60 42" />
+                <path d="M60 46 C 68 49 76 50 86 48 C 78 44 70 43 60 42" />
+                <path d="M60 34 C 50 35 42 32 32 26 C 42 26 52 28 60 30" />
+                <path d="M60 34 C 70 35 78 32 88 26 C 78 26 68 28 60 30" />
+                <path d="M60 22 C 54 22 48 19 44 14 C 50 14 56 16 60 18" />
+                <path d="M60 22 C 66 22 72 19 76 14 C 70 14 64 16 60 18" />
+              </g>
+              <g fill="currentColor" class="letter__ornament-dots">
+                <circle cx="60" cy="6" r="1.2" />
+                <circle cx="60" cy="58" r="1.2" />
+              </g>
+            </svg>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script defer src="assets/js/config.js?v=df81cc9cd7e9e51f"></script>
+  <script defer src="assets/js/firefly.js?v=ed683e49147d4f7e"></script>
+  <script defer src="assets/js/hero-animations.js?v=cb6949ad3cea4697"></script>
+  <script defer src="assets/js/letter.js?v=8b61a7be4c2e6953"></script>
+  <script defer src="assets/js/main.js?v=e9c59dd3dc313188"></script>
+</body>
+</html>

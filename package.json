@@ -1,0 +1,8 @@
+{
+  "name": "wedding-invitation",
+  "private": true,
+  "scripts": {
+    "version-assets": "node ./scripts/version-assets.mjs",
+    "prepare-deploy": "npm run version-assets"
+  }
+}

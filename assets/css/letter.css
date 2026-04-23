@@ -1,0 +1,457 @@
+/* ══════════════════════════════════════════════════════════════════════
+   Section 02 · Invitation Letter (초대글)
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Layout ────────────────────────────────────────────────────────── */
+
+.letter {
+  position: relative;
+  padding: clamp(56px, 12vw, 108px) 0;
+  text-align: center;
+
+  /* ★ Letter Title Font — 교체 시 이 변수만 수정 (HTML의 <link>도 함께 교체) */
+  --letter-title-font: 'munche_seuki_jung', 'Sun Batang', 'Noto Serif KR', serif;
+}
+
+.letter__inner {
+  position: relative;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 0 clamp(24px, 6vw, 40px);
+}
+
+/* ── Botanical Ornament ────────────────────────────────────────────── */
+
+.letter__ornament {
+  display: flex;
+  justify-content: center;
+  margin-bottom: clamp(20px, 4.5vw, 36px);
+  color: #c2b5a4;
+}
+
+.letter__ornament svg {
+  width: clamp(80px, 24vw, 120px);
+  height: auto;
+  overflow: visible;
+}
+
+.letter__ornament--bottom {
+  margin-top: clamp(28px, 5.5vw, 44px);
+  margin-bottom: 0;
+}
+
+.letter__ornament-strokes path {
+  stroke-dasharray: 200;
+}
+
+/* ── Eyebrow ───────────────────────────────────────────────────────── */
+
+.letter__eyebrow {
+  font-family: 'Sorts Mill Goudy', serif;
+  font-size: clamp(10px, 2.5vw, 13px);
+  font-weight: 400;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  color: #b8a898;
+  margin-bottom: clamp(10px, 2.2vw, 16px);
+}
+
+/* ── Title ──────────────────────────────────────────────────────────── */
+
+.letter__title {
+  font-family: var(--letter-title-font);
+  font-size: clamp(26px, 6.5vw, 38px);
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  color: #2f2824;
+  margin-bottom: clamp(18px, 4vw, 30px);
+  line-height: 1.4;
+}
+
+/* ── Divider ───────────────────────────────────────────────────────── */
+
+.letter__divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 2.5vw, 16px);
+  margin-bottom: clamp(28px, 5.5vw, 44px);
+  color: #c4b5a5;
+}
+
+.letter__divider-line {
+  display: block;
+  width: clamp(36px, 11vw, 64px);
+  height: 1px;
+  background: currentColor;
+}
+
+.letter__divider-line--left  { transform-origin: right center; }
+.letter__divider-line--right { transform-origin: left center; }
+
+.letter__divider-mark {
+  width: clamp(12px, 3vw, 16px);
+  height: clamp(12px, 3vw, 16px);
+  color: #c4b5a5;
+  flex-shrink: 0;
+}
+
+/* ── Message ───────────────────────────────────────────────────────── */
+
+.letter__message {
+  margin-bottom: clamp(32px, 7vw, 52px);
+}
+
+.letter__message p {
+  font-family: 'Sun Batang', 'Noto Serif KR', serif;
+  font-size: clamp(14px, 3.5vw, 17px);
+  font-weight: 300;
+  line-height: 2.1;
+  color: #4a3f39;
+  letter-spacing: -0.01em;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.letter__message-spacer {
+  line-height: 1.0 !important;
+}
+
+/* ── Family ─────────────────────────────────────────────────────────── */
+
+.letter__family {
+  list-style: none;
+  margin-bottom: clamp(28px, 6vw, 44px);
+}
+
+.letter__family-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: clamp(4px, 1.2vw, 8px);
+  font-family: 'Sun Batang', 'Noto Serif KR', serif;
+  font-size: clamp(14px, 3.4vw, 16px);
+  line-height: 2.3;
+  color: #5a4f47;
+  word-break: keep-all;
+}
+
+.letter__family-row + .letter__family-row {
+  margin-top: clamp(2px, 0.6vw, 6px);
+}
+
+.letter__family-parents em {
+  font-style: normal;
+  font-weight: 300;
+}
+
+.letter__family-rel {
+  font-weight: 300;
+  color: #7a6f67;
+}
+
+.letter__family-name {
+  font-weight: 600;
+  color: #2f2824;
+}
+
+/* ── Closing ────────────────────────────────────────────────────────── */
+
+.letter__closing {
+  padding-top: clamp(4px, 1vw, 10px);
+}
+
+.letter__closing-date {
+  font-family: 'Goudy SC', 'Sorts Mill Goudy', serif;
+  font-size: clamp(13px, 3vw, 15px);
+  letter-spacing: 0.18em;
+  color: #5a4f47;
+  margin-bottom: clamp(4px, 1vw, 8px);
+}
+
+.letter__closing-venue {
+  font-family: 'Sun Batang', 'Noto Serif KR', serif;
+  font-size: clamp(13px, 3vw, 15px);
+  color: #5a4f47;
+  letter-spacing: 0.02em;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Vine Border Frame (growing ivy + blooming flowers)
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Stacking context so vine sits behind content ──────────────────── */
+
+.letter__inner {
+  isolation: isolate;
+}
+
+/* ── Frame container ───────────────────────────────────────────────── */
+
+.letter__vine-frame {
+  position: absolute;
+  top: clamp(-12px, -3vw, -20px);
+  left: clamp(8px, 2vw, 14px);
+  right: clamp(8px, 2vw, 14px);
+  bottom: clamp(-12px, -3vw, -20px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.letter__vine-frame::before,
+.letter__vine-frame::after {
+  content: '';
+  position: absolute;
+  border: 1px solid rgba(194, 181, 164, 0.35);
+  border-radius: 1px;
+}
+
+.letter__vine-frame::before { inset: 0; }
+.letter__vine-frame::after  { inset: 5px; border-color: rgba(194, 181, 164, 0.18); }
+
+/* ── Corner vine SVGs ──────────────────────────────────────────────── */
+
+.letter__vine {
+  position: absolute;
+  z-index: 1;
+  overflow: visible;
+  width: clamp(55px, 17vw, 75px);
+  height: auto;
+  aspect-ratio: 100 / 130;
+}
+
+.letter__vine--tl { top: -4px;    left: -4px;  }
+.letter__vine--tr { top: -4px;    right: -4px;  transform: scaleX(-1); }
+.letter__vine--bl { bottom: -4px; left: -4px;   transform: scaleY(-1); }
+.letter__vine--br { bottom: -4px; right: -4px;  transform: scale(-1, -1); }
+
+/* ── Vine colors ───────────────────────────────────────────────────── */
+
+.vine__stem   { stroke: #a3b091; stroke-width: 1.2; stroke-linecap: round; }
+.vine__tendril { stroke: #a3b091; stroke-width: 0.7; stroke-linecap: round; }
+.vine__leaf   { fill: #96a484; opacity: 0.9; }
+.vine__leaf:nth-of-type(odd) { fill: #8a9e70; }
+.vine__bud    { fill: #a3b091; }
+
+.vine__flower ellipse    { fill: #d4aab8; opacity: 0.85; }
+.vine__flower--sm ellipse { fill: #c9a0af; opacity: 0.8; }
+.vine__flower-center     { fill: #dbc396; }
+
+/* ── Vine animated states ──────────────────────────────────────────── */
+
+.letter--animated .letter__vine-frame::before,
+.letter--animated .letter__vine-frame::after {
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.letter--animated .letter__vine-frame.is-growing::before,
+.letter--animated .letter__vine-frame.is-growing::after {
+  opacity: 1;
+}
+
+.letter--animated .vine__stem {
+  stroke-dasharray: var(--path-len, 300);
+  stroke-dashoffset: var(--path-len, 300);
+  transition: stroke-dashoffset 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.letter--animated .vine__tendril {
+  stroke-dasharray: var(--path-len, 50);
+  stroke-dashoffset: var(--path-len, 50);
+  transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1) var(--d, 1.4s);
+}
+
+.letter--animated .letter__vine-frame.is-growing .vine__stem,
+.letter--animated .letter__vine-frame.is-growing .vine__tendril {
+  stroke-dashoffset: 0;
+}
+
+.letter__vine--tr .vine__stem { transition-delay: 0.15s; }
+.letter__vine--bl .vine__stem { transition-delay: 0.08s; }
+.letter__vine--br .vine__stem { transition-delay: 0.22s; }
+
+.letter--animated .vine__leaf {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  opacity: 0;
+  transform: scale(0) rotate(-30deg);
+}
+
+.letter--animated .vine__flower {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  transform: scale(0);
+}
+
+.letter--animated .vine__bud {
+  opacity: 0;
+  transition: opacity 0.5s ease var(--d, 0s);
+}
+
+.letter--animated .letter__vine-frame.is-growing .vine__leaf {
+  animation: vineLeafGrow 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d, 0s) forwards;
+}
+
+.letter--animated .letter__vine-frame.is-growing .vine__flower {
+  animation: vineBloom 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d, 0s) forwards;
+}
+
+.letter--animated .letter__vine-frame.is-growing .vine__bud {
+  opacity: 1;
+}
+
+@keyframes vineLeafGrow {
+  0%   { opacity: 0; transform: scale(0) rotate(-30deg); }
+  50%  { opacity: 0.7; }
+  70%  { transform: scale(1.15) rotate(5deg); }
+  100% { opacity: 0.9; transform: scale(1) rotate(0deg); }
+}
+
+@keyframes vineBloom {
+  0%   { opacity: 0; transform: scale(0) rotate(-45deg); }
+  40%  { opacity: 0.6; }
+  60%  { transform: scale(1.2) rotate(8deg); }
+  80%  { transform: scale(0.95) rotate(-3deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Animated States
+   Applied only when JS adds .letter--animated (progressive enhancement).
+   Without JS the section remains fully visible and readable.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Fade-up reveals ───────────────────────────────────────────────── */
+
+.letter--animated [data-reveal="fade-up"] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.letter--animated [data-reveal="fade-up"].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Stagger children ──────────────────────────────────────────────── */
+
+.letter--animated [data-reveal-item] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.75s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 0.75s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.letter--animated [data-reveal-item].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Ornament stroke drawing ───────────────────────────────────────── */
+
+.letter--animated .letter__ornament-strokes path {
+  stroke-dashoffset: 200;
+  transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.letter--animated .letter__ornament.is-drawn .letter__ornament-strokes path {
+  stroke-dashoffset: 0;
+}
+
+.letter--animated .letter__ornament-strokes path:nth-child(1) { transition-delay: 0.00s; }
+.letter--animated .letter__ornament-strokes path:nth-child(2) { transition-delay: 0.15s; }
+.letter--animated .letter__ornament-strokes path:nth-child(3) { transition-delay: 0.15s; }
+.letter--animated .letter__ornament-strokes path:nth-child(4) { transition-delay: 0.30s; }
+.letter--animated .letter__ornament-strokes path:nth-child(5) { transition-delay: 0.30s; }
+.letter--animated .letter__ornament-strokes path:nth-child(6) { transition-delay: 0.45s; }
+.letter--animated .letter__ornament-strokes path:nth-child(7) { transition-delay: 0.45s; }
+
+.letter--animated .letter__ornament-dots circle {
+  opacity: 0;
+  transition: opacity 0.7s ease 0.6s;
+}
+
+.letter--animated .letter__ornament.is-drawn .letter__ornament-dots circle {
+  opacity: 1;
+}
+
+/* ── Divider animation ─────────────────────────────────────────────── */
+
+.letter--animated .letter__divider-line {
+  transform: scaleX(0);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.letter--animated .letter__divider.is-visible .letter__divider-line {
+  transform: scaleX(1);
+}
+
+.letter--animated .letter__divider-mark {
+  opacity: 0;
+  transform: scale(0) rotate(-90deg);
+  transition:
+    opacity 0.5s ease,
+    transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition-delay: 0.35s;
+}
+
+.letter--animated .letter__divider.is-visible .letter__divider-mark {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Responsive Refinements
+   ══════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 360px) {
+  .letter__inner {
+    padding: 0 clamp(18px, 5vw, 28px);
+  }
+
+  .letter__family-row {
+    font-size: clamp(12.5px, 3.2vw, 15px);
+    gap: clamp(3px, 1vw, 6px);
+  }
+}
+
+@media (min-width: 768px) {
+  .letter__inner {
+    max-width: 480px;
+  }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Reduced Motion
+   ══════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .letter--animated [data-reveal="fade-up"],
+  .letter--animated [data-reveal-item],
+  .letter--animated .letter__divider-line,
+  .letter--animated .letter__divider-mark,
+  .letter--animated .letter__ornament-strokes path,
+  .letter--animated .letter__ornament-dots circle,
+  .letter--animated .vine__stem,
+  .letter--animated .vine__tendril,
+  .letter--animated .vine__leaf,
+  .letter--animated .vine__flower,
+  .letter--animated .vine__bud,
+  .letter--animated .letter__vine-frame::before,
+  .letter--animated .letter__vine-frame::after {
+    transition: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+}
