@@ -346,7 +346,12 @@
   width: 100vw;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
-  margin-bottom: clamp(36px, 8vw, 60px);
+  /* Tight margin to the CTA below — the filmstrip's `padding-bottom`
+     already supplies all the visual breathing room past the polaroid
+     shadows, so any extra `margin-bottom` here is purely cosmetic gap.
+     Trimmed (was `clamp(36px, 8vw, 60px)`) so the "전체 사진 보기" button
+     sits ~one button-height higher without invading the shadow zone. */
+  margin-bottom: clamp(6px, 1.5vw, 12px);
   /* Vertical padding must be large enough to *contain* the polaroid drop
      shadow, because we cannot rely on `overflow-y: visible`: the
      horizontal `mask-image` below is anchored to this element's border
@@ -486,7 +491,10 @@
 .gallery__cta {
   display: flex;
   justify-content: center;
-  margin-top: clamp(16px, 3.5vw, 24px);
+  /* Small top gap — partner of the filmstrip's reduced `margin-bottom`.
+     Total "polaroid-shadow → button" cosmetic gap is now ~12 px instead
+     of the previous ~52 px (≈ one button-height tighter). */
+  margin-top: clamp(4px, 1vw, 8px);
   margin-bottom: clamp(28px, 6vw, 40px);
 }
 

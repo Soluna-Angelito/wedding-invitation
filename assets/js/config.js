@@ -48,32 +48,70 @@
     },
     animation: {
       starts: {
-        wedding: 0.3,
-        date: 0.54,
-        korean: 0.78,
-        venue: 0.97,
-        nameRow: 1.45,
-        groom: 1.45,
-        ampersand: 1.45,
-        bride: 1.45,
+        wedding: 0.0,
+        date: 0.0,
+        korean: 0.0,
+        venue: 0.0,
+        nameRow: 0.0,
+        groom: 0.8,
+        ampersand: 0.8,
+        bride: 0.8,
         arrow: 3.0
       },
       nameRowAnim: {
-        charDuration: 1.75,
-        charEase: 'power4.inOut',
-        charYRange: 100,
-        staggerEach: 0.1,
-        staggerFrom: 'start'
+        fadeDuration: 1.2,
+        fadeEase: 'power2.out'
+      },
+      // ── Per-character hero text animation ─────────────────────────
+      // Controls how letters in `THE WEDDING OF`, the date, the Korean
+      // names, and the venue line "fall into place". Tweak here to
+      // change the *feel* of the intro without touching JS.
+      //
+      //   yRange:               px each letter can drift from before
+      //                         settling. Lower = subtler / more
+      //                         elegant. (was hardcoded 100)
+      //   duration:             seconds for each letter's flight.
+      //                         Higher = more graceful. (was 1.75)
+      //   ease:                 GSAP ease curve. 'power4.inOut' is
+      //                         dramatic; 'power2.out' / 'sine.out'
+      //                         read as more refined.
+      //   staggerEach:          delay (s) between consecutive letters.
+      //                         Tiny = letters arrive together;
+      //                         ~0.04 = graceful wave.
+      //   staggerFrom:          'start' | 'center' | 'end' | 'edges'.
+      //   rotationX:            initial 3D tilt (deg). 0 = pure
+      //                         vertical drift, no theatrical fall.
+      //   transformPerspective: GSAP 3D perspective (px). Larger =
+      //                         flatter / more subtle.
+      //   transformOrigin:      where the 3D rotation pivots from.
+      //
+      // `perLine` overrides any subset of the above for a specific
+      // hero line (keyed by element id in index.html).
+      charAnim: {
+        yRange: 10,
+        duration: 1.75,
+        ease: 'power4.inOut',
+        staggerEach: 0.01,
+        staggerFrom: 'center',
+        rotationX: 20,
+        transformPerspective: 600,
+        transformOrigin: '50% 50% -50px',
+        perLine: {
+          theWedding:   {},
+          weddingDate:  { duration: 1.5 },
+          koreanNames:  {},
+          weddingVenue: {}
+        }
       },
       postIntro: {
-        start: 5.0,
-        duration: 2.0,
+        start: 2.0,
+        duration: 4.0,
         hideTitleGroup: true,
         titleYOffset: -24
       },
       overlay: {
         before: { y0: 0.8, y35: 0.8, y60: 0.8, y100: 0.8 },
-        after: { y0: 0.0, y35: 0.0, y60: 0.10, y100: 0.8 }
+        after: { y0: 0.0, y35: 0.0, y60: 0.30, y100: 0.8 }
       }
     },
     letter: {

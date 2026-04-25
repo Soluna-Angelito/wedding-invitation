@@ -3,7 +3,6 @@
 
   const DEFAULT_OVERLAY_BEFORE = { y0: 0.78, y35: 0.62, y60: 0.48, y100: 0.42 };
   const DEFAULT_OVERLAY_AFTER = { y0: 0.54, y35: 0.42, y60: 0.30, y100: 0.24 };
-  const ALLOWED_STAGGER_FROM = new Set(['start', 'center', 'end', 'edges', 'random']);
   const HERO_TEXT_IDS = ['theWedding', 'nameGroom', 'ampersand', 'nameBride', 'koreanNames', 'weddingDate', 'weddingVenue'];
 
   function normalizeOverlayStops(stops, fallback) {
@@ -24,16 +23,6 @@
       y60: read('y60'),
       y100: read('y100')
     };
-  }
-
-  function normalizeStaggerFrom(value, fallback) {
-    if (typeof value === 'number' && Number.isFinite(value)) {
-      return value;
-    }
-    if (typeof value === 'string' && ALLOWED_STAGGER_FROM.has(value)) {
-      return value;
-    }
-    return fallback;
   }
 
   function wrapChars(el) {
@@ -105,12 +94,15 @@
     const charEase = lineConfig.charEase || 'power4.inOut';
     const staggerEach = lineConfig.staggerEach ?? 0.01;
     const staggerFrom = lineConfig.staggerFrom || 'center';
+    const rotationX = lineConfig.rotationX ?? 70;
+    const transformPerspective = lineConfig.transformPerspective ?? 600;
+    const transformOrigin = lineConfig.transformOrigin || '50% 50% -50px';
 
     global.gsap.set(chars, {
       opacity: 0,
-      rotationX: 70,
-      transformPerspective: 600,
-      transformOrigin: '50% 50% -50px',
+      rotationX: rotationX,
+      transformPerspective: transformPerspective,
+      transformOrigin: transformOrigin,
       force3D: true,
       y: function () {
         return global.gsap.utils.random(-charYRange, charYRange);
@@ -124,6 +116,25 @@
       duration: charDuration,
       stagger: { each: staggerEach, from: staggerFrom },
       ease: charEase
+    }, startAt);
+  }
+
+  function animateElementsFade(tl, elements, startAt, options) {
+    const targets = elements.filter(Boolean);
+    if (!targets.length) {
+      return;
+    }
+
+    const fadeConfig = options || {};
+
+    global.gsap.set(targets, {
+      opacity: 0
+    });
+
+    tl.to(targets, {
+      opacity: 1,
+      duration: fadeConfig.duration ?? 1.2,
+      ease: fadeConfig.ease || 'power2.out'
     }, startAt);
   }
 
@@ -184,57 +195,49 @@
       const overlayAfter = normalizeOverlayStops(overlayConfig.after, DEFAULT_OVERLAY_AFTER);
 
       const nameRowAnim = animation.nameRowAnim || {};
-      const nameRowCharDuration = nameRowAnim.charDuration ?? 1.75;
-      const nameRowCharEase = nameRowAnim.charEase || 'power4.inOut';
-      const nameRowCharYRange = nameRowAnim.charYRange ?? 100;
-      const nameRowStaggerEach = nameRowAnim.staggerEach ?? 0.035;
-      const nameRowStaggerFrom = normalizeStaggerFrom(nameRowAnim.staggerFrom, 'start');
+      const charAnim = animation.charAnim || {};
+      const charPerLine = charAnim.perLine || {};
 
-      animateTextLine(timeline, document.getElementById('theWedding'), starts.wedding ?? 0.3, {
-        charDuration: 1.75,
-        charEase: 'power4.inOut'
-      });
+      // Map a config-shaped block ({ yRange, duration, ease, ... }) to the
+      // option keys `animateTextLine` expects (charYRange, charDuration, ...).
+      // Per-line overrides win; anything missing falls through to the
+      // defaults declared on `charAnim`, and anything still missing falls
+      // through to `animateTextLine`'s built-in fallbacks.
+      function lineOptionsFor(lineKey) {
+        const override = charPerLine[lineKey] || {};
+        function pick(name) {
+          return override[name] !== undefined ? override[name] : charAnim[name];
+        }
+        return {
+          charYRange:           pick('yRange'),
+          charDuration:         pick('duration'),
+          charEase:             pick('ease'),
+          staggerEach:          pick('staggerEach'),
+          staggerFrom:          pick('staggerFrom'),
+          rotationX:            pick('rotationX'),
+          transformPerspective: pick('transformPerspective'),
+          transformOrigin:      pick('transformOrigin')
+        };
+      }
 
-      animateTextLine(timeline, document.getElementById('weddingDate'), starts.date ?? 0.54, {
-        charDuration: 1.5,
-        charEase: 'power4.inOut'
-      });
+      animateTextLine(timeline, document.getElementById('theWedding'),   starts.wedding ?? 0.3,  lineOptionsFor('theWedding'));
+      animateTextLine(timeline, document.getElementById('weddingDate'),  starts.date    ?? 0.54, lineOptionsFor('weddingDate'));
+      animateTextLine(timeline, document.getElementById('koreanNames'),  starts.korean  ?? 0.78, lineOptionsFor('koreanNames'));
+      animateTextLine(timeline, document.getElementById('weddingVenue'), starts.venue   ?? 0.97, lineOptionsFor('weddingVenue'));
 
-      animateTextLine(timeline, document.getElementById('koreanNames'), starts.korean ?? 0.78, {
-        charDuration: 1.75,
-        charEase: 'power4.inOut'
-      });
+      const defaultNameStart = 1.45;
+      const nameRowStart = starts.nameRow ?? defaultNameStart;
+      const groomStart = starts.groom ?? nameRowStart;
+      const ampersandStart = starts.ampersand ?? nameRowStart;
+      const brideStart = starts.bride ?? nameRowStart;
+      const fadeOptions = {
+        duration: nameRowAnim.fadeDuration ?? 1.2,
+        ease: nameRowAnim.fadeEase || 'power2.out'
+      };
 
-      animateTextLine(timeline, document.getElementById('weddingVenue'), starts.venue ?? 0.97, {
-        charDuration: 1.75,
-        charEase: 'power4.inOut'
-      });
-
-      const nameRowStart = starts.nameRow ?? starts.groom ?? 1.45;
-
-      animateTextLine(timeline, document.getElementById('nameGroom'), nameRowStart, {
-        charDuration: nameRowCharDuration,
-        charEase: nameRowCharEase,
-        charYRange: nameRowCharYRange,
-        staggerEach: nameRowStaggerEach,
-        staggerFrom: nameRowStaggerFrom
-      });
-
-      animateTextLine(timeline, document.getElementById('ampersand'), nameRowStart, {
-        charDuration: nameRowCharDuration,
-        charEase: nameRowCharEase,
-        charYRange: nameRowCharYRange,
-        staggerEach: nameRowStaggerEach,
-        staggerFrom: nameRowStaggerFrom
-      });
-
-      animateTextLine(timeline, document.getElementById('nameBride'), nameRowStart, {
-        charDuration: nameRowCharDuration,
-        charEase: nameRowCharEase,
-        charYRange: nameRowCharYRange,
-        staggerEach: nameRowStaggerEach,
-        staggerFrom: nameRowStaggerFrom
-      });
+      animateElementsFade(timeline, [document.getElementById('nameGroom')], groomStart, fadeOptions);
+      animateElementsFade(timeline, [document.getElementById('ampersand')], ampersandStart, fadeOptions);
+      animateElementsFade(timeline, [document.getElementById('nameBride')], brideStart, fadeOptions);
 
       const arrow = document.getElementById('scrollArrow');
       if (arrow) {
