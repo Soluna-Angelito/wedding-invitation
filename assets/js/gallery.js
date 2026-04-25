@@ -644,6 +644,9 @@
     var isOpen = false;
     var lastFocused = null;
     var preloadCache = new Map();
+    /* Tracks whether we pushed a history entry when opening the lightbox
+       so we know whether to pop it back when closing programmatically. */
+    var historyPushed = false;
 
     function onKey(e) {
       if (!isOpen) { return; }
@@ -656,6 +659,37 @@
     var touchStartY = 0;
     var touchTracking = false;
     var swipeThreshold = 50;
+
+    /* Animate the current image off-screen in the swipe direction,
+       then load the next photo. Replaces the previous behaviour where
+       the image snapped back to the center on release before loading
+       — which made the navigation look like the frame "jumped back". */
+    function flyOutAndAdvance(navDir) {
+      var stageWidth = (stage && stage.clientWidth) || global.innerWidth || 800;
+      var exitX = -navDir * stageWidth * 0.55;
+
+      imgEl.classList.remove('is-swiping');
+      /* Inline transition overrides the long 0.55s default so the exit
+         is brisk; it's cleared as soon as `show()` reasserts control. */
+      imgEl.style.transition =
+        'transform 0.22s cubic-bezier(0.45, 0.05, 0.55, 0.95),' +
+        ' opacity 0.18s ease-out';
+      imgEl.style.transform = 'translateX(' + exitX.toFixed(1) + 'px) scale(0.94)';
+      imgEl.style.opacity = '0';
+
+      global.setTimeout(function () {
+        imgEl.style.transition = '';
+        imgEl.style.transform = '';
+        imgEl.style.opacity = '';
+        go(navDir);
+      }, 200);
+    }
+
+    function snapBackToCenter() {
+      imgEl.classList.remove('is-swiping');
+      imgEl.style.transform = '';
+      imgEl.style.opacity = '';
+    }
 
     function onTouchStart(e) {
       if (e.touches.length !== 1) { return; }
@@ -684,12 +718,11 @@
         : touchStartX;
       var dx = endX - touchStartX;
       touchTracking = false;
-      imgEl.classList.remove('is-swiping');
-      imgEl.style.transform = '';
-      imgEl.style.opacity = '';
 
-      if (Math.abs(dx) > swipeThreshold) {
-        go(dx < 0 ? +1 : -1);
+      if (Math.abs(dx) > swipeThreshold && sources.length > 1) {
+        flyOutAndAdvance(dx < 0 ? +1 : -1);
+      } else {
+        snapBackToCenter();
       }
     }
 
@@ -706,8 +739,8 @@
       if (!pointerDown) { return; }
       pointerDown = false;
       var dx = e.clientX - pointerStartX;
-      if (Math.abs(dx) > swipeThreshold) {
-        go(dx < 0 ? +1 : -1);
+      if (Math.abs(dx) > swipeThreshold && sources.length > 1) {
+        flyOutAndAdvance(dx < 0 ? +1 : -1);
       }
     }
 
@@ -783,6 +816,19 @@
       show(index + delta);
     }
 
+    /* Browser back-button (and Android system back gesture) handler.
+       Without this, pressing back while the lightbox is open closes the
+       whole page. We push a transient history entry on open and treat
+       any `popstate` while open as "user wants to close the modal". */
+    function onPopState() {
+      if (isOpen) {
+        /* History entry was already popped by the navigation that
+           triggered popstate, so we must not pop again in close(). */
+        historyPushed = false;
+        close();
+      }
+    }
+
     function open(idx) {
       if (isOpen) { show(idx); return; }
       isOpen = true;
@@ -793,6 +839,18 @@
       document.body.classList.add('gallery-lightbox-open');
 
       show(idx || 0);
+
+      /* Push a history entry so the device's back button (and the
+         browser's back arrow) closes the lightbox instead of leaving
+         the page. The state object lets us recognise our own entry. */
+      if (global.history && typeof global.history.pushState === 'function') {
+        try {
+          global.history.pushState({ weddingLightbox: true }, '');
+          historyPushed = true;
+        } catch (_) {
+          historyPushed = false;
+        }
+      }
 
       global.setTimeout(function () {
         if (closeBtn && typeof closeBtn.focus === 'function') {
@@ -807,6 +865,7 @@
       stage.addEventListener('pointerdown', onPointerDownStage);
       stage.addEventListener('pointerup',   onPointerUpStage);
       lb.addEventListener('click', onBackdropClick);
+      global.addEventListener('popstate', onPopState);
     }
 
     function close() {
@@ -817,6 +876,11 @@
       lb.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('gallery-lightbox-open');
       imgEl.classList.remove('is-loaded');
+      /* Clear any inline styles left over from a swipe-in-progress so
+         the next open() starts in a clean state. */
+      imgEl.style.transition = '';
+      imgEl.style.transform = '';
+      imgEl.style.opacity = '';
 
       document.removeEventListener('keydown', onKey);
       stage.removeEventListener('touchstart', onTouchStart);
@@ -825,6 +889,16 @@
       stage.removeEventListener('pointerdown', onPointerDownStage);
       stage.removeEventListener('pointerup',   onPointerUpStage);
       lb.removeEventListener('click', onBackdropClick);
+      global.removeEventListener('popstate', onPopState);
+
+      /* Pop our pushed entry so closing via the X button / Esc / backdrop
+         click doesn't leave a stale entry in the browser history. When
+         close() was invoked *because of* popstate, `historyPushed` is
+         already false and we skip this. */
+      if (historyPushed && global.history && typeof global.history.back === 'function') {
+        historyPushed = false;
+        try { global.history.back(); } catch (_) {}
+      }
 
       if (lastFocused && typeof lastFocused.focus === 'function') {
         try { lastFocused.focus({ preventScroll: true }); } catch (_) {}

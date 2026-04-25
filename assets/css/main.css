@@ -9,14 +9,20 @@
   --color-text-light: #fff;
 
   --hero-content-side-padding: clamp(12px, 5vw, 24px);
-  --hero-title-top: 8vh;
-  --hero-details-top: 76vh;
+  /* All vertical hero anchors are expressed in `svh` (small-viewport
+     height) so they stay locked to the *smallest* visible viewport —
+     the one with the mobile browser toolbar showing. They therefore do
+     NOT drift when the toolbar slides on scroll, which is what was
+     making content jump on iOS Safari / Chrome Android. See `.hero`
+     below for the matching height declaration. */
+  --hero-title-top: 8svh;
+  --hero-details-top: 76svh;
   --hero-name-font-size: clamp(34px, 11vw, 150px);
   --hero-ampersand-font-size: clamp(48px, 14vw, 230px);
   --hero-names-gap: clamp(2px, 1vw, 12px);
   --hero-korean-margin-top: 0;
-  --hero-date-margin-top: clamp(10px, 2vh, 24px);
-  --hero-venue-margin-top: clamp(6px, 1.2vh, 14px);
+  --hero-date-margin-top: clamp(10px, 2svh, 24px);
+  --hero-venue-margin-top: clamp(6px, 1.2svh, 14px);
 
   --hero-title-group-shift-y: 0px;
   --hero-details-group-shift-y: 0px;
@@ -50,16 +56,29 @@ body {
 }
 
 .invitation {
-  min-height: 100dvh;
+  /* Match the hero's `svh`-based height; using `dvh` here would re-introduce
+     toolbar-driven reflow on the parent. */
+  min-height: 100svh;
   background: var(--color-page-bg);
 }
 
 .hero {
   position: relative;
   width: 100%;
+  /* Layered fallbacks (last-valid-wins):
+       1. `100vh`   — universal fallback for very old browsers.
+       2. `100svh`  — the *small* viewport (toolbar visible). Locked to
+                     this size on purpose: when the mobile address/tab
+                     bar slides off on scroll, the hero does NOT grow,
+                     so nothing below it reflows. The newly-revealed
+                     space simply shows more of the next section, which
+                     is the desired UX (and matches what native apps do
+                     with `safe-area-inset-bottom`).
+     `100dvh` is intentionally NOT used here — `dvh` tracks the live
+     visible viewport and would cause the very layout shift the user
+     reported. */
   height: 100vh;
   height: 100svh;
-  height: 100dvh;
   min-height: 500px;
 }
 
@@ -212,7 +231,9 @@ body {
 .hero__scroll {
   position: absolute;
   left: 50%;
-  bottom: calc(clamp(50px, 6vh, 90px) + env(safe-area-inset-bottom));
+  /* `svh` for the same reason the hero uses it: the arrow stays glued
+     to a stable position relative to the toolbar-visible viewport. */
+  bottom: calc(clamp(50px, 6svh, 90px) + env(safe-area-inset-bottom));
   z-index: 5;
   transform: translateX(-50%);
   display: inline-flex;
@@ -346,8 +367,8 @@ body {
   :root {
     --hero-name-font-size: clamp(30px, 11vw, 48px);
     --hero-ampersand-font-size: clamp(42px, 14vw, 68px);
-    --hero-title-top: 6vh;
-    --hero-details-top: 73vh;
+    --hero-title-top: 6svh;
+    --hero-details-top: 73svh;
   }
 
   .hero__the-wedding {
@@ -357,8 +378,8 @@ body {
 
 @media (max-height: 700px) {
   :root {
-    --hero-title-top: 5vh;
-    --hero-details-top: 70vh;
+    --hero-title-top: 5svh;
+    --hero-details-top: 70svh;
   }
 }
 

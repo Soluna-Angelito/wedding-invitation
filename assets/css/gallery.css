@@ -176,9 +176,18 @@
 
 .gallery__featured-frame img {
   position: absolute;
-  inset: 0;
+  /* Permanent vertical "bleed" so the JS-driven parallax `translate` (up
+     to ±`parallaxStrength` px in either direction, default 18) can shift
+     the image without ever exposing the frame's dark backdrop. The
+     bleed must be ≥ parallaxStrength; we use 24 px for a safety margin.
+     The frame keeps `overflow: hidden`, so the extra height stays
+     visually clipped and the photo still appears to fill the frame. */
+  top: -24px;
+  bottom: -24px;
+  left: 0;
+  right: 0;
   width: 100%;
-  height: 100%;
+  height: calc(100% + 48px);
   object-fit: cover;
   /* Use individual transform properties so JS-driven `translate` (parallax,
      no transition) coexists with the CSS-driven `scale` reveal (1.6s ease).
@@ -338,7 +347,17 @@
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
   margin-bottom: clamp(36px, 8vw, 60px);
-  padding: clamp(20px, 4vw, 32px) 0 clamp(12px, 2.5vw, 20px);
+  /* Vertical padding must be large enough to *contain* the polaroid drop
+     shadow, because we cannot rely on `overflow-y: visible`: the
+     horizontal `mask-image` below is anchored to this element's border
+     box, so anything painted past the box (shadow ink included) would be
+     masked to fully transparent and disappear anyway.
+
+     `--gallery-shadow-deep` extends roughly 54 px below each card
+     (offset 26 + blur 56 − spread 28). Bottom padding is sized to clear
+     that with a small visual margin; top padding gets enough breathing
+     room for the −6 px hover lift plus the secondary upper-shadow ply. */
+  padding: clamp(40px, 8vw, 56px) 0 clamp(60px, 12vw, 76px);
   overflow: hidden;
   -webkit-mask-image: linear-gradient(90deg,
                        transparent 0,
@@ -419,7 +438,13 @@
   position: relative;
   aspect-ratio: 4 / 5;
   overflow: hidden;
-  background: #1f1a17;
+  /* Tinted to match the polaroid card (#fdfaf3) instead of pure black so
+     that:
+       1. lazy-loaded photos fade in from a paper-toned placeholder
+          rather than a hard black square;
+       2. any sub-pixel gap created by the parent's `rotate(...)` tilt
+          blends with the surrounding card border invisibly. */
+  background: #fdfaf3;
   cursor: zoom-in;
 }
 
@@ -430,6 +455,12 @@
   object-fit: cover;
   filter: saturate(0.94);
   transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  /* Hint to the compositor: the image will be transformed (hover zoom).
+     This pre-promotes it to its own layer so the rasterised pixels align
+     cleanly with the parent's rotated edge instead of falling on the
+     2-D antialiasing boundary that produces the 1-px seam. */
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 .gallery__polaroid:hover .gallery__polaroid-photo img,
@@ -642,7 +673,12 @@
   align-items: center;
   justify-content: center;
   width: min(92vw, 1200px);
-  height: min(78vh, 900px);
+  /* `dvh` here (not `svh`) — the lightbox is `position: fixed` and body
+     scroll is locked while it is open (`body.gallery-lightbox-open`),
+     so the toolbar cannot slide mid-view. `dvh` therefore matches what
+     the user actually sees right now, giving us the largest stable
+     stage for the photo. */
+  height: min(78dvh, 900px);
   pointer-events: none;
 }
 
