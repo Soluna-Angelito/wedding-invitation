@@ -362,7 +362,14 @@
   cursor: grab;
   user-select: none;
   -webkit-user-select: none;
+  /* `pan-y` lets the page scroll vertically while we own the horizontal axis;
+     this is what makes pointer-drag responsive on touch devices. */
   touch-action: pan-y;
+  /* Keep the track on its own GPU layer so the JS-driven translate3d
+     stays composite-only — no relayout/repaint per frame during drag. */
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 
 .gallery__filmstrip-track.is-grabbing { cursor: grabbing; }

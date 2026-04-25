@@ -127,7 +127,55 @@ await forceReveal(tabletPage);
 await tabletPage.waitForTimeout(400);
 await tabletGallery.screenshot({ path: resolve(outDir, 'gallery-section-tablet.png') });
 
-// Diagnostic info
+// Synthesize a horizontal drag on the filmstrip using Playwright's mouse
+// API (which mirrors a real input device — proper hit-testing, pointer
+// capture, etc.) and confirm the track transform updates synchronously.
+const dragInfo = await (async () => {
+  await tabletPage.evaluate(() => {
+    const s = document.querySelector('.gallery__filmstrip');
+    if (s) s.scrollIntoView({ block: 'center', behavior: 'instant' });
+  });
+  await tabletPage.waitForTimeout(250);
+
+  const rect = await tabletPage.evaluate(() => {
+    const t = document.querySelector('.gallery__filmstrip-track');
+    if (!t) return null;
+    const r = t.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  });
+  if (!rect) return { error: 'no track' };
+
+  const readTx = () => tabletPage.evaluate(() => {
+    const t = document.querySelector('.gallery__filmstrip-track');
+    const tr = t ? t.style.transform || '' : '';
+    /* Capture the first numeric argument INSIDE translate3d(...) — naive
+       `-?\d+` would match the "3" inside "translate3d(". */
+    const m = tr.match(/translate3d\(\s*(-?\d+(?:\.\d+)?)/);
+    return { raw: tr, x: m ? parseFloat(m[1]) : 0 };
+  });
+
+  await tabletPage.mouse.move(rect.x, rect.y);
+  await tabletPage.mouse.down();
+
+  const txAtStart = await readTx();
+  const samples = [];
+  for (let i = 1; i <= 10; i++) {
+    await tabletPage.mouse.move(rect.x - i * 12, rect.y);
+    await tabletPage.waitForTimeout(20);
+    samples.push(await readTx());
+  }
+  await tabletPage.mouse.up();
+
+  const xs = samples.map(s => s.x);
+  const monotonicallyDecreasing = xs.every((v, i, a) => i === 0 || v <= a[i - 1] + 0.5);
+  return {
+    txAtStart,
+    samples,
+    monotonicallyDecreasing,
+    totalDelta: xs[xs.length - 1] - txAtStart.x,
+  };
+})();
+
 const info = await page.evaluate(() => {
   const gal = document.getElementById('gallery');
   const cal = document.getElementById('calendar');
@@ -144,9 +192,18 @@ const info = await page.evaluate(() => {
     galleryImageCount: tiles.length,
     galleryHeight: Math.round(gal.getBoundingClientRect().height),
     polaroidCount: document.querySelectorAll('.gallery__polaroid').length,
+    quoteExists: !!document.querySelector('.gallery__quote'),
+    bottomOrnamentExists: !!document.querySelector('.gallery__bottom-ornament'),
+    extraMosaicCount:
+      document.querySelectorAll('#gallery .gallery__mosaic').length,
+    ctaParentClass: (document.querySelector('#galleryViewAll') || {})
+      .closest && document.querySelector('#galleryViewAll')
+        .closest('.gallery__inner')?.className,
+    viewAllLabel:
+      document.querySelector('.gallery__view-all-count')?.textContent,
   };
 });
 
-console.log(JSON.stringify(info, null, 2));
+console.log(JSON.stringify({ info, dragInfo }, null, 2));
 
 await browser.close();

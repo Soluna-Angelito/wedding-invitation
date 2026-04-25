@@ -34,6 +34,49 @@ python -m http.server 5500
 - 보통은 `index.html`과 `assets/*` 파일을 직접 수정합니다.
 - 별도 번들러(webpack/vite) 없이 동작합니다.
 
+### 4-1) 사진 추가 / 제거 / 설명 바꾸기
+
+갤러리에 들어가는 사진은 **`assets/data/photos.js` 한 파일**에서만 관리하면
+됩니다. 파일 안의 주석에 자세한 안내가 있으며, 핵심만 정리하면 다음과 같습니다.
+
+1. 새 사진 추가
+   1. 사진 파일을 `assets/img/` 폴더에 복사합니다 (`.webp` 권장).
+   2. `assets/data/photos.js`의 `registry`에 한 줄을 추가합니다.
+
+      ```js
+      'IMG_2300.webp': '여기에 한 줄 설명을 적어주세요',
+      ```
+2. 사진 빼기
+   - `registry`에서 해당 줄을 지우거나 `layout` 영역에서 빼면 됩니다.
+3. 설명만 바꾸기
+   - `registry` 값(작은따옴표 안)만 수정하면 갤러리/라이트박스/캡션 등
+     모든 곳에 자동으로 반영됩니다.
+4. 갤러리 자리 배치
+   - `layout.featured` : 갤러리 상단의 시네마틱 한 장
+   - `layout.mosaics` : 중간 모자이크 (`duo` / `mixed` / `trio`)
+   - `layout.filmstrip` : 하단 필름 스트립 (`'auto'` 면 등록된 모든 사진을 사용)
+
+작업이 끝나면 캐시 버전을 새로 찍기 위해 한 번 실행해주세요.
+
+```bash
+npm run version-assets
+```
+
+### 4-2) 필름 스트립 동작 미세 조정
+
+드래그 응답성, 자동 스크롤 속도, 폴라로이드 회전각 등은
+`assets/js/config.js`의 `gallery` 섹션에서 직접 조정할 수 있습니다.
+주요 항목:
+
+| 키 | 의미 |
+| --- | --- |
+| `filmstripAutoScrollSpeed` | 자동 스크롤 속도(0이면 비활성) |
+| `filmstripFlingWindowMs` | 손을 뗐을 때 관성 속도를 계산하는 시간창(ms) |
+| `filmstripFriction` | 관성 마찰. 1에 가까울수록 더 멀리 미끄러집니다 |
+| `filmstripResumeDelayMs` | 사용자 조작 후 자동 스크롤이 다시 시작되기까지의 시간 |
+| `filmstripTiltMaxDeg` | 폴라로이드 기울기 최대 각도 |
+| `filmstripTapeMaxDeg` | 폴라로이드 위쪽 테이프 회전 최대 각도 |
+
 ## 5) 빌드(배포 전 필수)
 
 이 프로젝트의 "빌드"는 캐시 버저닝 처리입니다.

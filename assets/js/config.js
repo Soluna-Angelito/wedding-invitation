@@ -98,7 +98,25 @@
       filmstripAutoScrollSpeed: 0.35,
       // Pixel offset applied to the featured photo as it scrolls through
       // the viewport (gentle ken-burns parallax).
-      parallaxStrength: 18
+      parallaxStrength: 18,
+      // ── Filmstrip drag / fling response ────────────────────────────
+      // Window (ms) used to compute release velocity. Smaller = snappier
+      // response to a real flick; the default captures the gesture's
+      // final ~80ms which corresponds to the user's actual finger speed
+      // at lift-off (avoids the "starts too late" feel).
+      filmstripFlingWindowMs: 80,
+      // Friction applied per ~16ms frame after release. Lower = glides
+      // farther (more film-like). Range: 0.85 (sticky) – 0.97 (very long).
+      filmstripFriction: 0.945,
+      // How long (ms) the auto-marquee stays paused after the last user
+      // interaction. Used to be 2200ms which felt sluggish; 700ms feels
+      // alive without fighting the user.
+      filmstripResumeDelayMs: 700,
+      // Maximum tilt (deg) randomly applied to each polaroid so adding
+      // photos doesn't require manually tuning style="--polaroid-tilt".
+      filmstripTiltMaxDeg: 2.6,
+      // Maximum tape-piece rotation (deg).
+      filmstripTapeMaxDeg: 5
     }
   };
 

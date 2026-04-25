@@ -8,8 +8,212 @@
     return (global.WeddingConfig && global.WeddingConfig.gallery) || {};
   }
 
+  function getPhotos() {
+    return global.WeddingPhotos || null;
+  }
+
   function prefersReducedMotion() {
     return global.matchMedia && global.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+
+  /* ══════════════════════════════════════════════════════════════════
+     Data-Driven Render
+     ──────────────────────────────────────────────────────────────────
+     Reads `window.WeddingPhotos` (assets/data/photos.js) and fills the
+     featured frame, mosaic grids, polaroid filmstrip, and "view all"
+     count from a single source of truth. Filenames map to captions
+     through the registry, so the same description is reused for the
+     gallery caption, the lightbox description, and the image alt text.
+     ══════════════════════════════════════════════════════════════════ */
+
+  function makeGalleryImg(photos, file, opts) {
+    opts = opts || {};
+    var caption = photos.captionFor(file);
+    var src = photos.pathFor(file);
+
+    var img = document.createElement('img');
+    img.src = src;
+    img.setAttribute('data-gallery-src', src);
+    img.setAttribute('data-gallery-caption', caption);
+    img.setAttribute('alt', opts.alt != null ? opts.alt : caption);
+    img.setAttribute('loading', opts.eager ? 'eager' : 'lazy');
+    img.setAttribute('decoding', 'async');
+    return img;
+  }
+
+  function renderFeatured(galleryEl, photos) {
+    var slot = galleryEl.querySelector('[data-gallery-slot="featured"]');
+    if (!slot || !photos.layout || !photos.layout.featured) {
+      return;
+    }
+
+    var file = photos.layout.featured;
+    var caption = photos.captionFor(file);
+
+    var frame = slot.querySelector('.gallery__featured-frame');
+    if (frame) {
+      frame.innerHTML = '';
+      frame.appendChild(makeGalleryImg(photos, file));
+    }
+
+    var cap = slot.querySelector('.gallery__featured-caption');
+    if (cap) {
+      cap.textContent = caption ? '— ' + caption + ' —' : '';
+    }
+  }
+
+  function renderMosaics(galleryEl, photos) {
+    var slot = galleryEl.querySelector('[data-gallery-slot="mosaics"]');
+    if (!slot || !photos.layout || !Array.isArray(photos.layout.mosaics)) {
+      return;
+    }
+
+    slot.innerHTML = '';
+
+    photos.layout.mosaics.forEach(function (group) {
+      if (!group || !Array.isArray(group.photos) || group.photos.length === 0) {
+        return;
+      }
+
+      var mosaic = document.createElement('div');
+      mosaic.className = 'gallery__mosaic gallery__mosaic--' + (group.layout || 'duo');
+      mosaic.setAttribute('data-reveal', 'fade-up');
+
+      group.photos.forEach(function (file, idx) {
+        var fig = document.createElement('figure');
+        fig.className = 'gallery__tile';
+
+        switch (group.layout) {
+          case 'mixed':
+            if (idx === 0) {
+              fig.classList.add('gallery__tile--span-row');
+            } else {
+              fig.classList.add('gallery__tile--landscape');
+            }
+            break;
+          case 'trio':
+            fig.classList.add('gallery__tile--square');
+            break;
+          case 'duo':
+          default:
+            fig.classList.add('gallery__tile--portrait');
+            break;
+        }
+
+        fig.appendChild(makeGalleryImg(photos, file));
+        mosaic.appendChild(fig);
+      });
+
+      slot.appendChild(mosaic);
+    });
+  }
+
+  /* Stable, deterministic pseudo-random tilt/tape angle per photo
+     position so adding a photo doesn't shuffle the others' angles. */
+  function pseudoRandomAngle(seed, max) {
+    var v = Math.sin(seed * 12.9898 + 78.233) * 43758.5453;
+    var frac = v - Math.floor(v);
+    return (frac * 2 - 1) * max;
+  }
+
+  function resolveFilmstripFiles(photos) {
+    var sel = photos.layout && photos.layout.filmstrip;
+    if (Array.isArray(sel)) {
+      return sel.slice();
+    }
+    if (sel && typeof sel === 'object' && Array.isArray(sel.exclude)) {
+      var excl = sel.exclude;
+      return photos.allFiles().filter(function (f) { return excl.indexOf(f) === -1; });
+    }
+    /* default → 'auto' */
+    return photos.allFiles();
+  }
+
+  function renderFilmstrip(galleryEl, photos, config) {
+    var track = galleryEl.querySelector('[data-gallery-slot="filmstrip"]');
+    if (!track) {
+      return;
+    }
+
+    var files = resolveFilmstripFiles(photos);
+    track.innerHTML = '';
+
+    var maxTilt = config.filmstripTiltMaxDeg != null ? config.filmstripTiltMaxDeg : 2.6;
+    var maxTape = config.filmstripTapeMaxDeg != null ? config.filmstripTapeMaxDeg : 5;
+
+    files.forEach(function (file, i) {
+      var caption = photos.captionFor(file);
+
+      var fig = document.createElement('figure');
+      fig.className = 'gallery__polaroid';
+      fig.setAttribute('role', 'listitem');
+      fig.style.setProperty('--polaroid-tilt', pseudoRandomAngle(i + 1, maxTilt).toFixed(2) + 'deg');
+      fig.style.setProperty('--tape-rotate', pseudoRandomAngle(i + 11, maxTape).toFixed(2) + 'deg');
+
+      var photoBox = document.createElement('div');
+      photoBox.className = 'gallery__polaroid-photo';
+      photoBox.appendChild(makeGalleryImg(photos, file));
+      fig.appendChild(photoBox);
+
+      var cap = document.createElement('figcaption');
+      cap.className = 'gallery__polaroid-caption';
+      cap.textContent = caption;
+      fig.appendChild(cap);
+
+      track.appendChild(fig);
+    });
+  }
+
+  function renderHero(photos) {
+    if (!photos.layout || !photos.layout.hero) {
+      return;
+    }
+    var heroImg = document.querySelector('[data-gallery-slot="hero"]');
+    if (!heroImg) {
+      return;
+    }
+    /* Only override the alt text — the src is left alone here because it
+       must be set in the initial HTML for the LCP/preload behaviour to
+       work correctly. The data file's hero entry is still authoritative
+       for documentation. */
+    var caption = photos.captionFor(photos.layout.hero);
+    if (caption) {
+      heroImg.setAttribute('alt', caption);
+    }
+  }
+
+  function updateViewAllCount(galleryEl) {
+    var slot = galleryEl.querySelector('[data-gallery-slot="count"]');
+    if (!slot) {
+      return;
+    }
+    /* Count unique photos across the whole gallery so duplicates between
+       the mosaic and filmstrip don't inflate the badge. */
+    var imgs = galleryEl.querySelectorAll('img[data-gallery-src]');
+    var seen = Object.create(null);
+    var count = 0;
+    for (var i = 0; i < imgs.length; i++) {
+      var src = imgs[i].getAttribute('data-gallery-src');
+      if (src && !seen[src]) {
+        seen[src] = 1;
+        count += 1;
+      }
+    }
+    slot.textContent = '(' + count + ')';
+  }
+
+  function renderGallery(galleryEl, config) {
+    var photos = getPhotos();
+    if (!photos) {
+      return false;
+    }
+    renderHero(photos);
+    renderFeatured(galleryEl, photos);
+    renderMosaics(galleryEl, photos);
+    renderFilmstrip(galleryEl, photos, config);
+    updateViewAllCount(galleryEl);
+    return true;
   }
 
 
@@ -42,7 +246,6 @@
 
   /* ══════════════════════════════════════════════════════════════════
      Featured Photo — gentle ken-burns parallax tied to scroll position.
-     Holds together with the existing letter parallax pattern.
      ══════════════════════════════════════════════════════════════════ */
 
   function setupFeaturedParallax(galleryEl, strength) {
@@ -52,9 +255,6 @@
       return null;
     }
 
-    /* Confirm the browser supports individual `translate` so the parallax
-       won't override the CSS-driven `scale` reveal. If not, skip parallax —
-       the static reveal alone still looks elegant. */
     if (!('translate' in img.style)) {
       return null;
     }
@@ -101,27 +301,55 @@
 
 
   /* ══════════════════════════════════════════════════════════════════
-     Polaroid Filmstrip — pointer-drag with momentum + auto-marquee.
-     Matches native scroll wheel behaviour but stays inside the strip.
+     Polaroid Filmstrip — pointer-drag with windowed-fling momentum
+     and auto-marquee.
+
+     Why "windowed fling"?  The previous implementation tracked velocity
+     with an exponential moving average that mixed in older samples,
+     so a quick flick at release produced a damped, late-feeling glide.
+     We now snapshot the user's finger position over the last
+     `filmstripFlingWindowMs` (default 80 ms) and compute the *true*
+     release velocity from those samples — the same technique used in
+     iOS / Android scrollers, sometimes called inertial fling response.
+     The strip therefore continues moving in step with the gesture as
+     soon as the user lifts off, with no perceptible delay.
      ══════════════════════════════════════════════════════════════════ */
 
   function setupFilmstrip(galleryEl, config) {
     var strip = galleryEl.querySelector('.gallery__filmstrip');
     var track = strip && strip.querySelector('.gallery__filmstrip-track');
-    if (!track) {
+    if (!track || track.children.length === 0) {
       return null;
     }
 
     var pos = 0;            /* Current x offset (negative = scrolled right). */
-    var velocity = 0;       /* Pixels per frame at 60fps. */
+    var velocity = 0;       /* Pixels per ~16ms frame.                       */
     var dragging = false;
     var pointerId = null;
     var lastClientX = 0;
-    var lastDt = 0;
-    var lastMoveTs = 0;
+    var lastClientY = 0;
+    var startClientX = 0;
+    var startClientY = 0;
+    var moved = false;
     var rafId = null;
-    var paused = false;     /* Pauses auto-marquee while user interacts. */
+    var paused = false;
     var pauseTimerId = null;
+
+    /* Recent move samples used to compute the user's actual flick
+       velocity at the moment of release. */
+    var samples = [];
+
+    var DRAG_THRESHOLD = 4;
+
+    var FLING_WINDOW_MS = (config.filmstripFlingWindowMs != null)
+      ? config.filmstripFlingWindowMs
+      : 80;
+    var FRICTION = (config.filmstripFriction != null)
+      ? config.filmstripFriction
+      : 0.945;
+    var RESUME_DELAY_MS = (config.filmstripResumeDelayMs != null)
+      ? config.filmstripResumeDelayMs
+      : 700;
 
     var autoSpeed = (config.filmstripAutoScrollSpeed != null)
       ? config.filmstripAutoScrollSpeed
@@ -129,9 +357,7 @@
     var autoEnabled = autoSpeed !== 0 && !prefersReducedMotion();
 
     function getMaxScroll() {
-      var trackWidth = track.scrollWidth;
-      var stripWidth = strip.clientWidth;
-      return Math.max(0, trackWidth - stripWidth);
+      return Math.max(0, track.scrollWidth - strip.clientWidth);
     }
 
     function applyTransform() {
@@ -145,33 +371,84 @@
       return x;
     }
 
+    /* Render loop — auto-marquee drift + post-release inertial momentum.
+       Drag updates apply directly inside `onPointerMove` for zero-frame
+       latency; tick() handles only continuous motion. */
     function tick() {
-      if (dragging) {
-        rafId = global.requestAnimationFrame(tick);
-        return;
-      }
+      if (!dragging) {
+        var changed = false;
 
-      /* Auto-marquee — drift slowly leftwards, bounce at the edge. */
-      if (autoEnabled && !paused) {
-        var max = getMaxScroll();
-        if (max > 0) {
-          pos -= autoSpeed;
-          if (pos <= -max) {
-            pos = -max;
-            autoSpeed = -Math.abs(autoSpeed);
-          } else if (pos >= 0) {
-            pos = 0;
-            autoSpeed = Math.abs(autoSpeed);
+        if (autoEnabled && !paused) {
+          var max = getMaxScroll();
+          if (max > 0) {
+            pos -= autoSpeed;
+            if (pos <= -max) {
+              pos = -max;
+              autoSpeed = -Math.abs(autoSpeed);
+            } else if (pos >= 0) {
+              pos = 0;
+              autoSpeed = Math.abs(autoSpeed);
+            }
+            changed = true;
           }
         }
-      } else if (Math.abs(velocity) > 0.05) {
-        /* User-induced momentum (after pointer up). */
-        pos = clamp(pos + velocity);
-        velocity *= 0.92;
-      }
 
-      applyTransform();
+        if (Math.abs(velocity) > 0.05) {
+          var next = pos + velocity;
+          var clamped = clamp(next);
+          /* Bleed off velocity instantly when we hit an edge so the
+             strip doesn't keep "pushing" against the wall. */
+          if (clamped !== next) {
+            velocity = 0;
+          } else {
+            velocity *= FRICTION;
+          }
+          pos = clamped;
+          changed = true;
+        } else if (velocity !== 0) {
+          velocity = 0;
+        }
+
+        if (changed) {
+          applyTransform();
+        }
+      }
       rafId = global.requestAnimationFrame(tick);
+    }
+
+    function pushSample(x, ts) {
+      samples.push({ x: x, ts: ts });
+      /* Keep the buffer small — anything older than ~2× window is dead weight. */
+      var cutoff = ts - FLING_WINDOW_MS * 2;
+      while (samples.length > 2 && samples[0].ts < cutoff) {
+        samples.shift();
+      }
+    }
+
+    function computeReleaseVelocity() {
+      if (samples.length < 2) {
+        return 0;
+      }
+      var now = performance.now();
+      /* Find the first sample within the fling window. */
+      var startIdx = 0;
+      for (var i = samples.length - 1; i >= 0; i--) {
+        if (now - samples[i].ts > FLING_WINDOW_MS) {
+          startIdx = i + 1;
+          break;
+        }
+      }
+      if (startIdx >= samples.length - 1) {
+        startIdx = Math.max(0, samples.length - 2);
+      }
+      var first = samples[startIdx];
+      var last  = samples[samples.length - 1];
+      var dt = last.ts - first.ts;
+      if (dt <= 4) {
+        return 0;
+      }
+      /* px / ms  →  px per ~60fps frame. */
+      return ((last.x - first.x) / dt) * 16;
     }
 
     function onPointerDown(e) {
@@ -181,10 +458,14 @@
       dragging = true;
       paused = true;
       velocity = 0;
+      moved = false;
       pointerId = e.pointerId;
+      startClientX = e.clientX;
+      startClientY = e.clientY;
       lastClientX = e.clientX;
-      lastMoveTs = performance.now();
-      track.classList.add('is-grabbing');
+      lastClientY = e.clientY;
+      samples.length = 0;
+      pushSample(e.clientX, performance.now());
       try { track.setPointerCapture(e.pointerId); } catch (_) {}
     }
 
@@ -192,17 +473,34 @@
       if (!dragging || (pointerId != null && e.pointerId !== pointerId)) {
         return;
       }
-      var dx = e.clientX - lastClientX;
-      lastClientX = e.clientX;
 
-      var now = performance.now();
-      lastDt = Math.max(1, now - lastMoveTs);
-      lastMoveTs = now;
+      var dx = e.clientX - lastClientX;
+      var dy = e.clientY - lastClientY;
+      lastClientX = e.clientX;
+      lastClientY = e.clientY;
+
+      if (!moved) {
+        var totalX = e.clientX - startClientX;
+        var totalY = e.clientY - startClientY;
+        if (Math.abs(totalX) < DRAG_THRESHOLD && Math.abs(totalY) < DRAG_THRESHOLD) {
+          return;
+        }
+        if (Math.abs(totalY) > Math.abs(totalX) * 1.4) {
+          dragging = false;
+          pointerId = null;
+          try { track.releasePointerCapture(e.pointerId); } catch (_) {}
+          return;
+        }
+        moved = true;
+        track.classList.add('is-grabbing');
+      }
+
+      pushSample(e.clientX, performance.now());
 
       pos = clamp(pos + dx);
-      velocity = dx / Math.max(1, lastDt) * 16;  /* ~60fps target */
+      applyTransform();
 
-      e.preventDefault();
+      if (e.cancelable) { e.preventDefault(); }
     }
 
     function endDrag(e) {
@@ -211,22 +509,28 @@
       }
       dragging = false;
       pointerId = null;
+      moved = false;
       track.classList.remove('is-grabbing');
 
-      /* Resume auto-marquee after a short idle pause. */
+      try { if (e) { track.releasePointerCapture(e.pointerId); } } catch (_) {}
+
+      /* True release velocity from the windowed sample buffer — this is
+         what eliminates the "starts too late" feel of the previous EMA
+         approach. Inertia continues seamlessly from the user's gesture. */
+      velocity = computeReleaseVelocity();
+      samples.length = 0;
+
       if (pauseTimerId) {
         global.clearTimeout(pauseTimerId);
       }
       pauseTimerId = global.setTimeout(function () {
         paused = false;
-      }, 2200);
+      }, RESUME_DELAY_MS);
     }
 
-    /* Wheel events: translate vertical wheel into horizontal scroll
-       only when the user is actually dragging vertically while their
-       cursor is over the strip. We avoid hijacking the page's normal
-       scroll behaviour. Holding shift converts wheel-y to wheel-x. */
-
+    /* Wheel events: support trackpad horizontal scroll natively, and
+       translate shift-wheel into horizontal. We don't hijack regular
+       vertical wheel — that belongs to the page. */
     function onWheel(e) {
       var dx = e.deltaX;
       if (Math.abs(dx) < 1 && e.shiftKey) {
@@ -237,39 +541,38 @@
       pos = clamp(pos - dx);
       paused = true;
       velocity = 0;
+      applyTransform();
 
       e.preventDefault();
 
       if (pauseTimerId) { global.clearTimeout(pauseTimerId); }
       pauseTimerId = global.setTimeout(function () {
         paused = false;
-      }, 2200);
+      }, RESUME_DELAY_MS);
     }
 
-    /* Resize keeps clamp valid. */
     function onResize() {
       pos = clamp(pos);
       applyTransform();
     }
 
-    /* Pause auto-marquee when the strip is off-screen — saves CPU. */
     var visibilityObs = new IntersectionObserver(function (entries) {
       paused = !entries[0].isIntersecting || dragging;
     }, { threshold: 0 });
     visibilityObs.observe(strip);
 
-    track.addEventListener('pointerdown',  onPointerDown);
-    track.addEventListener('pointermove',  onPointerMove);
-    track.addEventListener('pointerup',    endDrag);
+    track.addEventListener('pointerdown',   onPointerDown);
+    track.addEventListener('pointermove',   onPointerMove);
+    track.addEventListener('pointerup',     endDrag);
     track.addEventListener('pointercancel', endDrag);
-    track.addEventListener('pointerleave', endDrag);
     strip.addEventListener('wheel', onWheel, { passive: false });
     global.addEventListener('resize', onResize, { passive: true });
 
-    /* Pause when hovered with a mouse (pointer fine + hover supported). */
     if (global.matchMedia && global.matchMedia('(hover: hover) and (pointer: fine)').matches) {
       strip.addEventListener('mouseenter', function () { paused = true; });
-      strip.addEventListener('mouseleave', function () { paused = false; });
+      strip.addEventListener('mouseleave', function () {
+        if (!dragging) { paused = false; }
+      });
     }
 
     rafId = global.requestAnimationFrame(tick);
@@ -278,11 +581,10 @@
       if (rafId) { global.cancelAnimationFrame(rafId); }
       if (pauseTimerId) { global.clearTimeout(pauseTimerId); }
       visibilityObs.disconnect();
-      track.removeEventListener('pointerdown',  onPointerDown);
-      track.removeEventListener('pointermove',  onPointerMove);
-      track.removeEventListener('pointerup',    endDrag);
+      track.removeEventListener('pointerdown',   onPointerDown);
+      track.removeEventListener('pointermove',   onPointerMove);
+      track.removeEventListener('pointerup',     endDrag);
       track.removeEventListener('pointercancel', endDrag);
-      track.removeEventListener('pointerleave', endDrag);
       strip.removeEventListener('wheel', onWheel);
       global.removeEventListener('resize', onResize);
       track.style.transform = '';
@@ -294,6 +596,8 @@
      Lightbox — full-screen photo viewer
      Features: open/close, prev/next, keyboard, swipe, image preload,
      focus trap, body scroll lock, smooth fade-scale transitions.
+     De-duplicates by source so a photo present in both the mosaic and
+     the filmstrip only appears once in the lightbox sequence.
      ══════════════════════════════════════════════════════════════════ */
 
   function createLightbox(galleryEl) {
@@ -310,15 +614,26 @@
     var prevBtn   = lb.querySelector('.gallery-lightbox__nav--prev');
     var nextBtn   = lb.querySelector('.gallery-lightbox__nav--next');
 
-    /* Collect all image sources from the gallery in DOM order. */
+    /* Collect image sources, de-duplicated by URL. Each <img> still gets
+       a stable `data-gallery-index` so clicking any instance opens at
+       the correct lightbox slot. */
     var sources = [];
+    var indexByKey = Object.create(null);
     var imgEls = galleryEl.querySelectorAll('img[data-gallery-src]');
     for (var i = 0; i < imgEls.length; i++) {
-      sources.push({
-        src: imgEls[i].getAttribute('data-gallery-src') || imgEls[i].src,
-        caption: imgEls[i].getAttribute('data-gallery-caption') || ''
-      });
-      imgEls[i].setAttribute('data-gallery-index', String(i));
+      var src = imgEls[i].getAttribute('data-gallery-src') || imgEls[i].src;
+      var idx;
+      if (Object.prototype.hasOwnProperty.call(indexByKey, src)) {
+        idx = indexByKey[src];
+      } else {
+        idx = sources.length;
+        sources.push({
+          src: src,
+          caption: imgEls[i].getAttribute('data-gallery-caption') || ''
+        });
+        indexByKey[src] = idx;
+      }
+      imgEls[i].setAttribute('data-gallery-index', String(idx));
     }
 
     if (totalEl) {
@@ -330,16 +645,12 @@
     var lastFocused = null;
     var preloadCache = new Map();
 
-    /* ── Keyboard handlers ───────────────────────────────────────── */
-
     function onKey(e) {
       if (!isOpen) { return; }
       if (e.key === 'Escape')      { close();    e.preventDefault(); }
       else if (e.key === 'ArrowLeft')  { go(-1);  e.preventDefault(); }
       else if (e.key === 'ArrowRight') { go(+1);  e.preventDefault(); }
     }
-
-    /* ── Touch swipe ─────────────────────────────────────────────── */
 
     var touchStartX = 0;
     var touchStartY = 0;
@@ -382,8 +693,6 @@
       }
     }
 
-    /* ── Pointer-drag swipe (for desktop mouse) ──────────────────── */
-
     var pointerDown = false;
     var pointerStartX = 0;
 
@@ -402,15 +711,11 @@
       }
     }
 
-    /* ── Backdrop click closes ───────────────────────────────────── */
-
     function onBackdropClick(e) {
       if (e.target === lb) {
         close();
       }
     }
-
-    /* ── Image loading ───────────────────────────────────────────── */
 
     function preload(idx) {
       if (idx < 0 || idx >= sources.length) { return; }
@@ -444,7 +749,6 @@
         }
         imgEl.src = data.src;
         imgEl.alt = data.caption || '';
-        /* Force a frame so the transition restarts cleanly. */
         global.requestAnimationFrame(function () {
           imgEl.classList.add('is-loaded');
           lb.classList.remove('is-loading');
@@ -471,7 +775,6 @@
         if (nextBtn) { nextBtn.setAttribute('disabled', 'disabled'); }
         return;
       }
-      /* Wrap-around enabled — never disable. */
       if (prevBtn) { prevBtn.removeAttribute('disabled'); }
       if (nextBtn) { nextBtn.removeAttribute('disabled'); }
     }
@@ -479,8 +782,6 @@
     function go(delta) {
       show(index + delta);
     }
-
-    /* ── Open / Close ────────────────────────────────────────────── */
 
     function open(idx) {
       if (isOpen) { show(idx); return; }
@@ -493,7 +794,6 @@
 
       show(idx || 0);
 
-      /* Move focus into the dialog after the open transition. */
       global.setTimeout(function () {
         if (closeBtn && typeof closeBtn.focus === 'function') {
           closeBtn.focus({ preventScroll: true });
@@ -526,19 +826,15 @@
       stage.removeEventListener('pointerup',   onPointerUpStage);
       lb.removeEventListener('click', onBackdropClick);
 
-      /* Restore focus to the launcher. */
       if (lastFocused && typeof lastFocused.focus === 'function') {
         try { lastFocused.focus({ preventScroll: true }); } catch (_) {}
       }
     }
 
-    /* ── Wire up controls ────────────────────────────────────────── */
-
     if (closeBtn) { closeBtn.addEventListener('click', close); }
     if (prevBtn)  { prevBtn.addEventListener('click', function () { go(-1); }); }
     if (nextBtn)  { nextBtn.addEventListener('click', function () { go(+1); }); }
 
-    /* Click any gallery image to open at its index. */
     function onTileClick(e) {
       var tile = e.currentTarget;
       var img = tile.matches && tile.matches('img[data-gallery-index]')
@@ -561,7 +857,6 @@
       clickables[c].setAttribute('tabindex', '0');
     }
 
-    /* Keyboard activation on tiles (Enter/Space). */
     function onTileKey(e) {
       if (e.key !== 'Enter' && e.key !== ' ') { return; }
       onTileClick(e);
@@ -571,7 +866,6 @@
       clickables[k].addEventListener('keydown', onTileKey);
     }
 
-    /* "View all" CTA opens at index 0. */
     var viewAll = document.getElementById('galleryViewAll');
     if (viewAll) {
       viewAll.addEventListener('click', function () { open(0); });
@@ -626,7 +920,10 @@
 
     var config = getConfig();
 
-    /* Lightbox is always wired up (works fine with reduced motion). */
+    /* Render photos from the data file FIRST so the lightbox, reveals
+       and reduced-motion fallback all see real DOM. */
+    renderGallery(galleryEl, config);
+
     var lightbox = createLightbox(galleryEl);
 
     if (prefersReducedMotion()) {
@@ -645,7 +942,6 @@
     var destroyParall  = setupFeaturedParallax(galleryEl, config.parallaxStrength != null ? config.parallaxStrength : 18);
     var destroyStrip   = setupFilmstrip(galleryEl, config);
 
-    /* Listen for runtime reduced-motion changes. */
     var mq = global.matchMedia && global.matchMedia('(prefers-reduced-motion: reduce)');
 
     function onMotionChange(e) {
