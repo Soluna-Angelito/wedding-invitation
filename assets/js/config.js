@@ -89,6 +89,16 @@
       rootMargin: '0px 0px -12% 0px',
       threshold: 0.15,
       countdownUpdateMs: 1000
+    },
+    gallery: {
+      rootMargin: '0px 0px -10% 0px',
+      threshold: 0.12,
+      // Pixels per ~16ms frame for the polaroid filmstrip auto-marquee.
+      // Set to 0 to disable auto scrolling entirely.
+      filmstripAutoScrollSpeed: 0.35,
+      // Pixel offset applied to the featured photo as it scrolls through
+      // the viewport (gentle ken-burns parallax).
+      parallaxStrength: 18
     }
   };
 

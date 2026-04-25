@@ -1,0 +1,1033 @@
+/* ══════════════════════════════════════════════════════════════════════
+   Section 04 · Gallery (사진 갤러리)
+   ──────────────────────────────────────────────────────────────────────
+   Curated mosaic + cinematic featured photo + draggable polaroid
+   filmstrip + full-screen lightbox. Visually rhymes with the letter and
+   calendar sections (warm cream parchment, gold-leaf accents, subtle
+   ornaments). Background is the page cream #eeeae5 — calendar above
+   (#faf6f0) drapes UP into the gallery via a wave separator at the
+   bottom of the calendar (mirroring letter ⤓ calendar boundary).
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Color & spacing tokens local to this section ─────────────────── */
+
+.gallery {
+  --gallery-bg: #eeeae5;
+  --gallery-paper: #f7f3ed;
+  --gallery-ink: #2f2824;
+  --gallery-ink-soft: #4a3f39;
+  --gallery-muted: #7a6f67;
+  --gallery-accent: #c2b5a4;
+  --gallery-accent-soft: #c4b5a5;
+  --gallery-eyebrow: #b8a898;
+  --gallery-frame: rgba(180, 168, 150, 0.45);
+  --gallery-frame-faint: rgba(180, 168, 150, 0.22);
+  --gallery-shadow: 0 18px 40px -28px rgba(60, 48, 36, 0.45),
+                    0 6px 14px -10px rgba(60, 48, 36, 0.18);
+  --gallery-shadow-deep: 0 26px 56px -28px rgba(60, 48, 36, 0.55),
+                         0 10px 18px -10px rgba(60, 48, 36, 0.22);
+  --gallery-radius: clamp(2px, 0.6vw, 4px);
+
+  position: relative;
+  background: var(--gallery-bg);
+  padding: clamp(64px, 13vw, 110px) 0 clamp(72px, 14vw, 120px);
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Subtle paper-grain noise — only on top to add tactility, very soft. */
+.gallery::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
+  mix-blend-mode: multiply;
+  z-index: 0;
+}
+
+.gallery__inner {
+  position: relative;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 5.5vw, 32px);
+  z-index: 1;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Header — top ornament + eyebrow + title + divider + subtitle
+   ══════════════════════════════════════════════════════════════════════ */
+
+.gallery__top-ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 3vw, 18px);
+  margin-bottom: clamp(20px, 4.5vw, 32px);
+  color: var(--gallery-accent);
+}
+
+.gallery__ornament-line {
+  display: block;
+  width: clamp(36px, 11vw, 64px);
+  height: 1px;
+  background: currentColor;
+}
+
+.gallery__ornament-mark {
+  width: clamp(16px, 4vw, 22px);
+  height: clamp(16px, 4vw, 22px);
+  flex-shrink: 0;
+  color: var(--gallery-accent);
+}
+
+.gallery__eyebrow {
+  font-family: 'Sorts Mill Goudy', serif;
+  font-size: clamp(10px, 2.5vw, 13px);
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--gallery-eyebrow);
+  margin-bottom: clamp(10px, 2.2vw, 16px);
+}
+
+.gallery__title {
+  font-family: 'munche_seuki_jung', 'Sun Batang', 'Noto Serif KR', serif;
+  font-size: clamp(26px, 6.5vw, 38px);
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  color: var(--gallery-ink);
+  line-height: 1.4;
+  margin-bottom: clamp(18px, 4vw, 28px);
+}
+
+.gallery__divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 2.5vw, 16px);
+  margin-bottom: clamp(16px, 3.5vw, 22px);
+  color: var(--gallery-accent-soft);
+}
+
+.gallery__divider-line {
+  display: block;
+  width: clamp(36px, 11vw, 64px);
+  height: 1px;
+  background: currentColor;
+}
+
+.gallery__divider-line--left  { transform-origin: right center; }
+.gallery__divider-line--right { transform-origin: left center; }
+
+.gallery__divider-mark {
+  width: clamp(12px, 3vw, 16px);
+  height: clamp(12px, 3vw, 16px);
+  color: var(--gallery-accent-soft);
+  flex-shrink: 0;
+}
+
+.gallery__subtitle {
+  font-family: 'Sun Batang', 'Noto Serif KR', serif;
+  font-size: clamp(13px, 3.2vw, 16px);
+  font-weight: 300;
+  color: var(--gallery-ink-soft);
+  letter-spacing: 0.02em;
+  line-height: 1.9;
+  margin-bottom: clamp(36px, 8vw, 56px);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Featured Photo — cinematic hero of the gallery
+   ══════════════════════════════════════════════════════════════════════ */
+
+.gallery__featured {
+  position: relative;
+  margin: 0 0 clamp(28px, 6vw, 44px);
+  padding: clamp(8px, 2vw, 12px);
+  background: var(--gallery-paper);
+  border: 1px solid var(--gallery-frame-faint);
+  border-radius: var(--gallery-radius);
+  box-shadow: var(--gallery-shadow);
+}
+
+.gallery__featured-frame {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #1f1a17;
+  cursor: zoom-in;
+}
+
+.gallery__featured-frame::after {
+  /* Subtle vignette to give the photo cinematic weight. */
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center,
+              rgba(0,0,0,0) 60%,
+              rgba(0,0,0,0.28) 100%);
+  z-index: 2;
+}
+
+.gallery__featured-frame img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Use individual transform properties so JS-driven `translate` (parallax,
+     no transition) coexists with the CSS-driven `scale` reveal (1.6s ease).
+     Falls back to no animation in browsers that lack support — image
+     remains visible at scale(1.08) without breaking. */
+  scale: 1.08;
+  transform-origin: 50% 50%;
+  transition: scale 1.6s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: translate, scale;
+}
+
+.gallery__featured-caption {
+  font-family: 'Sorts Mill Goudy', serif;
+  font-size: clamp(10px, 2.5vw, 12px);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--gallery-eyebrow);
+  margin-top: clamp(10px, 2.5vw, 14px);
+  padding: 0 clamp(8px, 2vw, 12px);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Mosaic Grids — varied layouts with editorial weight
+   ══════════════════════════════════════════════════════════════════════ */
+
+.gallery__mosaic {
+  display: grid;
+  gap: clamp(8px, 1.8vw, 12px);
+  margin-bottom: clamp(20px, 4.5vw, 32px);
+}
+
+/* Two-column duo (4:5 portraits) */
+.gallery__mosaic--duo {
+  grid-template-columns: 1fr 1fr;
+}
+
+/* Three-column trio (square-ish) */
+.gallery__mosaic--trio {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* Mixed: large portrait + stacked landscapes */
+.gallery__mosaic--mixed {
+  grid-template-columns: 1.3fr 1fr;
+  grid-template-rows: auto auto;
+}
+.gallery__mosaic--mixed > .gallery__tile:nth-child(1) { grid-row: 1 / span 2; }
+
+.gallery__tile {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--gallery-radius);
+  background: #1f1a17;
+  box-shadow: var(--gallery-shadow);
+  cursor: zoom-in;
+  isolation: isolate;
+}
+
+.gallery__tile img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+              filter 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.gallery__tile::after {
+  /* Soft warm glaze on top of every tile so photos feel print-like
+     instead of glossy/digital. */
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(180deg,
+              rgba(60, 48, 36, 0) 60%,
+              rgba(60, 48, 36, 0.18) 100%);
+  opacity: 0.6;
+  transition: opacity 0.5s ease;
+}
+
+.gallery__tile:hover::after,
+.gallery__tile:focus-visible::after { opacity: 0.25; }
+
+.gallery__tile:hover img,
+.gallery__tile:focus-visible img {
+  transform: scale(1.05);
+}
+
+/* Aspect ratios for layout cohesion. */
+.gallery__tile--portrait  { aspect-ratio: 4 / 5; }
+.gallery__tile--square    { aspect-ratio: 1 / 1; }
+.gallery__tile--landscape { aspect-ratio: 4 / 3; }
+.gallery__tile--wide      { aspect-ratio: 16 / 9; }
+.gallery__tile--tall      { aspect-ratio: 3 / 4; }
+
+.gallery__tile--span-row  { grid-row: span 2; aspect-ratio: 4 / 5; height: 100%; }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Quote Block — between mosaic and filmstrip
+   ══════════════════════════════════════════════════════════════════════ */
+
+.gallery__quote {
+  position: relative;
+  margin: clamp(36px, 8vw, 60px) auto;
+  padding: clamp(24px, 5vw, 36px) clamp(8px, 2vw, 16px);
+  max-width: 360px;
+}
+
+.gallery__quote::before,
+.gallery__quote::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  width: clamp(52px, 14vw, 80px);
+  height: 1px;
+  background: var(--gallery-accent-soft);
+  transform: translateX(-50%);
+}
+.gallery__quote::before { top: 0; }
+.gallery__quote::after  { bottom: 0; }
+
+.gallery__quote-text {
+  font-family: 'Sun Batang', 'Noto Serif KR', serif;
+  font-size: clamp(14px, 3.4vw, 17px);
+  font-weight: 300;
+  font-style: italic;
+  line-height: 2;
+  color: var(--gallery-ink-soft);
+  letter-spacing: -0.005em;
+  word-break: keep-all;
+}
+
+.gallery__quote-cite {
+  font-family: 'Sorts Mill Goudy', serif;
+  font-size: clamp(10px, 2.4vw, 12px);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gallery-eyebrow);
+  margin-top: clamp(10px, 2.5vw, 16px);
+  display: block;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Polaroid Filmstrip — horizontally draggable
+   Bleeds beyond .gallery__inner edges for visual "infinite ribbon" feel.
+   ══════════════════════════════════════════════════════════════════════ */
+
+.gallery__filmstrip {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  margin-bottom: clamp(36px, 8vw, 60px);
+  padding: clamp(20px, 4vw, 32px) 0 clamp(12px, 2.5vw, 20px);
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg,
+                       transparent 0,
+                       #000 6%,
+                       #000 94%,
+                       transparent 100%);
+          mask-image: linear-gradient(90deg,
+                       transparent 0,
+                       #000 6%,
+                       #000 94%,
+                       transparent 100%);
+}
+
+.gallery__filmstrip-track {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(14px, 3.2vw, 24px);
+  padding: clamp(8px, 2vw, 16px) clamp(20px, 6vw, 40px);
+  /* The track will be made wider than viewport by JS to enable scrolling. */
+  width: max-content;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
+}
+
+.gallery__filmstrip-track.is-grabbing { cursor: grabbing; }
+
+.gallery__polaroid {
+  flex: 0 0 auto;
+  width: clamp(150px, 42vw, 220px);
+  background: #fdfaf3;
+  padding: clamp(8px, 2vw, 12px) clamp(8px, 2vw, 12px) clamp(28px, 6.5vw, 42px);
+  box-shadow: var(--gallery-shadow-deep);
+  border-radius: 2px;
+  transform: rotate(var(--polaroid-tilt, 0deg)) translateY(0);
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.gallery__polaroid::before {
+  /* Tape-strip illusion at the top center, rendered with a translucent
+     yellow-ish gradient. Hidden on first/last to avoid overdesign. */
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  width: 56px;
+  height: 16px;
+  transform: translateX(-50%) rotate(var(--tape-rotate, -2deg));
+  background:
+    linear-gradient(180deg,
+                    rgba(255, 230, 168, 0.55) 0%,
+                    rgba(232, 200, 140, 0.55) 100%);
+  box-shadow: 0 1px 2px rgba(60,48,36,0.12);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.gallery__polaroid {
+  position: relative;
+}
+
+.gallery__polaroid:hover,
+.gallery__polaroid:focus-within {
+  transform: rotate(0deg) translateY(-6px);
+}
+
+.gallery__polaroid-photo {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: #1f1a17;
+  cursor: zoom-in;
+}
+
+.gallery__polaroid-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.94);
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gallery__polaroid:hover .gallery__polaroid-photo img,
+.gallery__polaroid:focus-within .gallery__polaroid-photo img {
+  transform: scale(1.05);
+}
+
+.gallery__polaroid-caption {
+  font-family: 'Sorts Mill Goudy', 'Noto Serif KR', serif;
+  font-size: clamp(11px, 2.6vw, 13px);
+  letter-spacing: 0.18em;
+  color: var(--gallery-ink-soft);
+  text-align: center;
+  margin-top: clamp(10px, 2.5vw, 14px);
+  text-transform: none;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   View All CTA Button
+   ══════════════════════════════════════════════════════════════════════ */
+
+.gallery__cta {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(16px, 3.5vw, 24px);
+  margin-bottom: clamp(28px, 6vw, 40px);
+}
+
+.gallery__view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(10px, 2.5vw, 14px);
+  padding: clamp(12px, 3vw, 14px) clamp(22px, 5.5vw, 32px);
+  background: transparent;
+  color: var(--gallery-ink);
+  font-family: 'Sorts Mill Goudy', 'Noto Serif KR', serif;
+  font-size: clamp(12px, 3vw, 14px);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  border: 1px solid var(--gallery-accent);
+  border-radius: 999px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.4s ease, background 0.4s ease, border-color 0.4s ease,
+              transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gallery__view-all::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gallery-ink);
+  border-radius: inherit;
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 0.55s cubic-bezier(0.65, 0, 0.35, 1);
+  z-index: 0;
+}
+
+.gallery__view-all-icon,
+.gallery__view-all-text,
+.gallery__view-all-count { position: relative; z-index: 1; }
+
+.gallery__view-all-icon {
+  display: inline-flex;
+  width: clamp(14px, 3.4vw, 16px);
+  height: clamp(14px, 3.4vw, 16px);
+  color: var(--gallery-accent);
+  transition: color 0.4s ease, transform 0.4s ease;
+}
+
+.gallery__view-all-icon svg { width: 100%; height: 100%; }
+
+.gallery__view-all-count {
+  font-size: 0.78em;
+  letter-spacing: 0.18em;
+  color: var(--gallery-eyebrow);
+  transition: color 0.4s ease;
+}
+
+.gallery__view-all:hover,
+.gallery__view-all:focus-visible {
+  color: #fdfaf3;
+  border-color: var(--gallery-ink);
+  outline: none;
+}
+
+.gallery__view-all:hover::before,
+.gallery__view-all:focus-visible::before {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+.gallery__view-all:hover .gallery__view-all-icon,
+.gallery__view-all:focus-visible .gallery__view-all-icon {
+  color: #f3d99d;
+  transform: rotate(8deg);
+}
+
+.gallery__view-all:hover .gallery__view-all-count,
+.gallery__view-all:focus-visible .gallery__view-all-count {
+  color: rgba(243, 217, 157, 0.85);
+}
+
+.gallery__view-all:active { transform: scale(0.98); }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Bottom Ornament — mirrors the top
+   ══════════════════════════════════════════════════════════════════════ */
+
+.gallery__bottom-ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 3vw, 18px);
+  color: var(--gallery-accent);
+  margin-top: clamp(28px, 6vw, 44px);
+}
+
+.gallery__bottom-ornament .gallery__ornament-line {
+  background: currentColor;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Calendar → Gallery Wave Separator
+   Same layered SVG pattern as letter ⤓ calendar — the gallery cream
+   (#eeeae5) drapes UPWARD into the calendar cream (#faf6f0).
+   ══════════════════════════════════════════════════════════════════════ */
+
+.calendar__wave {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  z-index: 1;
+  overflow: hidden;
+  line-height: 0;
+  pointer-events: none;
+}
+
+.calendar__wave svg {
+  display: block;
+  width: 100%;
+  min-width: 100%;
+  height: clamp(30px, 15vh, 40px);
+}
+
+.calendar__wave .parallax > use {
+  animation: waveMove 25s cubic-bezier(0.55, 0.5, 0.45, 0.5) infinite;
+  will-change: transform;
+}
+
+.calendar__wave .parallax > use:nth-child(1) { animation-delay: -2s; animation-duration: 7s;  }
+.calendar__wave .parallax > use:nth-child(2) { animation-delay: -3s; animation-duration: 10s; }
+.calendar__wave .parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 13s; }
+.calendar__wave .parallax > use:nth-child(4) { animation-delay: -5s; animation-duration: 20s; }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Lightbox (Modal Photo Viewer)
+   ══════════════════════════════════════════════════════════════════════ */
+
+.gallery-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9990;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(20, 16, 14, 0.92);
+  backdrop-filter: blur(14px) saturate(0.9);
+  -webkit-backdrop-filter: blur(14px) saturate(0.9);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+              visibility 0.45s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+}
+
+.gallery-lightbox.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.gallery-lightbox::before {
+  /* Soft warm glow to keep the photo from feeling clinically dark. */
+  content: '';
+  position: absolute;
+  inset: -10%;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 30% 30%,
+      rgba(212, 165, 110, 0.10) 0%, transparent 55%),
+    radial-gradient(ellipse at 70% 70%,
+      rgba(120, 90, 70, 0.08) 0%, transparent 55%);
+}
+
+.gallery-lightbox__stage {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(92vw, 1200px);
+  height: min(78vh, 900px);
+  pointer-events: none;
+}
+
+.gallery-lightbox__image {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  pointer-events: auto;
+  border-radius: clamp(2px, 0.5vw, 4px);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+  transform: scale(0.96);
+  opacity: 0;
+  transition:
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.45s ease;
+  will-change: transform, opacity;
+}
+
+.gallery-lightbox.is-open .gallery-lightbox__image.is-loaded {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.gallery-lightbox__image.is-swiping {
+  transition: none;
+}
+
+.gallery-lightbox__loader {
+  position: absolute;
+  z-index: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 232, 197, 0.2);
+  border-top-color: rgba(255, 232, 197, 0.85);
+  animation: galleryLoaderSpin 0.9s linear infinite;
+  opacity: 0;
+  transition: opacity 0.3s ease 0.15s;
+}
+
+.gallery-lightbox.is-loading .gallery-lightbox__loader { opacity: 1; }
+
+@keyframes galleryLoaderSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Counter ──────────────────────────────────────────────────────── */
+
+.gallery-lightbox__counter {
+  position: absolute;
+  top: max(20px, env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  font-family: 'Sorts Mill Goudy', serif;
+  font-size: 13px;
+  letter-spacing: 0.32em;
+  color: rgba(255, 250, 240, 0.85);
+  padding: 8px 18px;
+  border: 1px solid rgba(255, 250, 240, 0.18);
+  border-radius: 999px;
+  background: rgba(40, 30, 24, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  user-select: none;
+  pointer-events: none;
+}
+
+.gallery-lightbox__counter-current {
+  color: rgba(255, 232, 197, 1);
+  font-weight: 500;
+}
+
+.gallery-lightbox__counter-sep {
+  margin: 0 0.4em;
+  color: rgba(255, 250, 240, 0.4);
+}
+
+/* ── Close button ─────────────────────────────────────────────────── */
+
+.gallery-lightbox__close {
+  position: absolute;
+  top: max(16px, env(safe-area-inset-top));
+  right: max(16px, env(safe-area-inset-right));
+  z-index: 3;
+  width: clamp(40px, 11vw, 48px);
+  height: clamp(40px, 11vw, 48px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(40, 30, 24, 0.45);
+  border: 1px solid rgba(255, 250, 240, 0.18);
+  border-radius: 50%;
+  color: rgba(255, 250, 240, 0.92);
+  cursor: pointer;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: background 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+}
+
+.gallery-lightbox__close svg { width: 50%; height: 50%; }
+
+.gallery-lightbox__close:hover,
+.gallery-lightbox__close:focus-visible {
+  background: rgba(60, 45, 36, 0.65);
+  border-color: rgba(255, 232, 197, 0.45);
+  outline: none;
+  transform: rotate(90deg);
+}
+
+/* ── Nav arrows ───────────────────────────────────────────────────── */
+
+.gallery-lightbox__nav {
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  width: clamp(40px, 11vw, 56px);
+  height: clamp(40px, 11vw, 56px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(40, 30, 24, 0.45);
+  border: 1px solid rgba(255, 250, 240, 0.18);
+  border-radius: 50%;
+  color: rgba(255, 250, 240, 0.92);
+  cursor: pointer;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  transform: translateY(-50%);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: background 0.3s ease, border-color 0.3s ease, opacity 0.3s ease;
+}
+
+.gallery-lightbox__nav svg { width: 45%; height: 45%; }
+
+.gallery-lightbox__nav--prev { left: clamp(8px, 3vw, 24px); }
+.gallery-lightbox__nav--next { right: clamp(8px, 3vw, 24px); }
+
+.gallery-lightbox__nav:hover,
+.gallery-lightbox__nav:focus-visible {
+  background: rgba(60, 45, 36, 0.65);
+  border-color: rgba(255, 232, 197, 0.45);
+  outline: none;
+}
+
+.gallery-lightbox__nav[disabled] {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+/* ── Caption ──────────────────────────────────────────────────────── */
+
+.gallery-lightbox__caption {
+  position: absolute;
+  bottom: max(28px, env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  font-family: 'Sun Batang', 'Noto Serif KR', serif;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  color: rgba(255, 250, 240, 0.7);
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Animated States
+   Applied only when JS adds .gallery--animated.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Top/bottom ornament lines */
+.gallery--animated .gallery__top-ornament .gallery__ornament-line,
+.gallery--animated .gallery__bottom-ornament .gallery__ornament-line {
+  transform: scaleX(0);
+  transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gallery--animated .gallery__top-ornament .gallery__ornament-line:first-child,
+.gallery--animated .gallery__bottom-ornament .gallery__ornament-line:first-child {
+  transform-origin: right center;
+}
+.gallery--animated .gallery__top-ornament .gallery__ornament-line:last-child,
+.gallery--animated .gallery__bottom-ornament .gallery__ornament-line:last-child {
+  transform-origin: left center;
+}
+
+.gallery--animated .gallery__ornament-mark {
+  opacity: 0;
+  transform: scale(0) rotate(-45deg);
+  transition: opacity 0.45s ease, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition-delay: 0.3s;
+}
+
+.gallery--animated .gallery__top-ornament.is-visible .gallery__ornament-line,
+.gallery--animated .gallery__bottom-ornament.is-visible .gallery__ornament-line {
+  transform: scaleX(1);
+}
+
+.gallery--animated .gallery__top-ornament.is-visible .gallery__ornament-mark,
+.gallery--animated .gallery__bottom-ornament.is-visible .gallery__ornament-mark {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+/* Fade-up reveals */
+.gallery--animated [data-reveal="fade-up"] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.95s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gallery--animated [data-reveal="fade-up"].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Divider */
+.gallery--animated .gallery__divider-line {
+  transform: scaleX(0);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gallery--animated .gallery__divider.is-visible .gallery__divider-line {
+  transform: scaleX(1);
+}
+
+.gallery--animated .gallery__divider-mark {
+  opacity: 0;
+  transform: scale(0) rotate(-90deg);
+  transition: opacity 0.5s ease, transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition-delay: 0.35s;
+}
+
+.gallery--animated .gallery__divider.is-visible .gallery__divider-mark {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+/* Featured photo reveal — slow zoom-out (ken-burns) */
+.gallery--animated .gallery__featured {
+  opacity: 0;
+  transform: translateY(36px);
+  transition:
+    opacity 1.1s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gallery--animated .gallery__featured.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.gallery--animated .gallery__featured.is-visible .gallery__featured-frame img {
+  scale: 1;
+}
+
+/* Mosaic tiles — staggered fade up */
+.gallery--animated .gallery__tile {
+  opacity: 0;
+  transform: translateY(22px) scale(0.985);
+  transition:
+    opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gallery--animated .gallery__mosaic.is-visible .gallery__tile {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.gallery--animated .gallery__mosaic .gallery__tile:nth-child(1) { transition-delay: 0.00s; }
+.gallery--animated .gallery__mosaic .gallery__tile:nth-child(2) { transition-delay: 0.10s; }
+.gallery--animated .gallery__mosaic .gallery__tile:nth-child(3) { transition-delay: 0.20s; }
+.gallery--animated .gallery__mosaic .gallery__tile:nth-child(4) { transition-delay: 0.30s; }
+.gallery--animated .gallery__mosaic .gallery__tile:nth-child(5) { transition-delay: 0.40s; }
+.gallery--animated .gallery__mosaic .gallery__tile:nth-child(6) { transition-delay: 0.50s; }
+
+/* Polaroid filmstrip — slide in from sides + un-tilt */
+.gallery--animated .gallery__filmstrip {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 1s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gallery--animated .gallery__filmstrip.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.gallery--animated .gallery__polaroid {
+  opacity: 0;
+  transform: rotate(0deg) translateY(40px);
+  transition:
+    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gallery--animated .gallery__filmstrip.is-visible .gallery__polaroid {
+  opacity: 1;
+  transform: rotate(var(--polaroid-tilt, 0deg)) translateY(0);
+}
+
+.gallery--animated .gallery__filmstrip .gallery__polaroid:nth-child(1) { transition-delay: 0.05s; }
+.gallery--animated .gallery__filmstrip .gallery__polaroid:nth-child(2) { transition-delay: 0.15s; }
+.gallery--animated .gallery__filmstrip .gallery__polaroid:nth-child(3) { transition-delay: 0.25s; }
+.gallery--animated .gallery__filmstrip .gallery__polaroid:nth-child(4) { transition-delay: 0.35s; }
+.gallery--animated .gallery__filmstrip .gallery__polaroid:nth-child(5) { transition-delay: 0.45s; }
+.gallery--animated .gallery__filmstrip .gallery__polaroid:nth-child(6) { transition-delay: 0.55s; }
+.gallery--animated .gallery__filmstrip .gallery__polaroid:nth-child(7) { transition-delay: 0.65s; }
+
+/* Quote — line draws + text fades */
+.gallery--animated .gallery__quote::before,
+.gallery--animated .gallery__quote::after {
+  transform: translateX(-50%) scaleX(0);
+  transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gallery--animated .gallery__quote.is-visible::before,
+.gallery--animated .gallery__quote.is-visible::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Body lock when lightbox is open
+   ══════════════════════════════════════════════════════════════════════ */
+
+body.gallery-lightbox-open {
+  overflow: hidden;
+  touch-action: none;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Responsive Refinements
+   ══════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 380px) {
+  .gallery__inner { padding: 0 clamp(16px, 5vw, 24px); }
+  .gallery__mosaic--trio { grid-template-columns: 1fr 1fr; }
+  .gallery__mosaic--trio > .gallery__tile:nth-child(3) { display: none; }
+}
+
+@media (min-width: 768px) {
+  .gallery__inner { max-width: 560px; }
+  .gallery__featured-frame { aspect-ratio: 16 / 9; }
+}
+
+@media (min-width: 1024px) {
+  .gallery__inner { max-width: 640px; }
+  .gallery-lightbox__counter { font-size: 14px; }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Reduced Motion
+   ══════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery--animated [data-reveal="fade-up"],
+  .gallery--animated .gallery__divider-line,
+  .gallery--animated .gallery__divider-mark,
+  .gallery--animated .gallery__top-ornament .gallery__ornament-line,
+  .gallery--animated .gallery__top-ornament .gallery__ornament-mark,
+  .gallery--animated .gallery__bottom-ornament .gallery__ornament-line,
+  .gallery--animated .gallery__bottom-ornament .gallery__ornament-mark,
+  .gallery--animated .gallery__featured,
+  .gallery--animated .gallery__featured-frame img,
+  .gallery--animated .gallery__tile,
+  .gallery--animated .gallery__filmstrip,
+  .gallery--animated .gallery__polaroid,
+  .gallery--animated .gallery__quote::before,
+  .gallery--animated .gallery__quote::after {
+    transition: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .gallery__featured-frame img { transform: none !important; scale: none !important; translate: none !important; }
+  .gallery__polaroid           { transform: none !important; }
+
+  .calendar__wave .parallax > use { animation: none !important; }
+}

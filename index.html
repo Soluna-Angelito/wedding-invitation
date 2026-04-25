@@ -31,6 +31,7 @@
   <link rel="stylesheet" href="assets/css/main.css?v=c5a404cd59ad088b" />
   <link rel="stylesheet" href="assets/css/letter.css?v=36a25ed08d0dcede" />
   <link rel="stylesheet" href="assets/css/calendar.css?v=dc2deb8abad7d99a" />
+  <link rel="stylesheet" href="assets/css/gallery.css?v=473a10475e1713cd" />
 </head>
 <body>
   <main class="invitation" id="invitationRoot">
@@ -321,17 +322,315 @@
           </div>
 
         </div>
+
+        <!-- Wavy section separator at the bottom of the calendar.
+             Mirrors `letter__wave` exactly — same SVG path, layering and
+             per-wave timings — but filled with the gallery cream
+             (#eeeae5) so the gallery drapes UPWARD into the calendar,
+             matching the letter ⤓ calendar boundary aesthetic. -->
+        <div class="calendar__wave" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 24 150 28" preserveAspectRatio="none">
+            <defs>
+              <path id="calendarWave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+            </defs>
+            <g class="parallax">
+              <use href="#calendarWave" class="wave1" x="48" y="0" fill="rgba(238,234,229,0.7)" />
+              <use href="#calendarWave" class="wave2" x="48" y="3" fill="rgba(238,234,229,0.5)" />
+              <use href="#calendarWave" class="wave3" x="48" y="5" fill="rgba(238,234,229,0.3)" />
+              <use href="#calendarWave" class="wave4" x="48" y="7" fill="#eeeae5" />
+            </g>
+          </svg>
+        </div>
+      </section>
+
+      <!-- ────────────────────────────────────────────────────────────────
+           Section 04 · Gallery (사진 갤러리)
+           ────────────────────────────────────────────────────────────────
+           A curated photo book: cinematic featured shot, layered mosaic
+           grids, a centered scripture-style quote, a draggable polaroid
+           filmstrip, and a global "view all" CTA that opens the
+           full-screen lightbox. Every image is wired to the lightbox via
+           `data-gallery-src` (DOM order = lightbox order).
+           ──────────────────────────────────────────────────────────────── -->
+      <section class="gallery" id="gallery" aria-labelledby="galleryTitle">
+        <div class="gallery__inner">
+
+          <!-- Top ornament: thin lines + 4-point compass mark -->
+          <div class="gallery__top-ornament" data-reveal="fade-up" aria-hidden="true">
+            <span class="gallery__ornament-line"></span>
+            <svg class="gallery__ornament-mark" viewBox="0 0 22 22" focusable="false">
+              <g fill="currentColor">
+                <circle cx="11" cy="11" r="1.5" />
+                <path d="M11 0.5 L12.4 9.6 L11 11 L9.6 9.6 Z" />
+                <path d="M11 21.5 L12.4 12.4 L11 11 L9.6 12.4 Z" />
+                <path d="M0.5 11 L9.6 12.4 L11 11 L9.6 9.6 Z" />
+                <path d="M21.5 11 L12.4 12.4 L11 11 L12.4 9.6 Z" />
+                <circle cx="11" cy="3.6" r="0.7" opacity="0.6" />
+                <circle cx="11" cy="18.4" r="0.7" opacity="0.6" />
+                <circle cx="3.6" cy="11" r="0.7" opacity="0.6" />
+                <circle cx="18.4" cy="11" r="0.7" opacity="0.6" />
+              </g>
+            </svg>
+            <span class="gallery__ornament-line"></span>
+          </div>
+
+          <p class="gallery__eyebrow" data-reveal="fade-up">GALLERY</p>
+
+          <h2 class="gallery__title" id="galleryTitle" data-reveal="fade-up">우리의 순간</h2>
+
+          <!-- Divider with petal mark -->
+          <div class="gallery__divider" data-reveal="fade-up" aria-hidden="true">
+            <span class="gallery__divider-line gallery__divider-line--left"></span>
+            <svg class="gallery__divider-mark" viewBox="0 0 16 16" focusable="false">
+              <g fill="currentColor">
+                <path d="M8 1.6 L9.4 5.4 L13.2 6.6 L10.2 9 L11.2 12.8 L8 10.6 L4.8 12.8 L5.8 9 L2.8 6.6 L6.6 5.4 Z" />
+              </g>
+            </svg>
+            <span class="gallery__divider-line gallery__divider-line--right"></span>
+          </div>
+
+          <p class="gallery__subtitle" data-reveal="fade-up">
+            함께 걸어온 시간을 모아 두었어요.<br />
+            그 순간들이 우리의 이야기가 됩니다.
+          </p>
+
+          <!-- ── Featured cinematic photo ──────────────────────────── -->
+          <figure class="gallery__featured" data-reveal="fade-up">
+            <div class="gallery__featured-frame">
+              <img
+                src="./assets/img/IMG_0509.webp?v=07113b1adf6803a1"
+                data-gallery-src="./assets/img/IMG_0509.webp?v=07113b1adf6803a1"
+                data-gallery-caption="우리의 어느 봄날"
+                alt="Seong Mun and Na Eun on a soft spring afternoon"
+                loading="lazy"
+                decoding="async" />
+            </div>
+            <figcaption class="gallery__featured-caption">— 우리의 어느 봄날 —</figcaption>
+          </figure>
+
+          <!-- ── Mosaic 1 — duo of portraits ───────────────────────── -->
+          <div class="gallery__mosaic gallery__mosaic--duo" data-reveal="fade-up">
+            <figure class="gallery__tile gallery__tile--portrait">
+              <img src="./assets/img/IMG_0014.webp?v=8de99fa970276e81" data-gallery-src="./assets/img/IMG_0014.webp?v=8de99fa970276e81" data-gallery-caption="첫 약속" alt="" loading="lazy" decoding="async" />
+            </figure>
+            <figure class="gallery__tile gallery__tile--portrait">
+              <img src="./assets/img/IMG_0026.webp?v=147f5aa02391953d" data-gallery-src="./assets/img/IMG_0026.webp?v=147f5aa02391953d" data-gallery-caption="마주 본 시간" alt="" loading="lazy" decoding="async" />
+            </figure>
+          </div>
+
+          <!-- ── Mosaic 2 — tall + two stacked landscapes ──────────── -->
+          <div class="gallery__mosaic gallery__mosaic--mixed" data-reveal="fade-up">
+            <figure class="gallery__tile gallery__tile--span-row">
+              <img src="./assets/img/IMG_0464.webp?v=2863d6d80661c742" data-gallery-src="./assets/img/IMG_0464.webp?v=2863d6d80661c742" data-gallery-caption="햇살 속에서" alt="" loading="lazy" decoding="async" />
+            </figure>
+            <figure class="gallery__tile gallery__tile--landscape">
+              <img src="./assets/img/IMG_0103.webp?v=256fcc007894ff1b" data-gallery-src="./assets/img/IMG_0103.webp?v=256fcc007894ff1b" data-gallery-caption="같은 곳을 바라보며" alt="" loading="lazy" decoding="async" />
+            </figure>
+            <figure class="gallery__tile gallery__tile--landscape">
+              <img src="./assets/img/IMG_0619.webp?v=00634676048da06e" data-gallery-src="./assets/img/IMG_0619.webp?v=00634676048da06e" data-gallery-caption="조용한 오후" alt="" loading="lazy" decoding="async" />
+            </figure>
+          </div>
+
+          <!-- ── Mosaic 3 — square trio ────────────────────────────── -->
+          <div class="gallery__mosaic gallery__mosaic--trio" data-reveal="fade-up">
+            <figure class="gallery__tile gallery__tile--square">
+              <img src="./assets/img/IMG_0711.webp?v=a7f6f7fa0f32b5f5" data-gallery-src="./assets/img/IMG_0711.webp?v=a7f6f7fa0f32b5f5" data-gallery-caption="작은 미소" alt="" loading="lazy" decoding="async" />
+            </figure>
+            <figure class="gallery__tile gallery__tile--square">
+              <img src="./assets/img/IMG_0732.webp?v=69971a7c60d5a224" data-gallery-src="./assets/img/IMG_0732.webp?v=69971a7c60d5a224" data-gallery-caption="둘만의 거리" alt="" loading="lazy" decoding="async" />
+            </figure>
+            <figure class="gallery__tile gallery__tile--square">
+              <img src="./assets/img/IMG_0819.webp?v=ce37269790189025" data-gallery-src="./assets/img/IMG_0819.webp?v=ce37269790189025" data-gallery-caption="별 헤는 밤" alt="" loading="lazy" decoding="async" />
+            </figure>
+          </div>
+
+          <!-- ── Quote ─────────────────────────────────────────────── -->
+          <blockquote class="gallery__quote" data-reveal="fade-up">
+            <p class="gallery__quote-text">
+              사랑은 모든 것을 참으며,<br />
+              모든 것을 믿으며,<br />
+              모든 것을 바라며,<br />
+              모든 것을 견디느니라.
+            </p>
+            <cite class="gallery__quote-cite">— 고린도전서 13 : 7 —</cite>
+          </blockquote>
+        </div>
+
+        <!-- ── Polaroid filmstrip — full-bleed, draggable ──────────── -->
+        <div class="gallery__filmstrip" data-reveal="fade-up">
+          <div class="gallery__filmstrip-track" role="list">
+            <figure class="gallery__polaroid" style="--polaroid-tilt: -2.2deg; --tape-rotate: -4deg;" role="listitem">
+              <div class="gallery__polaroid-photo">
+                <img src="./assets/img/IMG_0852.webp?v=03ec7dff70097a28" data-gallery-src="./assets/img/IMG_0852.webp?v=03ec7dff70097a28" data-gallery-caption="봄날의 약속" alt="" loading="lazy" decoding="async" />
+              </div>
+              <figcaption class="gallery__polaroid-caption">봄날의 약속</figcaption>
+            </figure>
+            <figure class="gallery__polaroid" style="--polaroid-tilt: 1.8deg; --tape-rotate: 5deg;" role="listitem">
+              <div class="gallery__polaroid-photo">
+                <img src="./assets/img/IMG_0949.webp?v=abca7c658e15a50b" data-gallery-src="./assets/img/IMG_0949.webp?v=abca7c658e15a50b" data-gallery-caption="햇살 아래" alt="" loading="lazy" decoding="async" />
+              </div>
+              <figcaption class="gallery__polaroid-caption">햇살 아래</figcaption>
+            </figure>
+            <figure class="gallery__polaroid" style="--polaroid-tilt: -1.4deg; --tape-rotate: -2deg;" role="listitem">
+              <div class="gallery__polaroid-photo">
+                <img src="./assets/img/IMG_1099.webp?v=fb8ed6eca0ff24c2" data-gallery-src="./assets/img/IMG_1099.webp?v=fb8ed6eca0ff24c2" data-gallery-caption="함께한 하루" alt="" loading="lazy" decoding="async" />
+              </div>
+              <figcaption class="gallery__polaroid-caption">함께한 하루</figcaption>
+            </figure>
+            <figure class="gallery__polaroid" style="--polaroid-tilt: 2.6deg; --tape-rotate: 3deg;" role="listitem">
+              <div class="gallery__polaroid-photo">
+                <img src="./assets/img/IMG_1160.webp?v=d11b2649eaa78ed9" data-gallery-src="./assets/img/IMG_1160.webp?v=d11b2649eaa78ed9" data-gallery-caption="너와 나" alt="" loading="lazy" decoding="async" />
+              </div>
+              <figcaption class="gallery__polaroid-caption">너와 나</figcaption>
+            </figure>
+            <figure class="gallery__polaroid" style="--polaroid-tilt: -2.0deg; --tape-rotate: -5deg;" role="listitem">
+              <div class="gallery__polaroid-photo">
+                <img src="./assets/img/IMG_1191.webp?v=2c2ec16d52d3122a" data-gallery-src="./assets/img/IMG_1191.webp?v=2c2ec16d52d3122a" data-gallery-caption="두 손 모아" alt="" loading="lazy" decoding="async" />
+              </div>
+              <figcaption class="gallery__polaroid-caption">두 손 모아</figcaption>
+            </figure>
+            <figure class="gallery__polaroid" style="--polaroid-tilt: 1.2deg; --tape-rotate: 4deg;" role="listitem">
+              <div class="gallery__polaroid-photo">
+                <img src="./assets/img/IMG_1319.webp?v=e0e2ea10871a8d0f" data-gallery-src="./assets/img/IMG_1319.webp?v=e0e2ea10871a8d0f" data-gallery-caption="잊지 못할 눈빛" alt="" loading="lazy" decoding="async" />
+              </div>
+              <figcaption class="gallery__polaroid-caption">잊지 못할 눈빛</figcaption>
+            </figure>
+          </div>
+        </div>
+
+        <div class="gallery__inner">
+
+          <!-- ── Mosaic 4 — duo of portraits ───────────────────────── -->
+          <div class="gallery__mosaic gallery__mosaic--duo" data-reveal="fade-up">
+            <figure class="gallery__tile gallery__tile--portrait">
+              <img src="./assets/img/IMG_1376.webp?v=295b6ccdba6c43b1" data-gallery-src="./assets/img/IMG_1376.webp?v=295b6ccdba6c43b1" data-gallery-caption="작은 행복" alt="" loading="lazy" decoding="async" />
+            </figure>
+            <figure class="gallery__tile gallery__tile--portrait">
+              <img src="./assets/img/IMG_1416.webp?v=5c33915072b5d74f" data-gallery-src="./assets/img/IMG_1416.webp?v=5c33915072b5d74f" data-gallery-caption="우리만의 시간" alt="" loading="lazy" decoding="async" />
+            </figure>
+          </div>
+
+          <!-- ── Mosaic 5 — wide single ───────────────────────────── -->
+          <div class="gallery__mosaic" data-reveal="fade-up">
+            <figure class="gallery__tile gallery__tile--wide">
+              <img src="./assets/img/IMG_1625.webp?v=4a2d8cc3d807060d" data-gallery-src="./assets/img/IMG_1625.webp?v=4a2d8cc3d807060d" data-gallery-caption="끝없는 길 위에서" alt="" loading="lazy" decoding="async" />
+            </figure>
+          </div>
+
+          <!-- ── Mosaic 6 — square trio ────────────────────────────── -->
+          <div class="gallery__mosaic gallery__mosaic--trio" data-reveal="fade-up">
+            <figure class="gallery__tile gallery__tile--square">
+              <img src="./assets/img/IMG_1528.webp?v=9f9cc3acb6a2f49c" data-gallery-src="./assets/img/IMG_1528.webp?v=9f9cc3acb6a2f49c" data-gallery-caption="고요한 빛" alt="" loading="lazy" decoding="async" />
+            </figure>
+            <figure class="gallery__tile gallery__tile--square">
+              <img src="./assets/img/IMG_1775.webp?v=7173b881d9c73ae7" data-gallery-src="./assets/img/IMG_1775.webp?v=7173b881d9c73ae7" data-gallery-caption="기억의 결" alt="" loading="lazy" decoding="async" />
+            </figure>
+            <figure class="gallery__tile gallery__tile--square">
+              <img src="./assets/img/IMG_1842.webp?v=37ed54a3f54e596b" data-gallery-src="./assets/img/IMG_1842.webp?v=37ed54a3f54e596b" data-gallery-caption="잔잔한 오후" alt="" loading="lazy" decoding="async" />
+            </figure>
+          </div>
+
+          <!-- ── Mosaic 7 — closing mixed grid ─────────────────────── -->
+          <div class="gallery__mosaic gallery__mosaic--mixed" data-reveal="fade-up">
+            <figure class="gallery__tile gallery__tile--span-row">
+              <img src="./assets/img/IMG_2006.webp?v=fba0ce59ac9f3e3b" data-gallery-src="./assets/img/IMG_2006.webp?v=fba0ce59ac9f3e3b" data-gallery-caption="둘이 그리는 풍경" alt="" loading="lazy" decoding="async" />
+            </figure>
+            <figure class="gallery__tile gallery__tile--landscape">
+              <img src="./assets/img/IMG_2086.webp?v=a762837e6dcfc942" data-gallery-src="./assets/img/IMG_2086.webp?v=a762837e6dcfc942" data-gallery-caption="평범한 행복" alt="" loading="lazy" decoding="async" />
+            </figure>
+            <figure class="gallery__tile gallery__tile--landscape">
+              <img src="./assets/img/IMG_2192.webp?v=c4fa51dfa57a1171" data-gallery-src="./assets/img/IMG_2192.webp?v=c4fa51dfa57a1171" data-gallery-caption="우리의 마지막 페이지" alt="" loading="lazy" decoding="async" />
+            </figure>
+          </div>
+
+          <!-- ── View All CTA ──────────────────────────────────────── -->
+          <div class="gallery__cta" data-reveal="fade-up">
+            <button class="gallery__view-all" id="galleryViewAll" type="button" aria-label="전체 사진 갤러리 열기">
+              <span class="gallery__view-all-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                  <rect x="3" y="3" width="18" height="18" rx="2.4" ry="2.4" />
+                  <circle cx="8.5" cy="9" r="1.8" />
+                  <path d="M21 16 L15.5 10.5 L5.5 20.5" />
+                </svg>
+              </span>
+              <span class="gallery__view-all-text">전체 사진 보기</span>
+              <span class="gallery__view-all-count">(24)</span>
+            </button>
+          </div>
+
+          <!-- Bottom ornament — mirrors top -->
+          <div class="gallery__bottom-ornament" data-reveal="fade-up" aria-hidden="true">
+            <span class="gallery__ornament-line"></span>
+            <svg class="gallery__ornament-mark" viewBox="0 0 22 22" focusable="false">
+              <g fill="currentColor">
+                <circle cx="11" cy="11" r="1.5" />
+                <path d="M11 0.5 L12.4 9.6 L11 11 L9.6 9.6 Z" />
+                <path d="M11 21.5 L12.4 12.4 L11 11 L9.6 12.4 Z" />
+                <path d="M0.5 11 L9.6 12.4 L11 11 L9.6 9.6 Z" />
+                <path d="M21.5 11 L12.4 12.4 L11 11 L12.4 9.6 Z" />
+                <circle cx="11" cy="3.6" r="0.7" opacity="0.6" />
+                <circle cx="11" cy="18.4" r="0.7" opacity="0.6" />
+                <circle cx="3.6" cy="11" r="0.7" opacity="0.6" />
+                <circle cx="18.4" cy="11" r="0.7" opacity="0.6" />
+              </g>
+            </svg>
+            <span class="gallery__ornament-line"></span>
+          </div>
+        </div>
       </section>
     </section>
 
   </main>
 
+  <!-- ────────────────────────────────────────────────────────────────
+       Gallery Lightbox (rendered at the end of <body>; toggled via JS).
+       Picks up images from any `[data-gallery-src]` inside #gallery
+       in DOM order. Supports keyboard (← → Esc), swipe, click, and
+       wrap-around navigation.
+       ──────────────────────────────────────────────────────────────── -->
+  <div class="gallery-lightbox"
+       id="galleryLightbox"
+       role="dialog"
+       aria-modal="true"
+       aria-label="사진 갤러리"
+       aria-hidden="true">
+    <div class="gallery-lightbox__counter" aria-hidden="true">
+      <span class="gallery-lightbox__counter-current">1</span><span class="gallery-lightbox__counter-sep">/</span><span class="gallery-lightbox__counter-total">0</span>
+    </div>
+
+    <button class="gallery-lightbox__close" type="button" aria-label="닫기">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" focusable="false">
+        <path d="M18 6 L6 18 M6 6 L18 18" />
+      </svg>
+    </button>
+
+    <button class="gallery-lightbox__nav gallery-lightbox__nav--prev" type="button" aria-label="이전 사진">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+        <polyline points="15 18 9 12 15 6" />
+      </svg>
+    </button>
+
+    <div class="gallery-lightbox__stage">
+      <div class="gallery-lightbox__loader" aria-hidden="true"></div>
+      <img class="gallery-lightbox__image" alt="" />
+    </div>
+
+    <button class="gallery-lightbox__nav gallery-lightbox__nav--next" type="button" aria-label="다음 사진">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+        <polyline points="9 18 15 12 9 6" />
+      </svg>
+    </button>
+
+    <p class="gallery-lightbox__caption" aria-live="polite"></p>
+  </div>
+
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script defer src="assets/js/config.js?v=c6e65c73803634aa"></script>
+  <script defer src="assets/js/config.js?v=475703c3f2435566"></script>
   <script defer src="assets/js/firefly.js?v=ed683e49147d4f7e"></script>
   <script defer src="assets/js/hero-animations.js?v=cb6949ad3cea4697"></script>
   <script defer src="assets/js/letter.js?v=5ab953a6d26c3e5d"></script>
   <script defer src="assets/js/calendar.js?v=0b8827c171cf5830"></script>
+  <script defer src="assets/js/gallery.js?v=cd0941cc994c4c08"></script>
   <script defer src="assets/js/main.js?v=e9c59dd3dc313188"></script>
 </body>
 </html>
