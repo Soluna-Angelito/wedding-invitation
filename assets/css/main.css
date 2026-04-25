@@ -311,9 +311,6 @@ body {
 
 .invitation-content {
   position: relative;
-  min-height: 100vh;
-  min-height: 100svh;
-  min-height: 100dvh;
   background: var(--color-page-bg);
   padding-bottom: max(20px, env(safe-area-inset-bottom));
 }

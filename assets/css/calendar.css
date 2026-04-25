@@ -1,0 +1,480 @@
+/* ══════════════════════════════════════════════════════════════════════
+   Section 03 · Calendar & Countdown (날짜)
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Layout ────────────────────────────────────────────────────────── */
+
+.calendar {
+  position: relative;
+  /* Wave separator now lives at the bottom of the letter section above,
+     so the calendar just needs balanced vertical breathing room. */
+  padding: clamp(56px, 12vw, 100px) 0;
+  text-align: center;
+  /* Soft warm cream parchment — matches example_1 section 2 (greeting) tone. */
+  background: #faf6f0;
+}
+
+.calendar__inner {
+  position: relative;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 0 clamp(24px, 6vw, 40px);
+  z-index: 2;
+}
+
+
+/* ── Top Ornament ──────────────────────────────────────────────────── */
+
+.calendar__top-ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 3vw, 18px);
+  margin-bottom: clamp(28px, 6vw, 44px);
+  color: #c2b5a4;
+}
+
+.calendar__ornament-line {
+  display: block;
+  width: clamp(36px, 11vw, 60px);
+  height: 1px;
+  background: currentColor;
+}
+
+.calendar__ornament-diamond {
+  font-size: 7px;
+  line-height: 1;
+  opacity: 0.8;
+}
+
+/* ── Month Title ───────────────────────────────────────────────────── */
+
+.calendar__month {
+  font-family: 'Sorts Mill Goudy', serif;
+  font-size: clamp(20px, 5vw, 28px);
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  color: #2f2824;
+  margin-bottom: clamp(24px, 5vw, 36px);
+  line-height: 1.3;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Calendar Grid
+   ══════════════════════════════════════════════════════════════════════ */
+
+.calendar__grid-wrap {
+  margin-bottom: clamp(28px, 6vw, 40px);
+}
+
+.calendar__grid {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.calendar__dow {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(12px, 3vw, 14px);
+  font-weight: 300;
+  color: #7a6f67;
+  padding-bottom: clamp(12px, 3vw, 18px);
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.calendar__dow--sun { color: #c49080; }
+.calendar__dow--sat { color: #8296a8; }
+
+.calendar__grid td {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(13px, 3.4vw, 16px);
+  font-weight: 300;
+  color: #4a3f39;
+  text-align: center;
+  padding: clamp(7px, 1.8vw, 11px) 0;
+  position: relative;
+  vertical-align: middle;
+  height: clamp(36px, 10vw, 48px);
+}
+
+.calendar__cell--sun { color: #c49080; }
+.calendar__cell--sat { color: #8296a8; }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Wedding Date Cell — concentric ripple rings
+   ══════════════════════════════════════════════════════════════════════ */
+
+.calendar__cell--wedding {
+  position: relative;
+  color: #fff !important;
+  font-weight: 400 !important;
+}
+
+.calendar__wedding-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(34px, 9vw, 44px);
+  height: clamp(34px, 9vw, 44px);
+  border-radius: 50%;
+  background: #2f2824;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.calendar__wedding-num {
+  position: relative;
+  z-index: 2;
+}
+
+.calendar__cell--wedding::before,
+.calendar__cell--wedding::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(34px, 9vw, 44px);
+  height: clamp(34px, 9vw, 44px);
+  border-radius: 50%;
+  border: 1.5px solid rgba(47, 40, 36, 0.28);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+}
+
+@keyframes calendarRipple {
+  0%   { transform: translate(-50%, -50%) scale(1);   opacity: 0.48; border-width: 1.5px; }
+  80%  { transform: translate(-50%, -50%) scale(2.4); opacity: 0;    border-width: 0.5px; }
+  100% { transform: translate(-50%, -50%) scale(2.4); opacity: 0;    border-width: 0.5px; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .calendar__cell--wedding::before,
+  .calendar__cell--wedding::after {
+    animation: calendarRipple 4s ease-out infinite;
+  }
+
+  .calendar__cell--wedding::after {
+    animation-delay: 2s;
+  }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Wedding Info (date · time · venue)
+   ══════════════════════════════════════════════════════════════════════ */
+
+.calendar__info {
+  margin-bottom: clamp(28px, 6vw, 44px);
+}
+
+.calendar__info-date {
+  font-family: 'Goudy SC', 'Cormorant SC', 'Sorts Mill Goudy', serif;
+  font-size: clamp(20px, 5.2vw, 28px);
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  color: #2f2824;
+  margin-bottom: clamp(6px, 1.5vw, 12px);
+}
+
+.calendar__info-time {
+  font-family: 'Sun Batang', 'Noto Serif KR', serif;
+  font-size: clamp(16px, 4vw, 21px);
+  font-weight: 300;
+  color: #4a3f39;
+  letter-spacing: 0.04em;
+  margin-bottom: clamp(8px, 2vw, 14px);
+}
+
+.calendar__info-venue {
+  font-family: 'Sun Batang', 'Noto Serif KR', serif;
+  font-size: clamp(13px, 3vw, 15px);
+  font-weight: 300;
+  color: #5a4f47;
+  letter-spacing: 0.02em;
+}
+
+
+/* ── Heart Divider ─────────────────────────────────────────────────── */
+
+.calendar__divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 2.5vw, 16px);
+  margin-bottom: clamp(28px, 6vw, 44px);
+  color: #c4b5a5;
+}
+
+.calendar__divider-line {
+  display: block;
+  width: clamp(36px, 11vw, 64px);
+  height: 1px;
+  background: currentColor;
+}
+
+.calendar__divider-line--left  { transform-origin: right center; }
+.calendar__divider-line--right { transform-origin: left center; }
+
+.calendar__divider-heart {
+  width: clamp(14px, 3.5vw, 18px);
+  height: auto;
+  flex-shrink: 0;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Countdown
+   ══════════════════════════════════════════════════════════════════════ */
+
+.calendar__countdown {
+  padding-bottom: clamp(4px, 1vw, 10px);
+}
+
+.calendar__countdown-label {
+  font-family: 'Sun Batang', 'Noto Serif KR', serif;
+  font-size: clamp(13px, 3.2vw, 16px);
+  font-weight: 300;
+  color: #5a4f47;
+  margin-bottom: clamp(18px, 4vw, 28px);
+  letter-spacing: 0.04em;
+  transition: font-size 0.4s ease;
+}
+
+.calendar__countdown-grid {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: clamp(4px, 1.5vw, 10px);
+}
+
+.calendar__countdown-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: clamp(52px, 15vw, 72px);
+}
+
+/* ── Number Roller (odometer slide-up effect) ─────────────────────── */
+
+.calendar__countdown-num {
+  font-family: 'Sorts Mill Goudy', serif;
+  font-size: clamp(30px, 8.5vw, 44px);
+  font-weight: 400;
+  color: #2f2824;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  display: inline-block;
+  position: relative;
+  height: 1.1em;
+  overflow: hidden;
+  vertical-align: top;
+  text-align: center;
+}
+
+.calendar__countdown-num .num-roller {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.55s cubic-bezier(0.65, 0, 0.35, 1);
+  will-change: transform;
+}
+
+.calendar__countdown-num .num-roller.is-sliding {
+  transform: translateY(-50%);
+}
+
+.calendar__countdown-num .num-roller__cell {
+  display: block;
+  height: 1.1em;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.calendar__countdown-unit {
+  font-family: 'Sorts Mill Goudy', serif;
+  font-size: clamp(9px, 2.2vw, 11px);
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  color: #b8a898;
+  margin-top: clamp(4px, 1vw, 8px);
+  text-transform: uppercase;
+}
+
+.calendar__countdown-sep {
+  font-family: 'Sorts Mill Goudy', serif;
+  font-size: clamp(18px, 4.5vw, 24px);
+  color: #c4b5a5;
+  line-height: 1;
+  padding-top: clamp(6px, 1.5vw, 10px);
+  user-select: none;
+}
+
+/* D-Day state */
+.calendar__countdown--dday .calendar__countdown-label {
+  font-size: clamp(17px, 4.2vw, 22px);
+  font-weight: 400;
+  color: #2f2824;
+}
+
+/* Past state */
+.calendar__countdown--past .calendar__countdown-grid {
+  display: none;
+}
+
+.calendar__countdown--past .calendar__countdown-label {
+  font-size: clamp(15px, 3.8vw, 19px);
+  color: #4a3f39;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Animated States
+   Applied only when JS adds .calendar--animated (progressive enhancement).
+   Without JS the section remains fully visible and readable.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Fade-up reveals ───────────────────────────────────────────────── */
+
+.calendar--animated [data-reveal="fade-up"] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.calendar--animated [data-reveal="fade-up"].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Top ornament lines ────────────────────────────────────────────── */
+
+.calendar--animated .calendar__ornament-line {
+  transform: scaleX(0);
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.calendar--animated .calendar__ornament-line:first-child  { transform-origin: right center; }
+.calendar--animated .calendar__ornament-line:last-child   { transform-origin: left center; }
+
+.calendar--animated .calendar__ornament-diamond {
+  opacity: 0;
+  transform: scale(0) rotate(-45deg);
+  transition:
+    opacity 0.4s ease,
+    transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition-delay: 0.3s;
+}
+
+.calendar--animated .calendar__top-ornament.is-visible .calendar__ornament-line {
+  transform: scaleX(1);
+}
+
+.calendar--animated .calendar__top-ornament.is-visible .calendar__ornament-diamond {
+  opacity: 0.8;
+  transform: scale(1) rotate(0deg);
+}
+
+/* ── Heart divider ─────────────────────────────────────────────────── */
+
+.calendar--animated .calendar__divider-line {
+  transform: scaleX(0);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.calendar--animated .calendar__divider.is-visible .calendar__divider-line {
+  transform: scaleX(1);
+}
+
+.calendar--animated .calendar__divider-heart {
+  opacity: 0;
+  transform: scale(0);
+  transition:
+    opacity 0.5s ease,
+    transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition-delay: 0.35s;
+}
+
+.calendar--animated .calendar__divider.is-visible .calendar__divider-heart {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ── Calendar grid row stagger ─────────────────────────────────────── */
+
+.calendar--animated .calendar__grid thead tr,
+.calendar--animated .calendar__grid tbody tr {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.calendar--animated .calendar__grid-wrap.is-visible thead tr,
+.calendar--animated .calendar__grid-wrap.is-visible tbody tr {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.calendar--animated .calendar__grid thead tr                  { transition-delay: 0s; }
+.calendar--animated .calendar__grid tbody tr:nth-child(1)     { transition-delay: 0.08s; }
+.calendar--animated .calendar__grid tbody tr:nth-child(2)     { transition-delay: 0.16s; }
+.calendar--animated .calendar__grid tbody tr:nth-child(3)     { transition-delay: 0.24s; }
+.calendar--animated .calendar__grid tbody tr:nth-child(4)     { transition-delay: 0.32s; }
+.calendar--animated .calendar__grid tbody tr:nth-child(5)     { transition-delay: 0.40s; }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Responsive Refinements
+   ══════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 360px) {
+  .calendar__inner {
+    padding: 0 clamp(18px, 5vw, 28px);
+  }
+
+  .calendar__countdown-cell {
+    min-width: clamp(44px, 13vw, 60px);
+  }
+}
+
+@media (min-width: 768px) {
+  .calendar__inner {
+    max-width: 480px;
+  }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Reduced Motion
+   ══════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .calendar--animated [data-reveal="fade-up"],
+  .calendar--animated .calendar__divider-line,
+  .calendar--animated .calendar__divider-heart,
+  .calendar--animated .calendar__ornament-line,
+  .calendar--animated .calendar__ornament-diamond,
+  .calendar--animated .calendar__grid thead tr,
+  .calendar--animated .calendar__grid tbody tr {
+    transition: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .calendar__cell--wedding::before,
+  .calendar__cell--wedding::after {
+    display: none;
+  }
+
+  .calendar__countdown-num .num-roller {
+    transition: none !important;
+  }
+}

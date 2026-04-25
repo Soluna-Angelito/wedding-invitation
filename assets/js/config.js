@@ -83,6 +83,12 @@
       messageStaggerMs: 160,
       familyStaggerMs: 180,
       photoParallaxStrength: 24
+    },
+    calendar: {
+      weddingDate: '2026-07-12T12:00:00+09:00',
+      rootMargin: '0px 0px -12% 0px',
+      threshold: 0.15,
+      countdownUpdateMs: 1000
     }
   };
 

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta name="theme-color" content="#FAF6F0">
+  <meta name="description" content="정성문 · 송나은의 상견례에 초대합니다">
+  <meta property="og:title" content="상견례에 초대합니다">
+  <meta property="og:description" content="두 가족이 처음 인사를 나누는 뜻깊은 자리에 함께해 주세요.">
+  <meta property="og:type" content="website">
+  <title>상견례 초대 | 정성문 · 송나은</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./assets/style.css">
+</head>
+<body>
+
+  <!-- Loading Screen -->
+  <div id="loader" aria-label="로딩 중">
+    <div class="loader-content">
+      <svg class="loader-ornament" viewBox="0 0 80 80" fill="none">
+        <circle cx="40" cy="40" r="36" stroke="#B08968" stroke-width="0.5" opacity="0.6"/>
+        <circle cx="40" cy="40" r="28" stroke="#B08968" stroke-width="0.3" opacity="0.4"/>
+        <path d="M40 8 L42 38 L40 40 L38 38 Z" fill="#C9A96E" opacity="0.5"/>
+        <path d="M40 72 L42 42 L40 40 L38 42 Z" fill="#C9A96E" opacity="0.5"/>
+        <path d="M8 40 L38 38 L40 40 L38 42 Z" fill="#C9A96E" opacity="0.5"/>
+        <path d="M72 40 L42 38 L40 40 L42 42 Z" fill="#C9A96E" opacity="0.5"/>
+      </svg>
+      <p class="loader-text">초대합니다</p>
+    </div>
+  </div>
+
+  <!-- Ambient Canvas (particles + petals) -->
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+  <!-- Scroll Progress -->
+  <div id="scroll-progress" aria-hidden="true"></div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+
+  <!-- Main -->
+  <main id="main">
+
+    <!-- Section 1: Cover -->
+    <section id="cover" class="section">
+      <div class="section-inner">
+        <svg class="cover-ornament" viewBox="0 0 240 140" fill="none" aria-hidden="true">
+          <!-- Left branch -->
+          <g class="ornament-branch" opacity="0" stroke="#B08968" stroke-width="0.8">
+            <path class="draw-path" d="M120 130 Q88 108 68 78 Q52 52 58 28" fill="none" stroke-linecap="round"/>
+            <ellipse class="ornament-leaf" cx="66" cy="62" rx="14" ry="6" transform="rotate(-50 66 62)" fill="#B08968" fill-opacity="0.10"/>
+            <ellipse class="ornament-leaf" cx="78" cy="82" rx="12" ry="5" transform="rotate(30 78 82)" fill="#B08968" fill-opacity="0.08"/>
+            <ellipse class="ornament-leaf" cx="58" cy="42" rx="13" ry="5.5" transform="rotate(-35 58 42)" fill="#B08968" fill-opacity="0.10"/>
+            <ellipse class="ornament-leaf" cx="96" cy="100" rx="10" ry="4" transform="rotate(20 96 100)" fill="#B08968" fill-opacity="0.08"/>
+            <ellipse class="ornament-leaf" cx="70" cy="95" rx="9" ry="4" transform="rotate(40 70 95)" fill="#B08968" fill-opacity="0.06"/>
+          </g>
+          <!-- Right branch -->
+          <g class="ornament-branch" opacity="0" stroke="#B08968" stroke-width="0.8">
+            <path class="draw-path" d="M120 130 Q152 108 172 78 Q188 52 182 28" fill="none" stroke-linecap="round"/>
+            <ellipse class="ornament-leaf" cx="174" cy="62" rx="14" ry="6" transform="rotate(50 174 62)" fill="#B08968" fill-opacity="0.10"/>
+            <ellipse class="ornament-leaf" cx="162" cy="82" rx="12" ry="5" transform="rotate(-30 162 82)" fill="#B08968" fill-opacity="0.08"/>
+            <ellipse class="ornament-leaf" cx="182" cy="42" rx="13" ry="5.5" transform="rotate(35 182 42)" fill="#B08968" fill-opacity="0.10"/>
+            <ellipse class="ornament-leaf" cx="144" cy="100" rx="10" ry="4" transform="rotate(-20 144 100)" fill="#B08968" fill-opacity="0.08"/>
+            <ellipse class="ornament-leaf" cx="170" cy="95" rx="9" ry="4" transform="rotate(-40 170 95)" fill="#B08968" fill-opacity="0.06"/>
+          </g>
+          <!-- Buds -->
+          <circle class="ornament-bud" cx="56" cy="26" r="3" fill="#D4A5A5" opacity="0"/>
+          <circle class="ornament-bud" cx="184" cy="26" r="3" fill="#D4A5A5" opacity="0"/>
+          <circle class="ornament-bud" cx="62" cy="16" r="2" fill="#D4A5A5" opacity="0"/>
+          <circle class="ornament-bud" cx="178" cy="16" r="2" fill="#D4A5A5" opacity="0"/>
+          <circle class="ornament-bud" cx="50" cy="34" r="1.8" fill="#E8C4C4" opacity="0"/>
+          <circle class="ornament-bud" cx="190" cy="34" r="1.8" fill="#E8C4C4" opacity="0"/>
+        </svg>
+
+        <p class="cover-subtitle" data-char-reveal data-delay="1200">상견례</p>
+
+        <h1 class="cover-title">
+          <span class="name groom-name" data-char-reveal data-delay="1800">정성문</span>
+          <span class="name-divider cover-fade" data-delay="2200">
+            <svg viewBox="0 0 20 20" width="16" height="16" fill="none">
+              <path d="M10 2 L12 8 L18 10 L12 12 L10 18 L8 12 L2 10 L8 8 Z" fill="#C9A96E" opacity="0.7"/>
+            </svg>
+          </span>
+          <span class="name bride-name" data-char-reveal data-delay="1800">송나은</span>
+        </h1>
+
+        <div class="cover-date cover-fade" data-delay="2400">
+          <span class="date-line"></span>
+          <span class="date-text">2026. 03. 14. SAT PM 12:30</span>
+          <span class="date-line"></span>
+        </div>
+
+        <p class="cover-venue cover-fade" data-delay="2600">진진수라 광화문점</p>
+      </div>
+
+      <div class="scroll-indicator cover-fade" data-delay="3200">
+        <div class="scroll-mouse">
+          <div class="scroll-wheel"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Greeting -->
+    <section id="greeting" class="section section-alt">
+      <div class="section-inner">
+        <div class="ornament-line reveal">
+          <svg width="140" height="20" viewBox="0 0 140 20" fill="none" aria-hidden="true">
+            <line x1="0" y1="10" x2="58" y2="10" stroke="#C9A96E" stroke-width="0.5"/>
+            <path d="M70 3 L77 10 L70 17 L63 10 Z" stroke="#C9A96E" stroke-width="0.5" fill="none"/>
+            <line x1="82" y1="10" x2="140" y2="10" stroke="#C9A96E" stroke-width="0.5"/>
+          </svg>
+        </div>
+
+        <h2 class="section-title reveal">초대의 글</h2>
+
+        <div class="greeting-text">
+          <p class="reveal">
+            서로 다른 길을 걸어온<br>
+            두 사람의 만남이
+          </p>
+          <p class="reveal">
+            두 가족의 아름다운 인연이 되어<br>
+            처음 인사를 나누는<br>
+            뜻깊은 자리를 마련하였습니다.
+          </p>
+          <p class="reveal">
+            바쁘시더라도 귀한 걸음 하시어<br>
+            따뜻한 자리를 빛내 주시면<br>
+            감사하겠습니다.
+          </p>
+        </div>
+
+        <div class="ornament-line reveal">
+          <svg width="60" height="20" viewBox="0 0 60 20" fill="none" aria-hidden="true">
+            <line x1="0" y1="10" x2="25" y2="10" stroke="#C9A96E" stroke-width="0.5"/>
+            <circle cx="30" cy="10" r="2" fill="#C9A96E" opacity="0.5"/>
+            <line x1="35" y1="10" x2="60" y2="10" stroke="#C9A96E" stroke-width="0.5"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Calendar -->
+    <section id="when" class="section">
+      <div class="section-inner">
+
+        <div class="ornament-line reveal">
+          <svg width="140" height="20" viewBox="0 0 140 20" fill="none" aria-hidden="true">
+            <line x1="0" y1="10" x2="58" y2="10" stroke="#C9A96E" stroke-width="0.5"/>
+            <path d="M70 3 L77 10 L70 17 L63 10 Z" stroke="#C9A96E" stroke-width="0.5" fill="none"/>
+            <line x1="82" y1="10" x2="140" y2="10" stroke="#C9A96E" stroke-width="0.5"/>
+          </svg>
+        </div>
+
+        <div class="calendar reveal" id="calendar" aria-label="2026년 3월 달력"></div>
+
+        <h2 class="section-title reveal">일시</h2>
+        <div class="date-hero reveal">
+          <p class="date-korean">2026년 3월 14일 토요일</p>
+          <div class="date-time-divider"></div>
+          <p class="date-time-display">오후 12:30</p>
+        </div>
+
+        <div class="countdown reveal" id="countdown" aria-label="디데이 카운트다운">
+          <p class="countdown-label-text">상견례까지</p>
+          <div class="countdown-boxes">
+            <div class="countdown-item">
+              <span class="countdown-num" id="cd-days">0</span>
+              <span class="countdown-unit">일</span>
+            </div>
+            <div class="countdown-sep">:</div>
+            <div class="countdown-item">
+              <span class="countdown-num" id="cd-hours">0</span>
+              <span class="countdown-unit">시간</span>
+            </div>
+            <div class="countdown-sep">:</div>
+            <div class="countdown-item">
+              <span class="countdown-num" id="cd-mins">0</span>
+              <span class="countdown-unit">분</span>
+            </div>
+            <div class="countdown-sep">:</div>
+            <div class="countdown-item">
+              <span class="countdown-num" id="cd-secs">0</span>
+              <span class="countdown-unit">초</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Section 4: Location -->
+    <section id="location" class="section section-alt">
+      <div class="section-inner">
+        
+        <div class="ornament-line reveal">
+          <svg width="140" height="20" viewBox="0 0 140 20" fill="none" aria-hidden="true">
+            <line x1="0" y1="10" x2="58" y2="10" stroke="#C9A96E" stroke-width="0.5"/>
+            <path d="M70 3 L77 10 L70 17 L63 10 Z" stroke="#C9A96E" stroke-width="0.5" fill="none"/>
+            <line x1="82" y1="10" x2="140" y2="10" stroke="#C9A96E" stroke-width="0.5"/>
+          </svg>
+        </div>
+
+        <h2 class="section-title reveal">오시는 길</h2>
+
+        <div class="venue reveal">
+          <p class="venue-name">진진수라 광화문점</p>
+          <p class="venue-addr">서울 종로구 종로5길 7</p>
+          <p class="venue-detail">타워8빌딩 지하 2층</p>
+        </div>
+
+        <!-- Sketch Map -->
+        <div class="sketch-map reveal" aria-label="약도">
+          <img src="./assets/map.png" alt="진진수라 광화문점 약도 — 5호선 광화문역, 1호선 종각역 인근" width="1030" height="681" loading="lazy">
+        </div>
+
+        <div class="location-actions reveal">
+          <button class="btn-action ripple-btn" id="btn-naver-map" aria-label="네이버 지도에서 보기">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            네이버 지도
+          </button>
+          <button class="btn-action ripple-btn" id="btn-kakao-map" aria-label="카카오맵에서 보기">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            카카오맵
+          </button>
+          <button class="btn-action ripple-btn" id="btn-copy-addr" aria-label="주소 복사">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            주소 복사
+          </button>
+        </div>
+
+        <div class="transport reveal">
+          <div class="transport-row">
+            <span class="transport-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="16" rx="2"/><path d="M4 11h16M12 3v16"/><circle cx="8" cy="15" r="1" fill="currentColor"/><circle cx="16" cy="15" r="1" fill="currentColor"/></svg>
+            </span>
+            <div>
+              <strong>지하철</strong>
+              <p>1호선 종각역 도보 1분<br>5호선 광화문역 도보 5분</p>
+            </div>
+          </div>
+          <div class="transport-row">
+            <span class="transport-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17m-2 0a2 2 0 104 0 2 2 0 10-4 0M17 17m-2 0a2 2 0 104 0 2 2 0 10-4 0"/><path d="M5 17H3v-6l2-5h9l4 5h1a2 2 0 012 2v4h-2"/><path d="M9 17h6"/></svg>
+            </span>
+            <div>
+              <strong>주차</strong>
+              <p>동일 건물 (타워8 빌딩 주차장) 무료 3시간</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="location-share reveal">
+          <button class="btn-share ripple-btn" id="btn-share">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            공유하기
+          </button>
+        </div>
+
+        <div class="ornament-line reveal">
+          <svg width="60" height="20" viewBox="0 0 60 20" fill="none" aria-hidden="true">
+            <line x1="0" y1="10" x2="25" y2="10" stroke="#C9A96E" stroke-width="0.5"/>
+            <circle cx="30" cy="10" r="2" fill="#C9A96E" opacity="0.5"/>
+            <line x1="35" y1="10" x2="60" y2="10" stroke="#C9A96E" stroke-width="0.5"/>
+          </svg>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script src="./assets/script.js"></script>
+</body>
+</html>

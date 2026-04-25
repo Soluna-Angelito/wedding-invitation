@@ -28,8 +28,9 @@
     }
   </style>
 
-  <link rel="stylesheet" href="assets/css/main.css?v=9300eca8684e21cd" />
-  <link rel="stylesheet" href="assets/css/letter.css?v=1f12c818ff457166" />
+  <link rel="stylesheet" href="assets/css/main.css?v=c5a404cd59ad088b" />
+  <link rel="stylesheet" href="assets/css/letter.css?v=36a25ed08d0dcede" />
+  <link rel="stylesheet" href="assets/css/calendar.css?v=dc2deb8abad7d99a" />
 </head>
 <body>
   <main class="invitation" id="invitationRoot">
@@ -185,15 +186,152 @@
             </svg>
           </div>
         </div>
+
+        <!-- Wavy section separator at the bottom of the letter section.
+             Reuses the exact same path, layering, and per-wave timings as
+             `hero__waves` — but filled with the calendar color (#faf6f0)
+             so the next section appears to drape UP into the letter,
+             mirroring how `hero__waves` drapes the letter into the hero. -->
+        <div class="letter__wave" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 24 150 28" preserveAspectRatio="none">
+            <defs>
+              <path id="letterWave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+            </defs>
+            <g class="parallax">
+              <use href="#letterWave" class="wave1" x="48" y="0" fill="rgba(250,246,240,0.7)" />
+              <use href="#letterWave" class="wave2" x="48" y="3" fill="rgba(250,246,240,0.5)" />
+              <use href="#letterWave" class="wave3" x="48" y="5" fill="rgba(250,246,240,0.3)" />
+              <use href="#letterWave" class="wave4" x="48" y="7" fill="#faf6f0" />
+            </g>
+          </svg>
+        </div>
+      </section>
+
+      <!-- ────────────────────────────────────────────────────────────────
+           Section 03 · Calendar & Countdown (날짜)
+           ──────────────────────────────────────────────────────────────── -->
+      <section class="calendar" id="calendar" aria-labelledby="calendarTitle">
+        <div class="calendar__inner">
+
+          <!-- Top ornament: diamond with lines -->
+          <div class="calendar__top-ornament" data-reveal="divider" aria-hidden="true">
+            <span class="calendar__ornament-line"></span>
+            <span class="calendar__ornament-diamond">&#x25C6;</span>
+            <span class="calendar__ornament-line"></span>
+          </div>
+
+          <h2 class="calendar__month" id="calendarTitle" data-reveal="fade-up">July 2026</h2>
+
+          <!-- Calendar grid — July 2026 (Wed start, 31 days) -->
+          <div class="calendar__grid-wrap" data-reveal="fade-up">
+            <table class="calendar__grid" aria-label="2026년 7월 달력">
+              <thead>
+                <tr>
+                  <th scope="col" class="calendar__dow calendar__dow--sun" abbr="일요일">일</th>
+                  <th scope="col" class="calendar__dow" abbr="월요일">월</th>
+                  <th scope="col" class="calendar__dow" abbr="화요일">화</th>
+                  <th scope="col" class="calendar__dow" abbr="수요일">수</th>
+                  <th scope="col" class="calendar__dow" abbr="목요일">목</th>
+                  <th scope="col" class="calendar__dow" abbr="금요일">금</th>
+                  <th scope="col" class="calendar__dow calendar__dow--sat" abbr="토요일">토</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td></td><td></td><td></td>
+                  <td>1</td><td>2</td><td>3</td>
+                  <td class="calendar__cell--sat">4</td>
+                </tr>
+                <tr>
+                  <td class="calendar__cell--sun">5</td><td>6</td><td>7</td>
+                  <td>8</td><td>9</td><td>10</td>
+                  <td class="calendar__cell--sat">11</td>
+                </tr>
+                <tr>
+                  <td class="calendar__cell--wedding" aria-label="7월 12일 일요일, 결혼식 당일">
+                    <span class="calendar__wedding-ring" aria-hidden="true"></span>
+                    <span class="calendar__wedding-num">12</span>
+                  </td>
+                  <td>13</td><td>14</td>
+                  <td>15</td><td>16</td><td>17</td>
+                  <td class="calendar__cell--sat">18</td>
+                </tr>
+                <tr>
+                  <td class="calendar__cell--sun">19</td><td>20</td><td>21</td>
+                  <td>22</td><td>23</td><td>24</td>
+                  <td class="calendar__cell--sat">25</td>
+                </tr>
+                <tr>
+                  <td class="calendar__cell--sun">26</td><td>27</td><td>28</td>
+                  <td>29</td><td>30</td><td>31</td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="calendar__info" data-reveal="fade-up">
+            <p class="calendar__info-date">2026. 07. 12</p>
+            <p class="calendar__info-time">일요일 오후 12시</p>
+            <p class="calendar__info-venue">Crest 72 &middot; 글래스홀</p>
+          </div>
+
+          <!-- Heart divider -->
+          <div class="calendar__divider" aria-hidden="true" data-reveal="divider">
+            <span class="calendar__divider-line calendar__divider-line--left"></span>
+            <svg class="calendar__divider-heart" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" role="img" focusable="false">
+              <path d="M10 18C10 18 1.5 12 1.5 6.5C1.5 4 3.2 2 5.5 2C7.5 2 9 3.5 10 5C11 3.5 12.5 2 14.5 2C16.8 2 18.5 4 18.5 6.5C18.5 12 10 18 10 18Z" fill="currentColor"/>
+            </svg>
+            <span class="calendar__divider-line calendar__divider-line--right"></span>
+          </div>
+
+          <!-- Live countdown — each number is a fixed-height window over a
+               vertical "roller" that slides up smoothly when the value changes. -->
+          <div class="calendar__countdown" id="calendarCountdown" data-reveal="fade-up">
+            <p class="calendar__countdown-label" id="countdownLabel">결혼식까지</p>
+            <div class="calendar__countdown-grid" id="countdownGrid">
+              <div class="calendar__countdown-cell">
+                <span class="calendar__countdown-num" id="countdownDays" aria-live="polite">
+                  <span class="num-roller"><span class="num-roller__cell">0</span></span>
+                </span>
+                <span class="calendar__countdown-unit">Days</span>
+              </div>
+              <span class="calendar__countdown-sep" aria-hidden="true">:</span>
+              <div class="calendar__countdown-cell">
+                <span class="calendar__countdown-num" id="countdownHours">
+                  <span class="num-roller"><span class="num-roller__cell">00</span></span>
+                </span>
+                <span class="calendar__countdown-unit">Hours</span>
+              </div>
+              <span class="calendar__countdown-sep" aria-hidden="true">:</span>
+              <div class="calendar__countdown-cell">
+                <span class="calendar__countdown-num" id="countdownMins">
+                  <span class="num-roller"><span class="num-roller__cell">00</span></span>
+                </span>
+                <span class="calendar__countdown-unit">Min</span>
+              </div>
+              <span class="calendar__countdown-sep" aria-hidden="true">:</span>
+              <div class="calendar__countdown-cell">
+                <span class="calendar__countdown-num" id="countdownSecs">
+                  <span class="num-roller"><span class="num-roller__cell">00</span></span>
+                </span>
+                <span class="calendar__countdown-unit">Sec</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
       </section>
     </section>
+
   </main>
 
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script defer src="assets/js/config.js?v=df81cc9cd7e9e51f"></script>
+  <script defer src="assets/js/config.js?v=c6e65c73803634aa"></script>
   <script defer src="assets/js/firefly.js?v=ed683e49147d4f7e"></script>
   <script defer src="assets/js/hero-animations.js?v=cb6949ad3cea4697"></script>
   <script defer src="assets/js/letter.js?v=5ab953a6d26c3e5d"></script>
+  <script defer src="assets/js/calendar.js?v=0b8827c171cf5830"></script>
   <script defer src="assets/js/main.js?v=e9c59dd3dc313188"></script>
 </body>
 </html>

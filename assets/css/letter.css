@@ -6,12 +6,53 @@
 
 .letter {
   position: relative;
-  padding: clamp(56px, 12vw, 108px) 0;
+  /* Extra bottom padding houses the wave separator + breathing room,
+     mirroring how the hero section reserves space for `hero__waves`. */
+  padding: clamp(56px, 12vw, 108px) 0 clamp(80px, 17vw, 144px);
   text-align: center;
 
   /* ★ Letter Title Font — 교체 시 이 변수만 수정 (HTML의 <link>도 함께 교체) */
   --letter-title-font: 'munche_seuki_jung', 'Sun Batang', 'Noto Serif KR', serif;
 }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Wave Separator (letter ⤓ calendar boundary)
+   ──────────────────────────────────────────────────────────────────────
+   Lives at the BOTTOM of the letter section, structurally mirroring
+   `hero__waves` (which lives at the bottom of the hero). Reuses the
+   same SVG path, layering, sizing, and per-wave timings; the only
+   difference is the fill color — the calendar background #faf6f0 drapes
+   upward into the warmer letter background #eeeae5.
+   ══════════════════════════════════════════════════════════════════════ */
+
+.letter__wave {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  z-index: 1;
+  overflow: hidden;
+  line-height: 0;
+  pointer-events: none;
+}
+
+.letter__wave svg {
+  display: block;
+  width: 100%;
+  min-width: 100%;
+  height: clamp(30px, 15vh, 40px);
+}
+
+.letter__wave .parallax > use {
+  animation: waveMove 25s cubic-bezier(0.55, 0.5, 0.45, 0.5) infinite;
+  will-change: transform;
+}
+
+.letter__wave .parallax > use:nth-child(1) { animation-delay: -2s; animation-duration: 7s;  }
+.letter__wave .parallax > use:nth-child(2) { animation-delay: -3s; animation-duration: 10s; }
+.letter__wave .parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 13s; }
+.letter__wave .parallax > use:nth-child(4) { animation-delay: -5s; animation-duration: 20s; }
 
 .letter__inner {
   position: relative;
@@ -372,5 +413,9 @@
     opacity: 1 !important;
     transform: none !important;
     stroke-dashoffset: 0 !important;
+  }
+
+  .letter__wave .parallax > use {
+    animation: none !important;
   }
 }
