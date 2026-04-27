@@ -35,8 +35,8 @@
   <link rel="stylesheet" href="assets/css/main.css?v=e88abceca76f2051" />
   <link rel="stylesheet" href="assets/css/letter.css?v=36a25ed08d0dcede" />
   <link rel="stylesheet" href="assets/css/calendar.css?v=dc2deb8abad7d99a" />
-  <link rel="stylesheet" href="assets/css/gallery.css?v=6e54a102b6b1bd23" />
-  <link rel="stylesheet" href="assets/css/location.css?v=c492227d80f41dce" />
+  <link rel="stylesheet" href="assets/css/gallery.css?v=ee5a670876b1e4cb" />
+  <link rel="stylesheet" href="assets/css/location.css?v=b920edd1ffc9b17a" />
 </head>
 <body>
   <main class="invitation" id="invitationRoot">
@@ -523,9 +523,6 @@
             <p class="location__address" data-loc-slot="addr-road" data-reveal="fade-up">
               서울특별시 중구 장충단로 72
             </p>
-            <p class="location__address-sub" data-loc-slot="addr-sub" data-reveal="fade-up">
-              한국자유총연맹 자유센터
-            </p>
           </header>
 
           <!-- ── Kakao RoughMap embed ───────────────────────────────────
@@ -538,52 +535,49 @@
                and live inline in HTML, not in deferred location.js. The
                polaroid frame around them is purely cosmetic. -->
           <figure class="location__map-card" data-reveal="fade-up">
-            <div class="location__map-frame">
-              <span class="location__map-tape location__map-tape--left"  aria-hidden="true"></span>
-              <span class="location__map-tape location__map-tape--right" aria-hidden="true"></span>
+            <!-- Single centered washi-tape — same placement as the
+                 polaroid `::before` tape so the map card reads as a
+                 polaroid sibling. Sits OUTSIDE `.location__map-frame`
+                 so it isn't clipped by that frame's `overflow: hidden`
+                 (which is required to round the iframe corners). -->
+            <span class="location__map-tape" aria-hidden="true"></span>
 
+            <div class="location__map-frame">
               <div
                 id="daumRoughmapContainer1777298027750"
                 class="root_daum_roughmap root_daum_roughmap_landing"
               ></div>
             </div>
 
-            <figcaption class="location__map-caption">
+<!--             <figcaption class="location__map-caption">
               지도를 통해 위치를 확인하시거나 아래 버튼으로 길찾기를 열어보세요.
-            </figcaption>
+            </figcaption> -->
           </figure>
 
           <script charset="UTF-8" class="daum_roughmap_loader_script"
-                  src="https://ssl.daumcdn.net/dmaps/map_js_init/roughmapLoader.js"></script>
+                  src="https://ssl.daumcdn.net/dmaps/map_js_init/roughmapLoader.js" style="width=100%"></script>
           <script charset="UTF-8">
             new daum.roughmap.Lander({
               timestamp: '1777298027750',
               key: 'mt9w6w4x9bt',
-              mapWidth: '640',
+              // mapWidth: '640',
               mapHeight: '360'
             }).render();
           </script>
 
-          <!-- ── Refined action row: copy · kakao · naver · tmap ─────── -->
+          <!-- ── Action row: 지도 보기 · 네이버지도 · 티맵 · 주소 복사 ───
+               지도 보기 opens the hand-drawn `map.jpg` in a lightweight
+               modal (see #locationMapModal at the bottom of <body>). -->
           <div class="location__actions" data-reveal="fade-up">
-            <button class="location__action" type="button" data-loc-action="copy" aria-label="주소 복사">
+            <button class="location__action" type="button" data-loc-action="map-view" aria-label="약도 보기">
               <span class="location__action-chip" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" focusable="false">
-                  <rect x="9" y="9" width="11" height="11" rx="2" />
-                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                  <path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z" />
+                  <path d="M9 4v14M15 6v14" />
                 </svg>
               </span>
-              <span class="location__action-label">주소 복사</span>
+              <span class="location__action-label">지도 보기</span>
             </button>
-
-            <a class="location__action" data-loc-navi="kakao" href="#" aria-label="카카오맵으로 길찾기">
-              <span class="location__action-chip" aria-hidden="true">
-                <svg viewBox="0 0 36 36" fill="currentColor" focusable="false">
-                  <path d="M18 6.5c-7.2 0-13 4.6-13 10.4 0 3.7 2.4 6.9 6 8.7-.3.9-1 3.4-1.2 3.9 0 0-.1.4.2.5.2.1.4 0 .5 0 .7-.1 4-2.6 4.8-3.2 1 .1 1.8.2 2.7.2 7.2 0 13-4.6 13-10.4S25.2 6.5 18 6.5z"/>
-                </svg>
-              </span>
-              <span class="location__action-label">카카오맵</span>
-            </a>
 
             <a class="location__action" data-loc-navi="naver" href="#" aria-label="네이버지도로 길찾기">
               <span class="location__action-chip" aria-hidden="true">
@@ -600,6 +594,16 @@
               </span>
               <span class="location__action-label">티맵</span>
             </a>
+
+            <button class="location__action" type="button" data-loc-action="copy" aria-label="주소 복사">
+              <span class="location__action-chip" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                  <rect x="9" y="9" width="11" height="11" rx="2" />
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                </svg>
+              </span>
+              <span class="location__action-label">주소 복사</span>
+            </button>
           </div>
 
           <!-- ── Transit + parking ───────────────────────────────────────
@@ -686,20 +690,6 @@
             </div>
           </dl>
 
-          <!-- Footnote: tel + landmark, set as a quiet caption. -->
-          <p class="location__footnote" data-reveal="fade-up">
-            <a class="location__tel" data-loc-slot="tel-link" href="tel:0222327366">
-              <span class="location__tel-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" focusable="false">
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" />
-                </svg>
-              </span>
-              <span data-loc-slot="tel-display">02-2232-7366</span>
-            </a>
-            <span class="location__footnote-sep" aria-hidden="true">·</span>
-            <span class="location__footnote-text">한국자유총연맹 자유센터</span>
-          </p>
-
           <!-- Bottom mirrored ornament — closes the section. -->
           <div class="location__ornament location__ornament--bottom" data-reveal="fade-up" aria-hidden="true">
             <svg viewBox="0 0 120 64" xmlns="http://www.w3.org/2000/svg" role="img" focusable="false">
@@ -770,6 +760,24 @@
   </div>
 
   <!-- ────────────────────────────────────────────────────────────────
+       Map Modal — renders the hand-drawn venue sketch (img path:
+       assets img map jpg) as a centered photo when the user taps
+       지도 보기. Hidden by default; toggled via JS in location.js.
+       ──────────────────────────────────────────────────────────────── -->
+  <div class="location-map-modal" id="locationMapModal" role="dialog" aria-modal="true" aria-label="약도 보기" aria-hidden="true">
+    <button class="location-map-modal__close" type="button" aria-label="닫기">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" focusable="false">
+        <path d="M18 6 L6 18 M6 6 L18 18" />
+      </svg>
+    </button>
+
+    <figure class="location-map-modal__stage">
+      <img class="location-map-modal__image" src="./assets/img/map.jpg?v=79aaaecb64e51db4" alt="크레스트 72 약도" loading="lazy" decoding="async" />
+      <figcaption class="location-map-modal__caption">크레스트 72 · 자유센터 약도</figcaption>
+    </figure>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────────
        Copy Toast — surfaces a quiet "주소가 복사되었습니다" pill after
        the user taps `주소 복사`. Hidden by default; shown via JS.
        ──────────────────────────────────────────────────────────────── -->
@@ -790,7 +798,7 @@
   <script defer src="assets/js/letter.js?v=5ab953a6d26c3e5d"></script>
   <script defer src="assets/js/calendar.js?v=0b8827c171cf5830"></script>
   <script defer src="assets/js/gallery.js?v=8e1e446938ebbbe1"></script>
-  <script defer src="assets/js/location.js?v=76b16ef022707ffb"></script>
+  <script defer src="assets/js/location.js?v=53e965e3cb79ab1b"></script>
   <script defer src="assets/js/main.js?v=e9c59dd3dc313188"></script>
 </body>
 </html>

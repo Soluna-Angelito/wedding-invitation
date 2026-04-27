@@ -54,14 +54,6 @@
     setText(locationEl.querySelector('[data-loc-slot="venue-kor"]'),  venue.nameKor || '크레스트 72');
     setText(locationEl.querySelector('[data-loc-slot="venue-hall"]'), venue.hall || '');
     setText(locationEl.querySelector('[data-loc-slot="addr-road"]'),  venue.addressRoad || '');
-    setText(locationEl.querySelector('[data-loc-slot="addr-sub"]'),   venue.landmark || '');
-
-    var telLink    = locationEl.querySelector('[data-loc-slot="tel-link"]');
-    var telDisplay = locationEl.querySelector('[data-loc-slot="tel-display"]');
-    if (telLink && venue.tel) {
-      telLink.setAttribute('href', 'tel:' + String(venue.tel).replace(/[^\d+]/g, ''));
-    }
-    setText(telDisplay, venue.tel || '');
   }
 
 
@@ -118,6 +110,69 @@
 
       global.location.href = urls.tmapDeep;
     });
+  }
+
+
+  /* ══════════════════════════════════════════════════════════════════
+     지도 보기 — open the hand-drawn `map.jpg` sketch in a modal.
+     Dismiss on Escape, backdrop click, or the close button.
+     ══════════════════════════════════════════════════════════════════ */
+
+  function setupMapViewer(locationEl) {
+    var trigger = locationEl.querySelector('[data-loc-action="map-view"]');
+    var modal   = document.getElementById('locationMapModal');
+    if (!trigger || !modal) { return null; }
+
+    var closeBtn  = modal.querySelector('.location-map-modal__close');
+    var stage     = modal.querySelector('.location-map-modal__stage');
+    var lastFocus = null;
+
+    function open() {
+      lastFocus = document.activeElement;
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('location-map-modal-open');
+      // Focus the close button so keyboard users can dismiss immediately.
+      if (closeBtn && typeof closeBtn.focus === 'function') {
+        global.setTimeout(function () { closeBtn.focus(); }, 0);
+      }
+      document.addEventListener('keydown', onKey);
+    }
+
+    function close() {
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('location-map-modal-open');
+      document.removeEventListener('keydown', onKey);
+      if (lastFocus && typeof lastFocus.focus === 'function') {
+        try { lastFocus.focus(); } catch (_) {}
+      }
+    }
+
+    function onKey(e) {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        close();
+      }
+    }
+
+    trigger.addEventListener('click', function (e) {
+      e.preventDefault();
+      open();
+    });
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', close);
+    }
+
+    // Click on the dim backdrop (anywhere outside the stage) closes.
+    modal.addEventListener('click', function (e) {
+      if (stage && stage.contains(e.target)) { return; }
+      if (e.target === closeBtn || (closeBtn && closeBtn.contains(e.target))) { return; }
+      close();
+    });
+
+    return { open: open, close: close };
   }
 
 
@@ -206,11 +261,36 @@
     var rootMargin = (config && config.rootMargin) || '0px 0px -10% 0px';
     var threshold  = (config && config.threshold != null) ? config.threshold : 0.12;
 
+    // Elements that should reveal *in lock-step* with the map card.
+    // Without this binding the actions row (and the transit table beneath
+    // it) animate in a beat later because they sit slightly below the
+    // viewport when the map first enters — which feels disjointed since
+    // the buttons are conceptually part of the map widget.
+    var mapCard = locationEl.querySelector('.location__map-card');
+    var coupledSelectors = [
+      '.location__actions',
+      '.location__transit'
+    ];
+
     var observer = new IntersectionObserver(function (entries) {
       for (var i = 0; i < entries.length; i++) {
         if (!entries[i].isIntersecting) { continue; }
-        entries[i].target.classList.add('is-visible');
-        observer.unobserve(entries[i].target);
+        var el = entries[i].target;
+        el.classList.add('is-visible');
+        observer.unobserve(el);
+
+        // When the map card crosses the threshold, also reveal its
+        // coupled siblings instantly so the whole "map + actions" unit
+        // appears as one beat.
+        if (el === mapCard) {
+          for (var j = 0; j < coupledSelectors.length; j++) {
+            var sib = locationEl.querySelector(coupledSelectors[j]);
+            if (sib && !sib.classList.contains('is-visible')) {
+              sib.classList.add('is-visible');
+              observer.unobserve(sib);
+            }
+          }
+        }
       }
     }, { rootMargin: rootMargin, threshold: threshold });
 
@@ -248,10 +328,10 @@
     populateVenue(locationEl, config);
 
     var urls = buildMapUrls(venue);
-    attachExternalLink(locationEl.querySelector('[data-loc-navi="kakao"]'), urls.kakaoRoute);
     attachExternalLink(locationEl.querySelector('[data-loc-navi="naver"]'), urls.naverRoute);
     attachTmapButton(locationEl.querySelector('[data-loc-navi="tmap"]'), urls);
 
+    setupMapViewer(locationEl);
     setupCopyButton(locationEl, config);
 
     if (prefersReducedMotion()) {

@@ -49,7 +49,11 @@
 
   position: relative;
   background: var(--location-bg);
-  padding: clamp(60px, 13vw, 110px) 0 clamp(72px, 14vw, 120px);
+  /* Compact vertical rhythm: keep the section visually short. The top
+     wave separator from the gallery already supplies a visible drape,
+     so we don't need an additional ~110px of empty cream above the
+     ornament — ~36-64px is plenty to let the ornament breathe. */
+  padding: clamp(36px, 8vw, 64px) 0 clamp(40px, 9vw, 72px);
   text-align: center;
   overflow: hidden;
 }
@@ -72,18 +76,18 @@
 .location__ornament {
   display: flex;
   justify-content: center;
-  margin-bottom: clamp(20px, 4.5vw, 32px);
+  margin-bottom: clamp(12px, 3vw, 20px);
   color: var(--location-accent);
 }
 
 .location__ornament svg {
-  width: clamp(82px, 24vw, 120px);
+  width: clamp(74px, 22vw, 108px);
   height: auto;
   overflow: visible;
 }
 
 .location__ornament--bottom {
-  margin-top: clamp(40px, 8vw, 64px);
+  margin-top: clamp(22px, 5vw, 36px);
   margin-bottom: 0;
 }
 
@@ -93,7 +97,7 @@
    ══════════════════════════════════════════════════════════════════════ */
 
 .location__header {
-  margin-bottom: clamp(28px, 6vw, 40px);
+  margin-bottom: clamp(18px, 4vw, 28px);
 }
 
 .location__eyebrow {
@@ -104,17 +108,17 @@
   text-indent: 0.42em;
   text-transform: uppercase;
   color: var(--location-eyebrow);
-  margin: 0 0 clamp(10px, 2.4vw, 16px);
+  margin: 0 0 clamp(8px, 2vw, 12px);
 }
 
 .location__title {
   font-family: 'munche_seuki_jung', 'Sun Batang', 'Noto Serif KR', serif;
-  font-size: clamp(28px, 7vw, 40px);
+  font-size: clamp(26px, 6.6vw, 36px);
   font-weight: 400;
   letter-spacing: 0.12em;
   color: var(--location-ink);
-  line-height: 1.35;
-  margin: 0 0 clamp(16px, 3.6vw, 24px);
+  line-height: 1.3;
+  margin: 0 0 clamp(10px, 2.6vw, 16px);
 }
 
 /* Petal divider — same DNA as the letter section's flower-mark divider. */
@@ -123,7 +127,7 @@
   align-items: center;
   justify-content: center;
   gap: clamp(10px, 2.5vw, 16px);
-  margin-bottom: clamp(26px, 5.5vw, 36px);
+  margin-bottom: clamp(16px, 3.5vw, 24px);
   color: var(--location-accent);
 }
 
@@ -150,7 +154,7 @@
   text-indent: 0.42em;
   text-transform: uppercase;
   color: var(--location-eyebrow);
-  margin: 0 0 clamp(6px, 1.4vw, 10px);
+  margin: 0 0 clamp(4px, 1.2vw, 8px);
 }
 
 .location__venue-kor {
@@ -159,8 +163,8 @@
   font-weight: 400;
   letter-spacing: 0.08em;
   color: var(--location-ink);
-  line-height: 1.4;
-  margin: 0 0 clamp(10px, 2.4vw, 14px);
+  line-height: 1.35;
+  margin: 0 0 clamp(8px, 2vw, 12px);
 }
 
 .location__venue-hall {
@@ -175,58 +179,70 @@
   font-family: 'Sun Batang', 'Noto Serif KR', serif;
   font-size: clamp(13px, 3.2vw, 14.5px);
   font-weight: 300;
-  line-height: 1.7;
+  line-height: 1.65;
   color: var(--location-ink-soft);
   letter-spacing: 0.02em;
   word-break: keep-all;
   margin: 0;
 }
 
-.location__address-sub {
-  font-family: 'Sun Batang', 'Noto Serif KR', serif;
-  font-size: clamp(12px, 2.9vw, 13px);
-  font-weight: 300;
-  color: var(--location-muted);
-  margin: 2px 0 0;
-}
-
 
 /* ══════════════════════════════════════════════════════════════════════
    Map Card — Kakao RoughMap embed inside a polaroid frame
    ──────────────────────────────────────────────────────────────────────
-   The Kakao Lander writes its own iframe + a small `wrap_controllers`
-   bar inside the `#daumRoughmapContainer…` div. Our job is purely
-   cosmetic: present that block as if it were a polaroid (paper card,
-   washi-tape corners, paper-grain gradient, soft hairline) and force
-   the iframe to be fully fluid (Lander otherwise renders at the fixed
-   width passed at construction time).
+   The Kakao Lander writes its own iframe + auxiliary chrome (a small
+   `wrap_controllers` link bar and, more recently, a `.cont` strip with
+   the venue's address + phone number) inside `#daumRoughmapContainer…`.
+   We keep ONLY the iframe — the address and phone are already presented
+   in our editorial header, and the controllers bar duplicates the
+   action row below. Everything else is purely cosmetic: present the
+   iframe as a polaroid (paper card, washi-tape corners, paper-grain
+   gradient, soft hairline) and force the widget to be fully fluid
+   (Lander otherwise renders at the fixed width passed at construction).
    ══════════════════════════════════════════════════════════════════════ */
 
 .location__map-card {
   position: relative;
-  margin: 0 0 clamp(18px, 4vw, 24px);
-  padding: clamp(14px, 3.4vw, 20px);
-  background:
-    linear-gradient(180deg, #ffffff 0%, var(--location-paper-soft) 100%);
-  border: 1px solid var(--location-line);
-  border-radius: var(--location-radius);
-  box-shadow: var(--location-shadow);
-  overflow: hidden;
+  /* Top breathing room reserves space for the washi-tape strip that
+     sits just above the card edge (decorative, mirrors the polaroid
+     filmstrip). */
+  margin: clamp(8px, 2vw, 14px) 0 clamp(14px, 3vw, 20px);
+  /* Slimmer padding so the map gets more of the card's real estate.
+     Sides + top stay tight (8-12 px) and the bottom is *very slightly*
+     thicker to give the polaroid an off-center weighting like the
+     gallery polaroids — but without a visible caption strip. */
+  padding: clamp(8px, 2vw, 12px) clamp(8px, 2vw, 12px) clamp(10px, 2.4vw, 14px);
+  /* Pure white paper. Reads brighter against the section's cream
+     `#faf6f0` background than the warm-cream polaroid colour, giving
+     the map card a stronger, more "fresh print" presence. */
+  background: #ffffff;
+  /* Definition comes from the drop shadow + colour contrast, not from
+     a stroke. Removing the outer border (and the previous nested
+     hairlines) gives us the clean single-edge polaroid look. */
+  border: 0;
+  border-radius: 2px;
+  box-shadow:
+    0 26px 56px -28px rgba(60, 48, 36, 0.55),
+    0 10px 18px -10px rgba(60, 48, 36, 0.22);
+  /* Keep `overflow: visible` so the washi-tape strip painted at
+     `top: -8px` is not amputated. The actual map iframe lives inside
+     `.location__map-frame` which has its own `overflow: hidden` and
+     handles the rounded clipping. */
+  overflow: visible;
   transition:
     transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 0.35s ease;
+    box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.location__map-card::before,
-.location__map-card::after {
+/* Subtle paper grain so the card never looks flat. The earlier
+   `::after` inner-hairline was removed because it stacked with the
+   card's outer border AND the frame's inset shadow to read as a
+   triple-frame nested look — visually noisy. The outer card border
+   alone gives the polaroid edge enough definition. */
+.location__map-card::before {
   content: '';
   position: absolute;
   pointer-events: none;
-}
-
-/* Subtle paper grain so the card never looks flat. */
-.location__map-card::before {
   inset: 0;
   background:
     radial-gradient(900px 220px at 20% -10%,
@@ -240,27 +256,24 @@
   z-index: 0;
 }
 
-/* Inner hairline so the polaroid reads as paper-on-paper. */
-.location__map-card::after {
-  inset: clamp(8px, 1.8vw, 12px);
-  border: 1px solid var(--location-line-soft);
-  border-radius: calc(var(--location-radius) - 4px);
-  z-index: 0;
-}
-
 .location__map-card:hover {
   transform: translateY(-2px);
-  border-color: var(--location-accent);
   box-shadow:
-    0 28px 60px -28px rgba(60, 48, 36, 0.55),
-    0 8px 18px -10px rgba(60, 48, 36, 0.22);
+    0 32px 64px -28px rgba(60, 48, 36, 0.62),
+    0 12px 22px -10px rgba(60, 48, 36, 0.26);
 }
 
-/* Washi-tape strips on the top corners (decorative). */
+/* Single washi-tape strip pinned to the top-center — same placement as
+   the polaroid `::before` tape in the gallery filmstrip so the map
+   card reads as a polaroid sibling. Muted gold gradient (the original
+   on-brand colour) sits well on both the card's white-to-cream
+   background and the cream-paper polaroids, so the tape reads
+   consistently across the page. */
 .location__map-tape {
   position: absolute;
-  top: clamp(-8px, -2vw, -10px);
-  width: clamp(54px, 14vw, 72px);
+  top: -8px;
+  left: 50%;
+  width: clamp(58px, 14vw, 76px);
   height: clamp(14px, 3.4vw, 18px);
   background:
     linear-gradient(180deg,
@@ -269,33 +282,30 @@
   border-radius: 2px;
   box-shadow: 0 6px 12px -8px rgba(60, 48, 36, 0.35);
   z-index: 3;
-  opacity: 0.78;
+  opacity: 0.82;
   pointer-events: none;
-}
-
-.location__map-tape--left {
-  left: clamp(14px, 4vw, 22px);
-  transform: rotate(-7deg);
-}
-
-.location__map-tape--right {
-  right: clamp(14px, 4vw, 22px);
-  transform: rotate(6deg);
+  transform: translateX(-50%) rotate(-3deg);
 }
 
 /* The frame that wraps Kakao's container — clips the iframe corners
-   and provides the inner shadow that sells the "paper inside paper" feel. */
+   and provides the inner shadow that sells the "paper inside paper" feel.
+   The `min-height` MUST match `.wrap_map { height }` below so the
+   polaroid hugs the iframe with no empty strip beneath it (formerly
+   filled by `.wrap_controllers` / `.cont`, both now hidden). */
 .location__map-frame {
   position: relative;
   z-index: 1;
-  border-radius: calc(var(--location-radius) - 6px);
+  /* Tight 1 px radius matches the polaroid photo opening — sharp paper
+     edges rather than a rounded card. */
+  border-radius: 1px;
   overflow: hidden;
-  box-shadow: inset 0 0 0 1px rgba(120, 100, 80, 0.08);
+  /* No inner ring or border. The outer `.location__map-card` cream
+     paper, plus the iframe's own content, defines the edge. Adding any
+     shadow / stroke here re-introduces the nested-frame look. */
   background: #fafafa;
-  /* Reserve a sensible aspect on first paint so the section's height
-     doesn't flicker before the iframe finishes loading. The iframe
-     itself fills 100% of this box via the overrides below. */
-  min-height: clamp(240px, 56vw, 360px);
+  /* Larger vertical real estate so the map dominates the polaroid the
+     way the photo dominates a gallery polaroid. */
+  min-height: clamp(280px, 62vw, 400px);
 }
 
 /* ── Kakao roughmap structural overrides ─────────────────────────────
@@ -313,7 +323,9 @@
 .location__map-frame .root_daum_roughmap .wrap_map,
 .location__map-frame .root_daum_roughmap_landing .wrap_map {
   width: 100% !important;
-  height: clamp(220px, 50vw, 320px) !important;
+  /* Must match `.location__map-frame { min-height }` so the iframe
+     fills the polaroid with no gap below it. */
+  height: clamp(280px, 62vw, 400px) !important;
 }
 
 .location__map-frame .root_daum_roughmap iframe,
@@ -324,13 +336,18 @@
   border: 0 !important;
 }
 
+/* Hide Kakao's auto-injected chrome:
+     • `.wrap_controllers` — Kakao logo + 로드뷰 / 길찾기 / 지도 크게 보기 links
+     • `.cont` (with `.section_address`) — duplicate 주소 / 전화 strip
+   Both are redundant: the address sits in our editorial header above
+   and the navigation actions sit in the four-up button row below.
+   We deliberately use `display:none` (not `hide` / `visibility`) so the
+   widget reflows and the iframe fills the polaroid cleanly. */
 .location__map-frame .root_daum_roughmap .wrap_controllers,
-.location__map-frame .root_daum_roughmap_landing .wrap_controllers {
-  width: 100% !important;
-  max-width: 100% !important;
-  box-sizing: border-box !important;
-  background: var(--location-paper-soft) !important;
-  border-top: 1px solid var(--location-line-soft) !important;
+.location__map-frame .root_daum_roughmap_landing .wrap_controllers,
+.location__map-frame .root_daum_roughmap .cont,
+.location__map-frame .root_daum_roughmap_landing .cont {
+  display: none !important;
 }
 
 .location__map-caption {
@@ -347,17 +364,23 @@
 
 
 /* ══════════════════════════════════════════════════════════════════════
-   Action Buttons — refined four-up pill row
-   주소 복사 · 카카오맵 · 네이버지도 · 티맵
-   The icon chip carries the brand colour on hover; the surrounding
-   pill stays calm so the row reads as one set.
+   Action Buttons — quiet icon-stack row
+   지도 보기 · 네이버지도 · 티맵 · 주소 복사
+   ──────────────────────────────────────────────────────────────────────
+   Each button is a transparent column: a generously-sized circular
+   icon chip on top, the Korean label centered below it. The "button"
+   itself has no background or border — only the inner icon chip
+   carries colour and structure, which keeps the row visually quiet
+   while leaving each tap target clearly defined. The four buttons sit
+   on a single horizontal row (CSS grid, 4 columns) at every screen
+   width; on very narrow phones the chip diameter and label size
+   shrink via clamp() so nothing crowds.
    ══════════════════════════════════════════════════════════════════════ */
-
 .location__actions {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: clamp(7px, 1.8vw, 11px);
-  margin: clamp(28px, 6vw, 40px) 0 clamp(32px, 7vw, 48px);
+  gap: clamp(4px, 1.2vw, 10px);
+  margin: clamp(20px, 4.5vw, 30px) 0 clamp(20px, 4.5vw, 30px);
 }
 
 .location__action {
@@ -365,60 +388,57 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  gap: clamp(7px, 1.8vw, 9px);
-  padding: clamp(11px, 2.6vw, 14px) clamp(4px, 1.2vw, 8px) clamp(11px, 2.6vw, 13px);
-  background: var(--location-paper);
-  color: var(--location-ink-soft);
+  gap: clamp(7px, 1.8vw, 10px);
+  min-width: 0;
+  padding: clamp(6px, 1.6vw, 10px) clamp(2px, 0.6vw, 6px);
+  background: transparent;
+  color: var(--location-ink);
   text-decoration: none;
-  border: 1px solid var(--location-line);
-  border-radius: clamp(12px, 2.6vw, 16px);
+  border: 0;
+  border-radius: clamp(10px, 2.4vw, 14px);
   cursor: pointer;
   appearance: none;
   -webkit-tap-highlight-color: transparent;
   font-family: 'Sun Batang', 'Noto Serif KR', serif;
   position: relative;
   transition:
-    border-color 0.35s ease,
-    background 0.35s ease,
-    color 0.35s ease,
-    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.35s ease;
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.location__action:hover,
 .location__action:focus-visible {
-  outline: none;
-  border-color: var(--location-accent);
-  transform: translateY(-2px);
-  box-shadow: var(--location-shadow-soft);
+  outline: 2px solid var(--location-accent);
+  outline-offset: 2px;
 }
 
+.location__action:hover { transform: translateY(-2px); }
 .location__action:active { transform: translateY(0); }
 
 .location__action-chip {
-  width: clamp(28px, 6.6vw, 34px);
-  height: clamp(28px, 6.6vw, 34px);
+  width: clamp(44px, 12vw, 56px);
+  height: clamp(44px, 12vw, 56px);
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  background: #f1ebe0;
+  background: var(--location-paper);
+  border: 1px solid var(--location-line);
   color: var(--location-accent-deep);
-  transition: background 0.35s ease, color 0.35s ease, box-shadow 0.35s ease;
+  transition: background 0.35s ease, color 0.35s ease,
+              border-color 0.35s ease, box-shadow 0.35s ease;
   overflow: hidden;
+  box-shadow: 0 4px 10px -8px rgba(60, 48, 36, 0.35);
 }
 
 .location__action-chip svg,
 .location__action-chip img {
-  width: 60%;
-  height: 60%;
+  width: 50%;
+  height: 50%;
   display: block;
 }
 
 .location__action-chip--tmap {
   background: #ffffff;
-  border: 1px solid var(--location-line);
 }
 
 .location__action-chip--tmap img {
@@ -429,46 +449,65 @@
 }
 
 .location__action-label {
-  font-size: clamp(11px, 2.7vw, 12px);
+  font-size: clamp(11px, 2.8vw, 12.5px);
   font-weight: 400;
-  letter-spacing: 0.04em;
-  color: var(--location-ink);
+  letter-spacing: 0.02em;
+  color: var(--location-ink-soft);
+  text-align: center;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
-/* Brand-tinted hover (chip carries the colour). */
-.location__action[data-loc-action="copy"]:hover .location__action-chip,
-.location__action[data-loc-action="copy"]:focus-visible .location__action-chip {
-  background: var(--location-ink);
-  color: #fdfaf3;
+.location__action:hover .location__action-chip,
+.location__action:focus-visible .location__action-chip {
+  border-color: var(--location-accent);
+  box-shadow:
+    0 8px 18px -10px rgba(60, 48, 36, 0.45),
+    0 2px 6px -4px rgba(60, 48, 36, 0.18);
 }
 
-.location__action[data-loc-navi="kakao"]:hover .location__action-chip,
-.location__action[data-loc-navi="kakao"]:focus-visible .location__action-chip {
-  background: #FEE500;
-  color: #371d1e;
+/* Brand-tinted hover (the chip carries the colour; the surrounding
+   transparent button stays calm so the row reads as one set). */
+.location__action[data-loc-action="map-view"]:hover .location__action-chip,
+.location__action[data-loc-action="map-view"]:focus-visible .location__action-chip {
+  background: var(--location-gold);
+  color: #ffffff;
+  border-color: var(--location-gold);
 }
 
 .location__action[data-loc-navi="naver"]:hover .location__action-chip,
 .location__action[data-loc-navi="naver"]:focus-visible .location__action-chip {
   background: #03C75A;
   color: #ffffff;
+  border-color: #03C75A;
 }
 
 .location__action[data-loc-navi="tmap"]:hover .location__action-chip,
 .location__action[data-loc-navi="tmap"]:focus-visible .location__action-chip {
   background: #ffffff;
   border-color: var(--location-accent);
-  box-shadow: 0 0 0 2px rgba(120, 59, 255, 0.10);
+  box-shadow:
+    0 0 0 2px rgba(120, 59, 255, 0.12),
+    0 6px 14px -8px rgba(60, 48, 36, 0.35);
 }
 
-.location__action.is-copied {
-  border-color: var(--location-gold);
+.location__action[data-loc-action="copy"]:hover .location__action-chip,
+.location__action[data-loc-action="copy"]:focus-visible .location__action-chip {
+  background: var(--location-ink);
+  color: #fdfaf3;
+  border-color: var(--location-ink);
 }
 
 .location__action.is-copied .location__action-chip {
   background: var(--location-gold);
   color: #ffffff;
+  border-color: var(--location-gold);
+}
+
+.location__action.is-copied .location__action-label {
+  color: var(--location-gold);
 }
 
 
@@ -480,10 +519,10 @@
 
 .location__transit {
   text-align: left;
-  padding: clamp(6px, 1.6vw, 10px) clamp(8px, 2vw, 14px);
+  padding: clamp(4px, 1.2vw, 8px) clamp(8px, 2vw, 14px);
   border-top: 1px solid var(--location-line);
   border-bottom: 1px solid var(--location-line);
-  margin: 0 0 clamp(22px, 4.6vw, 30px);
+  margin: 0 0 clamp(14px, 3.2vw, 22px);
 }
 
 .location__transit-row {
@@ -491,7 +530,7 @@
   grid-template-columns: clamp(76px, 22vw, 96px) 1fr;
   gap: clamp(12px, 3vw, 18px);
   align-items: flex-start;
-  padding: clamp(13px, 3.2vw, 16px) 0;
+  padding: clamp(10px, 2.5vw, 13px) 0;
   border-bottom: 1px solid var(--location-line-soft);
 }
 
@@ -587,55 +626,6 @@
 
 
 /* ══════════════════════════════════════════════════════════════════════
-   Footnote — single quiet line picking up tel + landmark.
-   ══════════════════════════════════════════════════════════════════════ */
-
-.location__footnote {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(8px, 2vw, 12px);
-  flex-wrap: wrap;
-  font-family: 'Sun Batang', 'Noto Serif KR', serif;
-  font-size: clamp(12px, 2.9vw, 13px);
-  font-weight: 300;
-  letter-spacing: 0.02em;
-  color: var(--location-muted);
-  line-height: 1.65;
-  margin: 0;
-}
-
-.location__tel {
-  display: inline-flex;
-  align-items: center;
-  gap: clamp(5px, 1.4vw, 7px);
-  color: var(--location-ink-soft);
-  text-decoration: none;
-  border-bottom: 1px dotted currentColor;
-  padding-bottom: 1px;
-  transition: color 0.35s ease, border-color 0.35s ease;
-}
-
-.location__tel:hover,
-.location__tel:focus-visible {
-  outline: none;
-  color: var(--location-gold);
-  border-color: var(--location-gold);
-}
-
-.location__tel-icon {
-  display: inline-flex;
-  width: clamp(11px, 2.8vw, 13px);
-  height: clamp(11px, 2.8vw, 13px);
-  color: var(--location-accent-deep);
-}
-
-.location__tel-icon svg { width: 100%; height: 100%; display: block; }
-
-.location__footnote-sep { color: var(--location-line); }
-
-
-/* ══════════════════════════════════════════════════════════════════════
    Gallery → Location wave separator (gallery cream drapes upward
    into the location section). Same DNA as the other section waves.
    ══════════════════════════════════════════════════════════════════════ */
@@ -667,6 +657,126 @@
 .gallery__wave .parallax > use:nth-child(2) { animation-delay: -3s; animation-duration: 10s; }
 .gallery__wave .parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 13s; }
 .gallery__wave .parallax > use:nth-child(4) { animation-delay: -5s; animation-duration: 20s; }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Map Modal — full-screen viewer for the hand-drawn `map.jpg` sketch
+   ──────────────────────────────────────────────────────────────────────
+   Triggered by the `지도 보기` action button. Light backdrop blur,
+   centered photo, soft drop shadow, dismissable with the close button,
+   a backdrop tap, or the Escape key (handled in location.js).
+   ══════════════════════════════════════════════════════════════════════ */
+
+.location-map-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9989;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(20px, 5vw, 36px);
+  background: rgba(20, 16, 14, 0.78);
+  backdrop-filter: blur(10px) saturate(0.95);
+  -webkit-backdrop-filter: blur(10px) saturate(0.95);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0.35s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.location-map-modal.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.location-map-modal__close {
+  position: absolute;
+  top: max(16px, env(safe-area-inset-top));
+  right: max(16px, env(safe-area-inset-right));
+  z-index: 2;
+  width: clamp(40px, 11vw, 48px);
+  height: clamp(40px, 11vw, 48px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(40, 30, 24, 0.55);
+  border: 1px solid rgba(255, 250, 240, 0.22);
+  border-radius: 50%;
+  color: rgba(255, 250, 240, 0.92);
+  cursor: pointer;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease,
+    transform 0.3s ease;
+}
+
+.location-map-modal__close svg { width: 50%; height: 50%; }
+
+.location-map-modal__close:hover,
+.location-map-modal__close:focus-visible {
+  background: rgba(60, 45, 36, 0.7);
+  border-color: rgba(255, 232, 197, 0.5);
+  outline: none;
+  transform: rotate(90deg);
+}
+
+.location-map-modal__stage {
+  position: relative;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(12px, 2.4vw, 18px);
+  max-width: min(94vw, 920px);
+  max-height: 90dvh;
+  transform: scale(0.96);
+  opacity: 0;
+  transition:
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.3s ease;
+}
+
+.location-map-modal.is-open .location-map-modal__stage {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.location-map-modal__image {
+  display: block;
+  max-width: 100%;
+  max-height: 78dvh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  background: #ffffff;
+  border-radius: clamp(6px, 1.2vw, 10px);
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.55),
+    0 6px 16px rgba(0, 0, 0, 0.32);
+  /* Pinch-zoom friendliness on touch devices. */
+  touch-action: pinch-zoom;
+}
+
+.location-map-modal__caption {
+  font-family: 'Sorts Mill Goudy', 'Noto Serif KR', serif;
+  font-size: clamp(12px, 2.8vw, 14px);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(255, 250, 240, 0.78);
+  text-align: center;
+  user-select: none;
+}
+
+body.location-map-modal-open {
+  overflow: hidden;
+  touch-action: none;
+}
 
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -797,7 +907,12 @@
     gap: 10px;
   }
   .location__action {
-    padding: 9px 4px 9px;
+    padding: 8px 12px;
+    gap: 6px;
+  }
+  .location__action-label {
+    font-size: 11.5px;
+    letter-spacing: 0.01em;
   }
 }
 

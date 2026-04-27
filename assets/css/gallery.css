@@ -346,34 +346,20 @@
   width: 100vw;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
-  /* Tight margin to the CTA below — the filmstrip's `padding-bottom`
-     already supplies all the visual breathing room past the polaroid
-     shadows, so any extra `margin-bottom` here is purely cosmetic gap.
-     Trimmed (was `clamp(36px, 8vw, 60px)`) so the "전체 사진 보기" button
-     sits ~one button-height higher without invading the shadow zone. */
-  margin-bottom: clamp(6px, 1.5vw, 12px);
-  /* Vertical padding must be large enough to *contain* the polaroid drop
-     shadow, because we cannot rely on `overflow-y: visible`: the
-     horizontal `mask-image` below is anchored to this element's border
-     box, so anything painted past the box (shadow ink included) would be
-     masked to fully transparent and disappear anyway.
-
-     `--gallery-shadow-deep` extends roughly 54 px below each card
-     (offset 26 + blur 56 − spread 28). Bottom padding is sized to clear
-     that with a small visual margin; top padding gets enough breathing
-     room for the −6 px hover lift plus the secondary upper-shadow ply. */
-  padding: clamp(40px, 8vw, 56px) 0 clamp(60px, 12vw, 76px);
-  overflow: hidden;
-  -webkit-mask-image: linear-gradient(90deg,
-                       transparent 0,
-                       #000 6%,
-                       #000 94%,
-                       transparent 100%);
-          mask-image: linear-gradient(90deg,
-                       transparent 0,
-                       #000 6%,
-                       #000 94%,
-                       transparent 100%);
+  /* Small cosmetic gap to the CTA below; the polaroid drop shadow now
+     paints into this margin (see `overflow-y: visible` below), so we
+     don't need to *also* reserve shadow-room as huge `padding-bottom`. */
+  margin-bottom: clamp(16px, 3vw, 22px);
+  /* `overflow-x: clip` keeps the over-wide track from triggering page
+     scroll, while `overflow-y: visible` lets the polaroid's deep drop
+     shadow paint *outside* the box and fade naturally into the cream
+     background instead of being amputated. Bottom padding sized so the
+     shadow tip (~50 px below each polaroid edge) lands inside the
+     filmstrip's own margin and finishes fading before reaching the CTA
+     underneath. */
+  padding: clamp(28px, 6vw, 42px) 0 clamp(28px, 5.5vw, 38px);
+  overflow-x: clip;
+  overflow-y: visible;
 }
 
 .gallery__filmstrip-track {
@@ -402,7 +388,11 @@
   flex: 0 0 auto;
   width: clamp(150px, 42vw, 220px);
   background: #fdfaf3;
-  padding: clamp(8px, 2vw, 12px) clamp(8px, 2vw, 12px) clamp(28px, 6.5vw, 42px);
+  /* Polaroid frame: classic uneven border (slightly thicker bottom edge
+     for the caption strip, but trimmed from the previous oversized
+     bottom so the empty white area below the photo no longer dwarfs the
+     image). */
+  padding: clamp(8px, 2vw, 12px) clamp(8px, 2vw, 12px) clamp(14px, 3.4vw, 22px);
   box-shadow: var(--gallery-shadow-deep);
   border-radius: 2px;
   transform: rotate(var(--polaroid-tilt, 0deg)) translateY(0);
@@ -479,7 +469,7 @@
   letter-spacing: 0.18em;
   color: var(--gallery-ink-soft);
   text-align: center;
-  margin-top: clamp(10px, 2.5vw, 14px);
+  margin-top: clamp(7px, 1.8vw, 10px);
   text-transform: none;
 }
 
@@ -491,10 +481,11 @@
 .gallery__cta {
   display: flex;
   justify-content: center;
-  /* Small top gap — partner of the filmstrip's reduced `margin-bottom`.
-     Total "polaroid-shadow → button" cosmetic gap is now ~12 px instead
-     of the previous ~52 px (≈ one button-height tighter). */
-  margin-top: clamp(4px, 1vw, 8px);
+  /* Tight to the filmstrip — the polaroid drop shadow now paints into
+     the filmstrip's bottom margin (overflow-y: visible) and fades
+     naturally into the cream background, so no extra top-margin is
+     needed to "reserve" space for the shadow. */
+  margin-top: 0;
   margin-bottom: clamp(28px, 6vw, 40px);
 }
 
