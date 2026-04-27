@@ -15,8 +15,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Noto+Serif+KR:wght@200;300;400;600&display=swap" rel="stylesheet" />
 
-  <!-- ★ Letter Title Font (교체 시 이 @font-face와 letter.css의 --letter-title-font 변수를 함께 수정) -->
-  <link rel="preload" href="assets/fonts/munche_seuki_jung.woff2?v=aeeb64db0c8ff00b" as="font" type="font/woff2" crossorigin />
+  <!-- ★ Letter Title Font (교체 시 이 @font-face와 letter.css의 --letter-title-font 변수를 함께 수정).
+       Note: no <link rel="preload" crossorigin> here on purpose — under the
+       file:// protocol the origin is `null`, so a `crossorigin` preload is
+       blocked by CORS *and* the credentials-mode mismatch makes the preload
+       useless even on http(s). The @font-face below still loads the woff2
+       on first paint via swap, which is the correct same-origin path. -->
   <style>
     @font-face {
       font-family: 'munche_seuki_jung';
@@ -32,6 +36,7 @@
   <link rel="stylesheet" href="assets/css/letter.css?v=36a25ed08d0dcede" />
   <link rel="stylesheet" href="assets/css/calendar.css?v=dc2deb8abad7d99a" />
   <link rel="stylesheet" href="assets/css/gallery.css?v=6e54a102b6b1bd23" />
+  <link rel="stylesheet" href="assets/css/location.css?v=c492227d80f41dce" />
 </head>
 <body>
   <main class="invitation" id="invitationRoot">
@@ -429,6 +434,294 @@
             </button>
           </div>
         </div>
+
+        <!-- Wavy section separator at the bottom of the gallery.
+             Mirrors `letter__wave` and `calendar__wave` exactly — same
+             SVG path, layering and per-wave timings — but filled with
+             the location section's calendar-cream (#faf6f0) so the
+             location section drapes UPWARD into the gallery, completing
+             the section-flow story established at the hero ⤓ letter ⤓
+             calendar ⤓ gallery boundaries. -->
+        <div class="gallery__wave" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 24 150 28" preserveAspectRatio="none">
+            <defs>
+              <path id="galleryWave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+            </defs>
+            <g class="parallax">
+              <use href="#galleryWave" class="wave1" x="48" y="0" fill="rgba(250,246,240,0.7)" />
+              <use href="#galleryWave" class="wave2" x="48" y="3" fill="rgba(250,246,240,0.5)" />
+              <use href="#galleryWave" class="wave3" x="48" y="5" fill="rgba(250,246,240,0.3)" />
+              <use href="#galleryWave" class="wave4" x="48" y="7" fill="#faf6f0" />
+            </g>
+          </svg>
+        </div>
+      </section>
+
+      <!-- ────────────────────────────────────────────────────────────────
+           Section 05 · Location (오시는 길) — editorial rewrite
+           ────────────────────────────────────────────────────────────────
+           Reads like a page from the same wedding photo book as Sections
+           02–04: top botanical ornament, eyebrow + script title + petal
+           divider, an editorial venue card, a hand-drawn sketch-map card
+           with an animated pin overlay (tap to open Kakao Map), a refined
+           one-line action row (copy · kakao · naver · tmap), a transit
+           list with SVG icons + colour-correct route badges, and a
+           mirrored bottom ornament. All copy + every map URL is sourced
+           from `WeddingConfig.location.venue` at runtime.
+           ──────────────────────────────────────────────────────────────── -->
+      <section class="location" id="location" aria-labelledby="locationTitle">
+        <div class="location__inner">
+
+          <!-- Top botanical ornament (mirrors letter section's stroke
+               style for visual continuity across the photo book). -->
+          <div class="location__ornament" data-reveal="fade-up" aria-hidden="true">
+            <svg viewBox="0 0 120 64" xmlns="http://www.w3.org/2000/svg" role="img" focusable="false">
+              <g fill="none" stroke="currentColor" stroke-width="0.9"
+                 stroke-linecap="round" stroke-linejoin="round"
+                 class="location__ornament-strokes">
+                <path d="M60 6 C 60 18 60 34 60 58" />
+                <path d="M60 18 C 52 15 44 14 34 16 C 42 20 50 21 60 22" />
+                <path d="M60 18 C 68 15 76 14 86 16 C 78 20 70 21 60 22" />
+                <path d="M60 30 C 50 29 42 32 32 38 C 42 38 52 36 60 34" />
+                <path d="M60 30 C 70 29 78 32 88 38 C 78 38 68 36 60 34" />
+                <path d="M60 42 C 54 42 48 45 44 50 C 50 50 56 48 60 46" />
+                <path d="M60 42 C 66 42 72 45 76 50 C 70 50 64 48 60 46" />
+              </g>
+              <g fill="currentColor" class="location__ornament-dots">
+                <circle cx="60" cy="5" r="1.2" />
+                <circle cx="60" cy="58" r="1.2" />
+              </g>
+            </svg>
+          </div>
+
+          <!-- Editorial header: eyebrow → script title → divider → venue -->
+          <header class="location__header">
+            <p class="location__eyebrow" id="locationTitle" data-reveal="fade-up">LOCATION</p>
+
+            <h2 class="location__title" data-reveal="fade-up">오시는 길</h2>
+
+            <div class="location__divider" data-reveal="fade-up" aria-hidden="true">
+              <span class="location__divider-line location__divider-line--left"></span>
+              <svg class="location__divider-mark" viewBox="0 0 16 16" focusable="false">
+                <g fill="currentColor">
+                  <circle cx="8" cy="8" r="1.4" />
+                  <circle cx="8" cy="2.8" r="0.7" />
+                  <circle cx="8" cy="13.2" r="0.7" />
+                  <circle cx="2.8" cy="8" r="0.7" />
+                  <circle cx="13.2" cy="8" r="0.7" />
+                </g>
+              </svg>
+              <span class="location__divider-line location__divider-line--right"></span>
+            </div>
+
+            <p class="location__venue-eng" data-loc-slot="venue-name" data-reveal="fade-up">Crest 72</p>
+            <h3 class="location__venue-kor" data-reveal="fade-up">
+              <span data-loc-slot="venue-kor">크레스트 72</span>
+              <span class="location__venue-hall" data-loc-slot="venue-hall">글래스홀</span>
+            </h3>
+
+            <p class="location__address" data-loc-slot="addr-road" data-reveal="fade-up">
+              서울특별시 중구 장충단로 72
+            </p>
+            <p class="location__address-sub" data-loc-slot="addr-sub" data-reveal="fade-up">
+              한국자유총연맹 자유센터
+            </p>
+          </header>
+
+          <!-- ── Kakao RoughMap embed ───────────────────────────────────
+               IMPORTANT: roughmapLoader.js uses `document.write()` to
+               bootstrap its dependency chain. That call is only legal
+               during *initial document parsing* — once DOMContentLoaded
+               fires, the browser refuses it. Therefore both the loader
+               <script> and the `new daum.roughmap.Lander(...).render()`
+               call below must remain SYNCHRONOUS (no defer / no async)
+               and live inline in HTML, not in deferred location.js. The
+               polaroid frame around them is purely cosmetic. -->
+          <figure class="location__map-card" data-reveal="fade-up">
+            <div class="location__map-frame">
+              <span class="location__map-tape location__map-tape--left"  aria-hidden="true"></span>
+              <span class="location__map-tape location__map-tape--right" aria-hidden="true"></span>
+
+              <div
+                id="daumRoughmapContainer1777298027750"
+                class="root_daum_roughmap root_daum_roughmap_landing"
+              ></div>
+            </div>
+
+            <figcaption class="location__map-caption">
+              지도를 통해 위치를 확인하시거나 아래 버튼으로 길찾기를 열어보세요.
+            </figcaption>
+          </figure>
+
+          <script charset="UTF-8" class="daum_roughmap_loader_script"
+                  src="https://ssl.daumcdn.net/dmaps/map_js_init/roughmapLoader.js"></script>
+          <script charset="UTF-8">
+            new daum.roughmap.Lander({
+              timestamp: '1777298027750',
+              key: 'mt9w6w4x9bt',
+              mapWidth: '640',
+              mapHeight: '360'
+            }).render();
+          </script>
+
+          <!-- ── Refined action row: copy · kakao · naver · tmap ─────── -->
+          <div class="location__actions" data-reveal="fade-up">
+            <button class="location__action" type="button" data-loc-action="copy" aria-label="주소 복사">
+              <span class="location__action-chip" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                  <rect x="9" y="9" width="11" height="11" rx="2" />
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                </svg>
+              </span>
+              <span class="location__action-label">주소 복사</span>
+            </button>
+
+            <a class="location__action" data-loc-navi="kakao" href="#" aria-label="카카오맵으로 길찾기">
+              <span class="location__action-chip" aria-hidden="true">
+                <svg viewBox="0 0 36 36" fill="currentColor" focusable="false">
+                  <path d="M18 6.5c-7.2 0-13 4.6-13 10.4 0 3.7 2.4 6.9 6 8.7-.3.9-1 3.4-1.2 3.9 0 0-.1.4.2.5.2.1.4 0 .5 0 .7-.1 4-2.6 4.8-3.2 1 .1 1.8.2 2.7.2 7.2 0 13-4.6 13-10.4S25.2 6.5 18 6.5z"/>
+                </svg>
+              </span>
+              <span class="location__action-label">카카오맵</span>
+            </a>
+
+            <a class="location__action" data-loc-navi="naver" href="#" aria-label="네이버지도로 길찾기">
+              <span class="location__action-chip" aria-hidden="true">
+                <svg viewBox="0 0 36 36" fill="currentColor" focusable="false">
+                  <path d="M21.6 18.9 14.6 8.5H8.5v19h6V17.1l7 10.4h6.1v-19h-6z"/>
+                </svg>
+              </span>
+              <span class="location__action-label">네이버지도</span>
+            </a>
+
+            <a class="location__action" data-loc-navi="tmap" href="#" aria-label="티맵으로 길찾기">
+              <span class="location__action-chip location__action-chip--tmap" aria-hidden="true">
+                <img src="./assets/svg/tmap.svg?v=31e5136a098ee491" alt="" loading="lazy" decoding="async" />
+              </span>
+              <span class="location__action-label">티맵</span>
+            </a>
+          </div>
+
+          <!-- ── Transit + parking ───────────────────────────────────────
+               Editorial single-column list. Each row gets its own
+               domain icon, a soft accent rule, and colour-correct
+               badges so the four transit modes are scannable. -->
+          <dl class="location__transit" data-reveal="fade-up">
+            <div class="location__transit-row">
+              <dt class="location__transit-label">
+                <span class="location__transit-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                    <rect x="5" y="3" width="14" height="15" rx="3" />
+                    <path d="M5 11h14" />
+                    <circle cx="9" cy="14.6" r="0.9" fill="currentColor" stroke="none" />
+                    <circle cx="15" cy="14.6" r="0.9" fill="currentColor" stroke="none" />
+                    <path d="M8 18l-2 3M16 18l2 3" />
+                  </svg>
+                </span>
+                <span>지하철</span>
+              </dt>
+              <dd class="location__transit-text">
+                <span class="location__badge location__badge--line-3">3</span>
+                동대입구역
+                <span class="location__badge location__badge--exit">6번출구</span>
+                <span class="muted">도보 약 15분 · 셔틀버스 운행</span>
+              </dd>
+            </div>
+
+            <div class="location__transit-row">
+              <dt class="location__transit-label">
+                <span class="location__transit-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                    <path d="M5 5h14v9H5z" />
+                    <path d="M5 14v3h2M19 14v3h-2" />
+                    <path d="M3 9h2M19 9h2" />
+                    <circle cx="8" cy="17.5" r="1.6" fill="currentColor" stroke="none" />
+                    <circle cx="16" cy="17.5" r="1.6" fill="currentColor" stroke="none" />
+                  </svg>
+                </span>
+                <span>셔틀버스</span>
+              </dt>
+              <dd class="location__transit-text">
+                동대입구역 6번출구 뒤 · <strong>15분 간격</strong> · 약 10분
+                <span class="muted">예식 시작 1시간 30분 전부터 운행</span>
+              </dd>
+            </div>
+
+            <div class="location__transit-row">
+              <dt class="location__transit-label">
+                <span class="location__transit-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                    <path d="M4 7c0-1.7 1.3-3 3-3h10c1.7 0 3 1.3 3 3v10H4V7z" />
+                    <path d="M4 11h16" />
+                    <path d="M9 17v2H7v-2M17 17v2h-2v-2" />
+                    <circle cx="8" cy="14.5" r="1" fill="currentColor" stroke="none" />
+                    <circle cx="16" cy="14.5" r="1" fill="currentColor" stroke="none" />
+                  </svg>
+                </span>
+                <span>시내버스</span>
+              </dt>
+              <dd class="location__transit-text">
+                국립극장 앞 정류장
+                <span class="muted">
+                  <span class="location__badge location__badge--bus-blue">420</span>간선 ·
+                  <span class="location__badge location__badge--bus-green">01</span>남산순환
+                </span>
+              </dd>
+            </div>
+
+            <div class="location__transit-row">
+              <dt class="location__transit-label">
+                <span class="location__transit-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                    <rect x="4" y="4" width="16" height="16" rx="3" />
+                    <path d="M9 17V8h4.4a2.6 2.6 0 0 1 0 5.2H9" />
+                  </svg>
+                </span>
+                <span>주차</span>
+              </dt>
+              <dd class="location__transit-text">
+                반얀트리 옆 · 800대 규모
+                <span class="muted">정문 · 후문 모두 이용 가능</span>
+              </dd>
+            </div>
+          </dl>
+
+          <!-- Footnote: tel + landmark, set as a quiet caption. -->
+          <p class="location__footnote" data-reveal="fade-up">
+            <a class="location__tel" data-loc-slot="tel-link" href="tel:0222327366">
+              <span class="location__tel-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" />
+                </svg>
+              </span>
+              <span data-loc-slot="tel-display">02-2232-7366</span>
+            </a>
+            <span class="location__footnote-sep" aria-hidden="true">·</span>
+            <span class="location__footnote-text">한국자유총연맹 자유센터</span>
+          </p>
+
+          <!-- Bottom mirrored ornament — closes the section. -->
+          <div class="location__ornament location__ornament--bottom" data-reveal="fade-up" aria-hidden="true">
+            <svg viewBox="0 0 120 64" xmlns="http://www.w3.org/2000/svg" role="img" focusable="false">
+              <g fill="none" stroke="currentColor" stroke-width="0.9"
+                 stroke-linecap="round" stroke-linejoin="round"
+                 class="location__ornament-strokes">
+                <path d="M60 58 C 60 46 60 30 60 6" />
+                <path d="M60 46 C 52 49 44 50 34 48 C 42 44 50 43 60 42" />
+                <path d="M60 46 C 68 49 76 50 86 48 C 78 44 70 43 60 42" />
+                <path d="M60 34 C 50 35 42 32 32 26 C 42 26 52 28 60 30" />
+                <path d="M60 34 C 70 35 78 32 88 26 C 78 26 68 28 60 30" />
+                <path d="M60 22 C 54 22 48 19 44 14 C 50 14 56 16 60 18" />
+                <path d="M60 22 C 66 22 72 19 76 14 C 70 14 64 16 60 18" />
+              </g>
+              <g fill="currentColor" class="location__ornament-dots">
+                <circle cx="60" cy="6" r="1.2" />
+                <circle cx="60" cy="58" r="1.2" />
+              </g>
+            </svg>
+          </div>
+
+        </div>
       </section>
     </section>
 
@@ -476,14 +769,28 @@
     <p class="gallery-lightbox__caption" aria-live="polite"></p>
   </div>
 
+  <!-- ────────────────────────────────────────────────────────────────
+       Copy Toast — surfaces a quiet "주소가 복사되었습니다" pill after
+       the user taps `주소 복사`. Hidden by default; shown via JS.
+       ──────────────────────────────────────────────────────────────── -->
+  <div class="location-toast" id="locationToast" role="status" aria-live="polite" aria-hidden="true">
+    <span class="location-toast__icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="5 13 10 18 20 6" />
+      </svg>
+    </span>
+    <span class="location-toast__text">주소가 복사되었습니다</span>
+  </div>
+
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script defer src="assets/js/config.js?v=a704b80d32f99411"></script>
+  <script defer src="assets/js/config.js?v=d2bbd870ba983f6c"></script>
   <script defer src="assets/data/photos.js?v=8416e6a81f26adc4"></script>
   <script defer src="assets/js/firefly.js?v=ed683e49147d4f7e"></script>
   <script defer src="assets/js/hero-animations.js?v=457763702cad7b3b"></script>
   <script defer src="assets/js/letter.js?v=5ab953a6d26c3e5d"></script>
   <script defer src="assets/js/calendar.js?v=0b8827c171cf5830"></script>
   <script defer src="assets/js/gallery.js?v=8e1e446938ebbbe1"></script>
+  <script defer src="assets/js/location.js?v=76b16ef022707ffb"></script>
   <script defer src="assets/js/main.js?v=e9c59dd3dc313188"></script>
 </body>
 </html>

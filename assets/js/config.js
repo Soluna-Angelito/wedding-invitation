@@ -155,6 +155,55 @@
       filmstripTiltMaxDeg: 2.6,
       // Maximum tape-piece rotation (deg).
       filmstripTapeMaxDeg: 5
+    },
+    // ── Section 05 · Location ────────────────────────────────────────
+    // Single source of truth for the venue identity that powers the
+    // editorial address header, the sketch-map card, every external
+    // map deep-link, and the copy-address toast. All strings here are
+    // user-facing — change once, and every label + share URL stays in
+    // sync.
+    location: {
+      // Scroll-reveal tuning (matches the gallery / calendar feel).
+      rootMargin: '0px 0px -10% 0px',
+      threshold: 0.12,
+      // ── Venue identity ────────────────────────────────────────────
+      venue: {
+        // English display name + the script title used as the map
+        // share-URL `place` parameter (kakao / naver / tmap all accept
+        // UTF-8 — Korean works equally well).
+        name: 'Crest 72',
+        // Korean script rendering of the venue name. Used in the
+        // editorial header beneath the English wordmark.
+        nameKor: '크레스트 72',
+        hall: '글래스홀',
+        // Both road-name and lot-number addresses are kept available;
+        // the road-name one is what `주소 복사` writes to the clipboard.
+        addressRoad: '서울특별시 중구 장충단로 72',
+        addressLot:  '서울특별시 중구 장충동2가 201-6',
+        landmark:    '한국자유총연맹 자유센터',
+        tel:         '02-2232-7366',
+        // Coordinates (WGS84) for 한국자유총연맹 / 자유센터 — used by
+        // every `link/to` URL that pre-fills the route destination in
+        // Kakao Map, Naver Map, and Tmap.
+        lat: 37.5547,
+        lng: 127.0048
+      },
+      // ── Kakao "RoughMap" embed (no API key required) ──────────────
+      // Generated once via https://apis.map.kakao.com/web/sample/jsMapLink/
+      // for the Crest 72 pin. Note: the loader script (roughmapLoader.js)
+      // and its `Lander(...).render()` call must both be invoked during
+      // *initial document parsing* — not after DOMContentLoaded — because
+      // the loader uses `document.write` to inject its dependency chain.
+      // index.html therefore references the loader synchronously inside
+      // Section 5 (no defer/async) and immediately calls `.render()` from
+      // an inline synchronous <script>. This config exists for the rest
+      // of the codebase to read the same identifiers in one place.
+      kakaoRoughmap: {
+        timestamp: '1777298027750',
+        key: 'mt9w6w4x9bt'
+      },
+      // ── Toast (after 주소 복사) ───────────────────────────────────
+      copyToastMs: 2200
     }
   };
 
