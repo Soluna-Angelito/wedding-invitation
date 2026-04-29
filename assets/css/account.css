@@ -185,6 +185,10 @@
   max-width: 30ch;
 }
 
+.account__intro.is-visible {
+  text-align: center;
+}
+
 .account__intro p {
   font-family: 'Sun Batang', 'Noto Serif KR', serif;
   font-size: clamp(13.5px, 3.4vw, 15.5px);
