@@ -1,0 +1,913 @@
+/* ══════════════════════════════════════════════════════════════════════
+   Section 06 · 마음 전하실 곳 (Account / Gift)
+   ──────────────────────────────────────────────────────────────────────
+   Editorial brief — same paper-card photo-book DNA as Sections 02–05:
+
+     • Botanical ornament → eyebrow (Sorts Mill Goudy) → script title
+       (`munche_seuki_jung`) → refined diamond divider (replaces the
+       earlier heart, which read too lightly for a section about
+       money) → quiet intro paragraph (Sun Batang) carrying a polite
+       notice about why account numbers are listed at all.
+     • Two collapsible "stationery folio" cards — 신랑측 / 신부측. The
+       card head is a colour-blocked button printed in white type:
+       "마음 전하실 곳: 신랑측" on an ash-sage panel for the groom card,
+       "마음 전하실 곳: 신부측" on an ash-rose panel for the bride card.
+       A small diamond ornament sits at the start of the label and
+       a translucent chevron closes the right edge; the body
+       below the head stays warm cream so the colour reads as a
+       printed envelope band rather than a UI tile. Tapping unfolds
+       the card with a smooth `grid-template-rows: 0fr → 1fr` height
+       transition and rotates the diamond mark 45°.
+     • Each member row inside the open card is pure typography:
+         · role  ·  name (printed in the side's accent colour)
+         · bank  ·  account-number (a single editorial line)
+         · centered, generously wide action button(s) in the side's
+           accent colour with white type — visually echoing the
+           parent card head.
+       The previous brand-coloured bank chip and the per-row marker
+       dot are intentionally absent so the section never reads
+       "credit-card material" beside the editorial photo-book paper
+       above and below it.
+     • The closing 감사합니다 line was removed — the polite intro
+       notice already carries the gratitude, and removing the second
+       beat lets the section breathe.
+
+   The section background alternates against the location section
+   above (#faf6f0) by reusing the page cream #eeeae5 — preserving the
+   established letter / calendar / gallery / location rhythm.
+   ══════════════════════════════════════════════════════════════════════ */
+
+.account {
+  --account-bg: #eee9e2;
+
+  --account-paper: #f7f0e4;
+  --account-paper-soft: #fbf6ec;
+  --account-paper-deep: #eadfcd;
+
+  --account-ink: #332b26;
+  --account-ink-soft: #514640;
+  --account-muted: #81756b;
+
+  /*
+    전체 장식/라인/아이콘 계열.
+    기존보다 살짝 더 warm champagne 쪽으로 이동.
+  */
+  --account-accent: #c7b89f;
+  --account-accent-soft: #ded2bd;
+  --account-accent-deep: #aa9578;
+  --account-eyebrow: #bca996;
+
+  /*
+    Groom / Bride.
+    base는 사용자가 고른 밝은 색을 유지하되,
+    deep은 흰 글씨가 읽히도록 충분히 눌러줌.
+  */
+  --account-groom:        #B2AF93;
+  --account-groom-deep:   #858067;
+  --account-groom-soft:   rgba(178, 175, 147, 0.18);
+
+  --account-bride:        #D1AC9B;
+  --account-bride-deep:   #A77C6A;
+  --account-bride-soft:   rgba(209, 172, 155, 0.18);
+
+  --account-gold:         var(--account-groom);
+  --account-gold-soft:    var(--account-groom-soft);
+  --account-rose:         var(--account-bride);
+  --account-rose-soft:    var(--account-bride-soft);
+
+  /*
+    라인은 기존보다 조금 더 따뜻하고 연하게.
+    버튼과 장식이 서로 따로 놀지 않게 함.
+  */
+  --account-line: rgba(137, 111, 82, 0.16);
+  --account-line-soft: rgba(137, 111, 82, 0.07);
+}
+
+.account__inner {
+  position: relative;
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 0 clamp(22px, 5.5vw, 36px);
+  z-index: 1;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Top + Bottom Botanical Ornaments — same stroke vocabulary as the
+   letter / location ornaments so the photo-book reads contiguous.
+   ══════════════════════════════════════════════════════════════════════ */
+
+.account__ornament {
+  display: flex;
+  justify-content: center;
+  margin-bottom: clamp(14px, 3vw, 22px);
+  color: var(--account-accent);
+}
+
+.account__ornament svg {
+  width: clamp(76px, 22vw, 108px);
+  height: auto;
+  overflow: visible;
+}
+
+.account__ornament--bottom {
+  margin-top: clamp(28px, 6vw, 44px);
+  margin-bottom: 0;
+}
+
+.account__ornament-strokes path {
+  stroke-dasharray: 200;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Editorial Header — eyebrow + script title + heart divider + intro
+   ══════════════════════════════════════════════════════════════════════ */
+
+.account__eyebrow {
+  font-family: 'Sorts Mill Goudy', serif;
+  font-size: clamp(10px, 2.5vw, 13px);
+  font-weight: 400;
+  letter-spacing: 0.42em;
+  text-indent: 0.42em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--account-eyebrow);
+  margin: 0 0 clamp(8px, 2vw, 12px);
+}
+
+.account__title {
+  font-family: 'munche_seuki_jung', 'Sun Batang', 'Noto Serif KR', serif;
+  font-size: clamp(26px, 6.6vw, 38px);
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-align: center;
+  color: var(--account-ink);
+  line-height: 1.3;
+  margin: 0 0 clamp(14px, 3.2vw, 22px);
+}
+
+/* Refined diamond divider — formal enough for a section about
+   money, while keeping the same hairline-and-mark vocabulary
+   used by the letter / location dividers above. The mark itself
+   is wider than tall (the SVG viewBox is 24×16) so the lines on
+   each side flow into the diamond's flanking dashes for a subtle
+   "deckle-edge" effect that feels like an engraver's flourish. */
+.account__divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 2vw, 14px);
+  margin: 0 auto clamp(18px, 4vw, 26px);
+  color: var(--account-accent-deep);
+}
+
+.account__divider-line {
+  display: block;
+  width: clamp(32px, 10vw, 54px);
+  height: 1px;
+  background: currentColor;
+  opacity: 0.7;
+}
+.account__divider-line--left  { transform-origin: right center; }
+.account__divider-line--right { transform-origin: left center; }
+
+.account__divider-mark {
+  width: clamp(28px, 7vw, 36px);
+  height: auto;
+  flex-shrink: 0;
+  color: var(--account-accent-deep);
+  opacity: 0.95;
+}
+
+.account__intro {
+  margin: 0 auto clamp(30px, 6.4vw, 46px);
+  max-width: 30ch;
+}
+
+.account__intro p {
+  font-family: 'Sun Batang', 'Noto Serif KR', serif;
+  font-size: clamp(13.5px, 3.4vw, 15.5px);
+  font-weight: 300;
+  line-height: 2.05;
+  color: var(--account-ink-soft);
+  letter-spacing: 0.005em;
+  word-break: keep-all;
+  margin: 0;
+}
+
+/* Optional secondary line — only rendered when config.intro.soft
+   is non-empty. Kept for backwards compat / future reuse. */
+.account__intro-soft {
+  margin-top: clamp(8px, 2vw, 14px) !important;
+  font-size: clamp(12.5px, 3.1vw, 14px) !important;
+  color: var(--account-muted) !important;
+  letter-spacing: 0.01em !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Card Stack — 신랑측 / 신부측 collapsible envelopes
+   ══════════════════════════════════════════════════════════════════════ */
+
+.account__cards {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(16px, 3.8vw, 22px);
+  margin: 0 auto;
+}
+
+/*
+ * "Stationery folio" card — a warm cream paper body topped by a
+ * solid colour-blocked head ("button"). The colour reads as quiet,
+ * pressed pigment rather than UI: ash-sage on the groom card and
+ * ash-rose on the bride card. White typography on the head plays
+ * the wedding-stationery role of an envelope's printed band.
+ *
+ * Per-side custom properties (--card-accent / --card-accent-deep /
+ * --card-accent-soft / --card-on-accent) cascade into the head, the
+ * inside name colour, and the action buttons — one source of truth
+ * for the full theming of each side.
+ */
+.account__card {
+  position: relative;
+  background:
+    linear-gradient(180deg,
+      var(--account-paper-soft) 0%,
+      var(--account-paper) 55%,
+      var(--account-paper-deep) 100%);
+  border: 1px solid var(--account-line);
+  border-radius: clamp(6px, 1.6vw, 10px);
+  box-shadow: var(--account-shadow);
+  text-align: left;
+  overflow: hidden;
+  transition:
+    box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.4s ease,
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  /* Default (groom) accent values — overridden for the bride card. */
+  --card-accent:      var(--account-groom);
+  --card-accent-deep: var(--account-groom-deep);
+  --card-accent-soft: var(--account-groom-soft);
+  --card-on-accent:   #ffffff;
+}
+
+.account__card:hover {
+  box-shadow: var(--account-shadow-hover);
+  border-color: rgba(120, 100, 80, 0.26);
+  transform: translateY(-1px);
+}
+
+.account__card[data-account-side="bride"] {
+  --card-accent:      var(--account-bride);
+  --card-accent-deep: var(--account-bride-deep);
+  --card-accent-soft: var(--account-bride-soft);
+}
+
+/* Soft paper-grain wash inside the body (below the head). The two
+   radial highlights mimic the way light catches a folded card. */
+.account__card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(900px 220px at 18% -10%,
+                    rgba(255, 248, 232, 0.55),
+                    rgba(255, 248, 232, 0) 60%),
+    radial-gradient(700px 180px at 110% 110%,
+                    rgba(60, 48, 36, 0.045),
+                    rgba(60, 48, 36, 0) 60%);
+  z-index: 0;
+}
+
+
+/* ── Card head (the colour-blocked button) ──────────────────────────
+   Filled with the side's accent colour. White typography across the
+   head — label, ornament mark, chevron — gives the closed state a
+   confident "envelope band" presence. A subtle inset top-highlight
+   keeps the surface from reading flat. */
+
+.account__card-head {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 2.5vw, 14px);
+  width: 100%;
+  padding: clamp(16px, 4.2vw, 22px) clamp(18px, 4.5vw, 26px);
+  background: var(--card-accent);
+  border: 0;
+  cursor: pointer;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  text-align: left;
+  font-family: inherit;
+  color: var(--card-on-accent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  transition: background 0.45s ease, box-shadow 0.45s ease;
+}
+
+.account__card-head:hover {
+  background: var(--card-accent-deep);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.account__card-head:focus-visible {
+  outline: 1.5px solid rgba(255, 255, 255, 0.65);
+  outline-offset: -4px;
+  background: var(--card-accent-deep);
+}
+
+/* Small ornament mark at the start of the head label. White on the
+   filled colour panel, rotates 45° when the card opens. */
+.account__card-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(15px, 3.6vw, 18px);
+  height: clamp(15px, 3.6vw, 18px);
+  flex-shrink: 0;
+  color: var(--card-on-accent);
+  opacity: 0.92;
+  transition: opacity 0.35s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.account__card-mark svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+.account__card.is-open .account__card-mark {
+  transform: rotate(45deg);
+  opacity: 1;
+}
+
+/* The single editorial label — "마음 전하실 곳: 신랑측" — printed in
+   white across the colour-blocked head. The colon hugs the prefix
+   tight (no leading space) and gets a small breathing margin only
+   on its right edge. */
+.account__card-label {
+  flex: 1;
+  min-width: 0;
+  font-family: 'Sun Batang', 'Noto Serif KR', serif;
+  font-size: clamp(14.5px, 3.7vw, 16.5px);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--card-on-accent);
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Colon separator — slightly translucent so it reads as a quiet
+   typographic mark, not a heavy slab. No left margin (sits flush
+   against the prefix), small right margin for breathing room. */
+.account__card-label-sep {
+  display: inline-block;
+  margin: 0 clamp(3px, 0.7vw, 5px) 0 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 300;
+  transform: translateY(-1px);
+}
+
+/* Chevron toggle — translucent ring on the colour panel that
+   rotates smoothly when the card opens. */
+.account__card-toggle {
+  width: clamp(28px, 6.6vw, 32px);
+  height: clamp(28px, 6.6vw, 32px);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--card-on-accent);
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  transition:
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.35s ease,
+    border-color 0.35s ease;
+}
+
+.account__card-toggle svg {
+  width: 55%;
+  height: 55%;
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.account__card.is-open .account__card-toggle {
+  transform: rotate(180deg);
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+
+/* ── Card panel (collapsible body) ──────────────────────────────── */
+
+/*
+ * Smooth height animation without any JS height calc:
+ * the outer panel transitions `grid-template-rows` between 0fr and
+ * 1fr, while the inner wrapper's `overflow: hidden` clips children
+ * during the collapse. Modern browsers (Chrome 117+, Safari 17.2+,
+ * Firefox 124+) animate this natively. Older browsers fall back
+ * gracefully to an instant snap (the panel is still fully usable).
+ */
+.account__card-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  z-index: 2;
+}
+
+.account__card.is-open .account__card-panel {
+  grid-template-rows: 1fr;
+}
+
+.account__card-panel-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Faint hairline that appears between the head and the body when
+   the card opens — sells the "envelope flap unfolds" feel. */
+.account__card-panel-inner::before {
+  content: '';
+  display: block;
+  height: 1px;
+  margin: 0 clamp(16px, 4vw, 22px);
+  background: linear-gradient(90deg,
+    rgba(120, 100, 80, 0) 0%,
+    rgba(120, 100, 80, 0.18) 50%,
+    rgba(120, 100, 80, 0) 100%);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.1s;
+}
+
+.account__card.is-open .account__card-panel-inner::before {
+  transform: scaleX(1);
+}
+
+.account__list {
+  list-style: none;
+  margin: 0;
+  padding: clamp(8px, 2vw, 14px) clamp(14px, 4vw, 20px) clamp(14px, 3.6vw, 22px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(12px, 3vw, 18px);
+}
+
+/* Soft fade-in for items inside an opening card — staggered via
+   nth-child so the rows ripple in rather than appearing all at once. */
+.account__item {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.account__card.is-open .account__item {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.account__card.is-open .account__item:nth-child(1) { transition-delay: 0.10s; }
+.account__card.is-open .account__item:nth-child(2) { transition-delay: 0.18s; }
+.account__card.is-open .account__item:nth-child(3) { transition-delay: 0.26s; }
+.account__card.is-open .account__item:nth-child(4) { transition-delay: 0.34s; }
+.account__card.is-open .account__item:nth-child(5) { transition-delay: 0.42s; }
+
+
+/* ── Member row ─────────────────────────────────────────────────────
+   Pure typographic stack inside each opened card:
+     ① role  ·  name (in the side's accent colour)
+     ② bank  ·  account-number   (a single editorial line)
+     ③ action buttons             (centered, wide, side-coloured)
+   Rows are separated by a hairline that fades to nothing on either
+   end so the list reads as a printed page rather than a UI table. */
+
+.account__item {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: clamp(10px, 2.4vw, 14px);
+  padding: clamp(16px, 3.6vw, 20px) clamp(2px, 0.6vw, 6px) clamp(14px, 3vw, 18px);
+}
+
+.account__item + .account__item {
+  border-top: 1px solid transparent;
+  background-image: linear-gradient(90deg,
+    rgba(120, 100, 80, 0) 0%,
+    rgba(120, 100, 80, 0.18) 24%,
+    rgba(120, 100, 80, 0.18) 76%,
+    rgba(120, 100, 80, 0) 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 1px;
+  background-position: top center;
+}
+
+
+/* Meta block — role + name on the first line, bank + number on the
+   second. Centered alignment matches the section's editorial axis
+   while keeping the typography light. */
+.account__item-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(4px, 1vw, 6px);
+  min-width: 0;
+  text-align: center;
+}
+
+/* Role label — small caps-feeling letter-spacing, printed in the
+   deep variant of the side's accent colour so it pairs with the
+   name below it. (No bullet dot before it — the previous
+   typographic marker has been removed.) */
+.account__item-role {
+  font-family: 'Sun Batang', 'Noto Serif KR', serif;
+  font-size: clamp(11px, 2.8vw, 12px);
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  color: var(--card-accent-deep);
+  text-transform: none;
+  margin-right: clamp(6px, 1.6vw, 8px);
+}
+
+/* Name — printed in the deep variant of the side's accent colour so
+   the row carries the visual identity of its parent card head while
+   reading slightly more grounded than the head's lighter accent. */
+.account__item-name {
+  font-family: 'Sun Batang', 'Noto Serif KR', serif;
+  font-size: clamp(16px, 4vw, 17.5px);
+  font-weight: 600;
+  color: var(--card-accent-deep);
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: baseline;
+  gap: clamp(2px, 0.5vw, 4px);
+  line-height: 1.35;
+}
+
+/* Bank + account number share one line, with a quiet middot dot
+   between them. On narrow viewports the line wraps gracefully. */
+.account__item-bank-line {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  gap: clamp(6px, 1.6vw, 10px);
+  margin-top: clamp(2px, 0.6vw, 4px);
+  line-height: 1.45;
+}
+
+.account__item-bank {
+  font-family: 'Sun Batang', 'Noto Serif KR', serif;
+  font-size: clamp(13px, 3.2vw, 14px);
+  font-weight: 400;
+  color: var(--account-muted);
+  letter-spacing: 0.04em;
+}
+
+.account__item-bank-line-sep {
+  font-family: 'Sun Batang', 'Noto Serif KR', serif;
+  font-size: clamp(13px, 3.2vw, 14px);
+  color: var(--account-accent-deep);
+  opacity: 0.55;
+  user-select: none;
+}
+
+.account__item-number {
+  font-family: 'Sorts Mill Goudy', 'Sun Batang', 'Noto Serif KR', serif;
+  font-size: clamp(15.5px, 4vw, 17px);
+  font-weight: 400;
+  color: var(--account-ink);
+  letter-spacing: 0.05em;
+  font-feature-settings: 'tnum' 1, 'lnum' 1;
+  word-break: break-all;
+  line-height: 1.4;
+}
+
+
+/* Actions — sit below the meta block, centered, generously wide.
+   Single button stretches to a comfortable width (≈70% of the
+   row); two buttons share the row equally. */
+.account__item-actions {
+  display: flex;
+  gap: clamp(8px, 2vw, 12px);
+  align-items: stretch;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: clamp(6px, 1.6vw, 10px);
+  width: 100%;
+}
+
+/*
+ * The action button — filled with the side's accent colour, white
+ * type, generously sized. Hover deepens the colour and lifts the
+ * pill gently. No outline ghost state any more: the button now
+ * carries the same colour weight as its parent card head, so the
+ * inside of the card "rhymes" with the outside.
+ */
+.account__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(6px, 1.4vw, 8px);
+  flex: 1 1 0;
+  min-width: 0;
+  /* `min-width: 60%` would clip a single-button row on very narrow
+     screens; instead we let it grow to the row width via flex: 1
+     and cap it generously so a lone "복사" button reads as a
+     deliberate full-width call to action. */
+  max-width: clamp(220px, 70vw, 320px);
+  height: clamp(38px, 9vw, 44px);
+  padding: 0 clamp(16px, 4vw, 22px);
+  border-radius: 999px;
+  font-family: 'Sun Batang', 'Noto Serif KR', serif;
+  font-size: clamp(12.5px, 3.1vw, 13.5px);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  border: 1px solid var(--card-accent);
+  background: var(--card-accent);
+  color: var(--card-on-accent, #ffffff);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18),
+              0 4px 10px -8px rgba(60, 48, 36, 0.4);
+  transition:
+    background 0.4s ease,
+    color 0.4s ease,
+    border-color 0.4s ease,
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.4s ease;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* When the row holds just one button, the flex:1 still applies but
+   the max-width centers it in the row. Two buttons split evenly. */
+.account__item-actions:has(.account__btn:only-child) .account__btn {
+  flex: 0 1 auto;
+  width: 100%;
+  max-width: clamp(220px, 78vw, 340px);
+}
+
+.account__btn svg {
+  width: clamp(13px, 3.2vw, 15px);
+  height: clamp(13px, 3.2vw, 15px);
+  flex-shrink: 0;
+  display: block;
+  opacity: 0.95;
+}
+
+.account__btn:hover,
+.account__btn:focus-visible {
+  background: var(--card-accent-deep);
+  border-color: var(--card-accent-deep);
+  outline: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22),
+              0 8px 18px -10px rgba(60, 48, 36, 0.5);
+  transform: translateY(-1px);
+}
+
+.account__btn:hover svg,
+.account__btn:focus-visible svg {
+  opacity: 1;
+}
+
+.account__btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.account__btn--copy.is-copied {
+  background: var(--account-ink);
+  border-color: var(--account-ink);
+  color: #fdfaf3;
+}
+
+/* Kakao Pay button — kept available for future config-enabled send
+   links. Sits next to 복사 in the same wide-and-centered row, but
+   uses the kakao-brown / yellow palette so the deep-link reads as
+   a recognised brand affordance without breaking the section's
+   sophistication. */
+.account__btn--kakao {
+  background: #2c1e1e;
+  border-color: #2c1e1e;
+  color: #ffe500;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06),
+              0 4px 10px -8px rgba(60, 48, 36, 0.4);
+}
+
+.account__btn--kakao:hover,
+.account__btn--kakao:focus-visible {
+  background: #1c1212;
+  border-color: #1c1212;
+  color: #ffe500;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08),
+              0 8px 18px -10px rgba(60, 48, 36, 0.45);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Location → Account wave separator
+   ──────────────────────────────────────────────────────────────────────
+   Lives at the BOTTOM of the location section, structurally mirroring
+   the existing letter / calendar / gallery wave drapes. The location
+   section's cream (#faf6f0) drapes UPWARD into the account section's
+   cream (#eeeae5) — completing the section-flow story.
+   ══════════════════════════════════════════════════════════════════════ */
+
+.location__wave {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  z-index: 1;
+  overflow: hidden;
+  line-height: 0;
+  pointer-events: none;
+}
+
+.location__wave svg {
+  display: block;
+  width: 100%;
+  min-width: 100%;
+  height: clamp(30px, 15vh, 40px);
+}
+
+.location__wave .parallax > use {
+  animation: waveMove 25s cubic-bezier(0.55, 0.5, 0.45, 0.5) infinite;
+  will-change: transform;
+}
+
+.location__wave .parallax > use:nth-child(1) { animation-delay: -2s; animation-duration: 7s;  }
+.location__wave .parallax > use:nth-child(2) { animation-delay: -3s; animation-duration: 10s; }
+.location__wave .parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 13s; }
+.location__wave .parallax > use:nth-child(4) { animation-delay: -5s; animation-duration: 20s; }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Scroll-Reveal Animations — applied only when JS adds .account--animated.
+   Without JS the section remains fully visible and readable.
+   ══════════════════════════════════════════════════════════════════════ */
+
+.account--animated [data-reveal="fade-up"] {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.account--animated [data-reveal="fade-up"].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.account--animated [data-reveal-item] {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.account--animated [data-reveal-item].is-visible,
+.account--animated [data-reveal].is-visible [data-reveal-item] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger the two cards inside `.account__cards` so the second
+   card arrives a beat after the first — same rhythm as the
+   location section's transit list. */
+.account--animated .account__cards.is-visible [data-reveal-item]:nth-child(1) { transition-delay: 0.06s; }
+.account--animated .account__cards.is-visible [data-reveal-item]:nth-child(2) { transition-delay: 0.16s; }
+
+/* Petal divider scaleX-in. */
+.account--animated .account__divider-line {
+  transform: scaleX(0);
+  transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.account--animated .account__divider.is-visible .account__divider-line {
+  transform: scaleX(1);
+}
+
+.account--animated .account__divider-mark {
+  opacity: 0;
+  transform: scale(0.6) rotate(-30deg);
+  transition:
+    opacity 0.55s ease,
+    transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition-delay: 0.32s;
+}
+
+.account--animated .account__divider.is-visible .account__divider-mark {
+  opacity: 1;
+  transform: scale(1) rotate(0);
+}
+
+/* Ornament stroke drawing — same DNA as letter ornaments. */
+.account--animated .account__ornament-strokes path {
+  stroke-dashoffset: 200;
+  transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.account--animated .account__ornament.is-drawn .account__ornament-strokes path {
+  stroke-dashoffset: 0;
+}
+
+.account--animated .account__ornament-strokes path:nth-child(1) { transition-delay: 0.00s; }
+.account--animated .account__ornament-strokes path:nth-child(2) { transition-delay: 0.15s; }
+.account--animated .account__ornament-strokes path:nth-child(3) { transition-delay: 0.15s; }
+.account--animated .account__ornament-strokes path:nth-child(4) { transition-delay: 0.30s; }
+.account--animated .account__ornament-strokes path:nth-child(5) { transition-delay: 0.30s; }
+.account--animated .account__ornament-strokes path:nth-child(6) { transition-delay: 0.45s; }
+.account--animated .account__ornament-strokes path:nth-child(7) { transition-delay: 0.45s; }
+
+.account--animated .account__ornament-dots circle {
+  opacity: 0;
+  transition: opacity 0.7s ease 0.6s;
+}
+
+.account--animated .account__ornament.is-drawn .account__ornament-dots circle {
+  opacity: 1;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Responsive Refinements
+   ══════════════════════════════════════════════════════════════════════ */
+
+@media (min-width: 768px) {
+  .account__inner { max-width: 540px; }
+}
+
+@media (min-width: 1024px) {
+  .account__inner { max-width: 600px; }
+}
+
+@media (max-width: 380px) {
+  /* On the smallest phones tighten the action button so a long
+     account number on the line above doesn't push it off the row,
+     and shrink the head label letter-spacing a touch. */
+  .account__btn {
+    height: 36px;
+    padding: 0 14px;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+  }
+  .account__card-label {
+    font-size: 14px;
+    letter-spacing: 0.03em;
+  }
+  .account__item-bank-line {
+    gap: 6px;
+  }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Reduced Motion
+   ══════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .account--animated [data-reveal="fade-up"],
+  .account--animated [data-reveal-item],
+  .account--animated .account__divider-line,
+  .account--animated .account__divider-mark,
+  .account--animated .account__ornament-strokes path,
+  .account--animated .account__ornament-dots circle {
+    transition: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+
+  .account__card,
+  .account__card-toggle,
+  .account__card-panel,
+  .account__card-panel-inner::before,
+  .account__item,
+  .account__btn {
+    transition: none !important;
+  }
+
+  .location__wave .parallax > use { animation: none !important; }
+}

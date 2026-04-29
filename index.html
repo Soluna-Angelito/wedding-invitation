@@ -36,7 +36,8 @@
   <link rel="stylesheet" href="assets/css/letter.css?v=36a25ed08d0dcede" />
   <link rel="stylesheet" href="assets/css/calendar.css?v=dc2deb8abad7d99a" />
   <link rel="stylesheet" href="assets/css/gallery.css?v=ee5a670876b1e4cb" />
-  <link rel="stylesheet" href="assets/css/location.css?v=bd6ae9e8075af67f" />
+  <link rel="stylesheet" href="assets/css/location.css?v=1bd14fda5803a209" />
+  <link rel="stylesheet" href="assets/css/account.css?v=0f6533299b5740e7" />
 </head>
 <body>
   <main class="invitation" id="invitationRoot">
@@ -156,12 +157,12 @@
 
           <ul class="letter__family" role="list" data-reveal="stagger">
             <li class="letter__family-row" data-reveal-item>
-              <span class="letter__family-parents"><em>아빠</em> &middot; <em>엄마</em></span>
+              <span class="letter__family-parents"><em>정인복</em> &middot; <em>전명자</em></span>
               <span class="letter__family-rel">의 아들</span>
               <span class="letter__family-name">성문</span>
             </li>
             <li class="letter__family-row" data-reveal-item>
-              <span class="letter__family-parents"><em>엄마</em> &middot; <em>아빠</em></span>
+              <span class="letter__family-parents"><em>송점수</em> &middot; <em>이혜경</em></span>
               <span class="letter__family-rel">의 딸</span>
               <span class="letter__family-name">나은</span>
             </li>
@@ -606,103 +607,58 @@
           </div>
 
           <!-- ── Transit + parking ───────────────────────────────────────
-               Senior-friendly card stack: each transit mode gets its
-               own white paper card with a large icon-on-tinted-disk
-               header, a hairline rule, and roomy body text with
-               colour-correct route badges. Larger base font sizes
-               (≈17px primary / 14.5px meta) keep the section legible
-               without reading glasses. -->
+               Editorial minimal list: each mode is a row composed of a
+               thin outlined-circle icon on the left and clean typography
+               on the right (bold Korean title, then detail lines). No
+               card backgrounds or hairlines — the breathing room
+               between items carries the structure. Senior-friendly:
+               body lines run ≈16-17px with a relaxed 1.65 leading. -->
           <ul class="location__transit" role="list" data-reveal="fade-up">
-            <li class="location__transit-card">
-              <div class="location__transit-head">
-                <span class="location__transit-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" focusable="false">
-                    <rect x="5" y="3" width="14" height="15" rx="3" />
-                    <path d="M5 11h14" />
-                    <circle cx="9" cy="14.6" r="0.9" fill="currentColor" stroke="none" />
-                    <circle cx="15" cy="14.6" r="0.9" fill="currentColor" stroke="none" />
-                    <path d="M8 18l-2 3M16 18l2 3" />
-                  </svg>
-                </span>
+            <li class="location__transit-item">
+              <span class="location__transit-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                  <rect x="5" y="3" width="14" height="15" rx="3" />
+                  <path d="M5 11h14" />
+                  <circle cx="9" cy="14.6" r="0.9" fill="currentColor" stroke="none" />
+                  <circle cx="15" cy="14.6" r="0.9" fill="currentColor" stroke="none" />
+                  <path d="M8 18l-2 3M16 18l2 3" />
+                </svg>
+              </span>
+              <div class="location__transit-info">
                 <h3 class="location__transit-title">지하철</h3>
-              </div>
-              <div class="location__transit-body">
-                <p class="location__transit-line">
-                  <span class="location__badge location__badge--line-3">3</span>
-                  <span class="location__transit-place">동대입구역</span>
-                  <span class="location__badge location__badge--exit">6번출구</span>
-                </p>
-                <p class="location__transit-meta">도보 약 15분 · 셔틀버스 운행</p>
+                <p class="location__transit-detail">3호선 동대입구역 6번 출구 하차 후 셔틀버스 탑승</p>
+                <p class="location__transit-meta">15분 간격 운행 · 예식 시작 1시간 30분 전부터</p>
               </div>
             </li>
 
-            <li class="location__transit-card">
-              <div class="location__transit-head">
-                <span class="location__transit-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" focusable="false">
-                    <path d="M5 5h14v9H5z" />
-                    <path d="M5 14v3h2M19 14v3h-2" />
-                    <path d="M3 9h2M19 9h2" />
-                    <circle cx="8" cy="17.5" r="1.6" fill="currentColor" stroke="none" />
-                    <circle cx="16" cy="17.5" r="1.6" fill="currentColor" stroke="none" />
-                  </svg>
-                </span>
-                <h3 class="location__transit-title">셔틀버스</h3>
-              </div>
-              <div class="location__transit-body">
-                <p class="location__transit-line">
-                  <span class="location__transit-place">동대입구역 6번출구 뒤</span>
-                  <span class="location__transit-sep" aria-hidden="true">·</span>
-                  <strong>15분 간격</strong>
-                  <span class="location__transit-sep" aria-hidden="true">·</span>
-                  약 10분
-                </p>
-                <p class="location__transit-meta">예식 시작 1시간 30분 전부터 운행</p>
+            <li class="location__transit-item">
+              <span class="location__transit-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                  <path d="M4 7c0-1.7 1.3-3 3-3h10c1.7 0 3 1.3 3 3v10H4V7z" />
+                  <path d="M4 11h16" />
+                  <path d="M9 17v2H7v-2M17 17v2h-2v-2" />
+                  <circle cx="8" cy="14.5" r="1" fill="currentColor" stroke="none" />
+                  <circle cx="16" cy="14.5" r="1" fill="currentColor" stroke="none" />
+                </svg>
+              </span>
+              <div class="location__transit-info">
+                <h3 class="location__transit-title">버스</h3>
+                <p class="location__transit-detail">국립극장 앞 정류장 하차</p>
+                <p class="location__transit-meta">간선 420번 (파란색) · 남산순환 01A, 01B번</p>
               </div>
             </li>
 
-            <li class="location__transit-card">
-              <div class="location__transit-head">
-                <span class="location__transit-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" focusable="false">
-                    <path d="M4 7c0-1.7 1.3-3 3-3h10c1.7 0 3 1.3 3 3v10H4V7z" />
-                    <path d="M4 11h16" />
-                    <path d="M9 17v2H7v-2M17 17v2h-2v-2" />
-                    <circle cx="8" cy="14.5" r="1" fill="currentColor" stroke="none" />
-                    <circle cx="16" cy="14.5" r="1" fill="currentColor" stroke="none" />
-                  </svg>
-                </span>
-                <h3 class="location__transit-title">시내버스</h3>
-              </div>
-              <div class="location__transit-body">
-                <p class="location__transit-line">
-                  <span class="location__transit-place">국립극장 앞 정류장</span>
-                </p>
-                <p class="location__transit-meta">
-                  <span class="location__badge location__badge--bus-blue">420</span>간선
-                  <span class="location__transit-sep" aria-hidden="true">·</span>
-                  <span class="location__badge location__badge--bus-green">01</span>남산순환
-                </p>
-              </div>
-            </li>
-
-            <li class="location__transit-card">
-              <div class="location__transit-head">
-                <span class="location__transit-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" focusable="false">
-                    <rect x="4" y="4" width="16" height="16" rx="3" />
-                    <path d="M9 17V8h4.4a2.6 2.6 0 0 1 0 5.2H9" />
-                  </svg>
-                </span>
+            <li class="location__transit-item">
+              <span class="location__transit-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                  <rect x="4" y="4" width="16" height="16" rx="3" />
+                  <path d="M9 17V8h4.4a2.6 2.6 0 0 1 0 5.2H9" />
+                </svg>
+              </span>
+              <div class="location__transit-info">
                 <h3 class="location__transit-title">주차</h3>
-              </div>
-              <div class="location__transit-body">
-                <p class="location__transit-line">
-                  <span class="location__transit-place">반얀트리 옆</span>
-                  <span class="location__transit-sep" aria-hidden="true">·</span>
-                  <strong>800대 규모</strong>
-                </p>
-                <p class="location__transit-meta">정문 · 후문 모두 이용 가능</p>
+                <p class="location__transit-detail">정문 및 후문 최대 800대 주차 가능</p>
+                <p class="location__transit-meta">반얀트리 옆</p>
               </div>
             </li>
           </ul>
@@ -722,6 +678,193 @@
                 <path d="M60 22 C 66 22 72 19 76 14 C 70 14 64 16 60 18" />
               </g>
               <g fill="currentColor" class="location__ornament-dots">
+                <circle cx="60" cy="6" r="1.2" />
+                <circle cx="60" cy="58" r="1.2" />
+              </g>
+            </svg>
+          </div>
+
+        </div>
+
+        <!-- Wavy section separator at the bottom of the location section.
+             Mirrors `letter__wave`, `calendar__wave`, and `gallery__wave`
+             exactly — same SVG path, layering, and per-wave timings —
+             but filled with the account section's page cream (#eeeae5)
+             so the account section drapes UPWARD into the location
+             cream (#faf6f0), completing the section-flow story
+             established at the hero ⤓ letter ⤓ calendar ⤓ gallery ⤓
+             location ⤓ account boundaries. -->
+        <div class="location__wave" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 24 150 28" preserveAspectRatio="none">
+            <defs>
+              <path id="locationWave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+            </defs>
+            <g class="parallax">
+              <use href="#locationWave" class="wave1" x="48" y="0" fill="rgba(238,234,229,0.7)" />
+              <use href="#locationWave" class="wave2" x="48" y="3" fill="rgba(238,234,229,0.5)" />
+              <use href="#locationWave" class="wave3" x="48" y="5" fill="rgba(238,234,229,0.3)" />
+              <use href="#locationWave" class="wave4" x="48" y="7" fill="#eeeae5" />
+            </g>
+          </svg>
+        </div>
+      </section>
+
+      <!-- ────────────────────────────────────────────────────────────────
+           Section 06 · 마음 전하실 곳 (Account / Gift)
+           ────────────────────────────────────────────────────────────────
+           Reads like the next page of the same wedding photo book as
+           Sections 02–05: top botanical ornament, eyebrow + script
+           title + heart divider, a quiet intro paragraph, then two
+           collapsible "envelope" cards (신랑측 / 신부측). Each member
+           row carries a brand-coloured bank chip, the bank/account
+           stack, and the action buttons (복사 + optional 송금 deep-link).
+           A closing 감사합니다 line and a mirrored bottom ornament
+           bookend the section. All copy + member data is sourced
+           from `WeddingConfig.account` at runtime via account.js.
+           ──────────────────────────────────────────────────────────── -->
+      <section class="account" id="account" aria-labelledby="accountTitle">
+        <div class="account__inner">
+
+          <!-- Top botanical ornament — same stroke vocabulary as the
+               letter / location ornaments so the photo-book reads
+               visually contiguous across sections. -->
+          <div class="account__ornament" data-reveal="fade-up" aria-hidden="true">
+            <svg viewBox="0 0 120 64" xmlns="http://www.w3.org/2000/svg" role="img" focusable="false">
+              <g fill="none" stroke="currentColor" stroke-width="0.9"
+                 stroke-linecap="round" stroke-linejoin="round"
+                 class="account__ornament-strokes">
+                <path d="M60 6 C 60 18 60 34 60 58" />
+                <path d="M60 18 C 52 15 44 14 34 16 C 42 20 50 21 60 22" />
+                <path d="M60 18 C 68 15 76 14 86 16 C 78 20 70 21 60 22" />
+                <path d="M60 30 C 50 29 42 32 32 38 C 42 38 52 36 60 34" />
+                <path d="M60 30 C 70 29 78 32 88 38 C 78 38 68 36 60 34" />
+                <path d="M60 42 C 54 42 48 45 44 50 C 50 50 56 48 60 46" />
+                <path d="M60 42 C 66 42 72 45 76 50 C 70 50 64 48 60 46" />
+              </g>
+              <g fill="currentColor" class="account__ornament-dots">
+                <circle cx="60" cy="5" r="1.2" />
+                <circle cx="60" cy="58" r="1.2" />
+              </g>
+            </svg>
+          </div>
+
+          <!-- Editorial header: eyebrow → script title → heart divider -->
+          <p class="account__eyebrow" id="accountTitle" data-account-slot="eyebrow" data-reveal="fade-up">WITH HEART</p>
+
+          <h2 class="account__title" data-account-slot="title" data-reveal="fade-up">마음 전하실 곳</h2>
+
+          <!-- Refined diamond mark — formal enough for a section
+               about money, while keeping the same hairline-and-mark
+               vocabulary as the letter / location dividers above. -->
+          <div class="account__divider" data-reveal="fade-up" aria-hidden="true">
+            <span class="account__divider-line account__divider-line--left"></span>
+            <svg class="account__divider-mark" viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg" focusable="false">
+              <g fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="round">
+                <path d="M3 8 L7 8" />
+                <path d="M17 8 L21 8" />
+                <path d="M12 3 L16 8 L12 13 L8 8 Z" />
+              </g>
+              <circle cx="12" cy="8" r="1.4" fill="currentColor" />
+            </svg>
+            <span class="account__divider-line account__divider-line--right"></span>
+          </div>
+
+          <!-- Intro copy — `lines` + `soft` are emitted in account.js
+               from WeddingConfig.account.intro so a single config
+               edit updates the displayed copy. The fallback below
+               mirrors the configured text so the section reads
+               correctly even when JavaScript is disabled. -->
+          <div class="account__intro" data-account-slot="lines" data-reveal="fade-up">
+            <p>참석 못하시는 분들의 요청으로</p>
+            <p>부득이하게 계좌번호 올려드림을</p>
+            <p>널리 양해 부탁드립니다.</p>
+          </div>
+
+          <!-- Card stack — 신랑측 / 신부측 collapsible envelopes.
+               Each card head is a single editorial label "마음 전하실 곳 :
+               신랑측 / 신부측" — set from WeddingConfig.account.{side}.
+               headLabel — followed by an ornament mark and a chevron
+               toggle. The member rows inside `[data-account-list]` are
+               rendered by account.js as a clean typographic list (no
+               brand-coloured bank chips). The visible fallbacks make
+               the section meaningful even without JavaScript. -->
+          <div class="account__cards" data-reveal="fade-up">
+
+            <!-- ── 신랑측 ─────────────────────────────────────── -->
+            <article class="account__card" data-account-side="groom" data-reveal-item>
+              <button class="account__card-head"
+                      type="button"
+                      data-account-toggle
+                      aria-expanded="false"
+                      aria-controls="accountPanelGroom">
+                <span class="account__card-mark" aria-hidden="true">
+                  <svg viewBox="0 0 16 16" focusable="false">
+                    <g fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="round">
+                      <path d="M8 2.5 L13.5 8 L8 13.5 L2.5 8 Z" />
+                    </g>
+                    <circle cx="8" cy="8" r="1.3" fill="currentColor" />
+                  </svg>
+                </span>
+                <span class="account__card-label" data-account-card-label>마음 전하실 곳<span class="account__card-label-sep" aria-hidden="true">:</span> 신랑측</span>
+                <span class="account__card-toggle" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </span>
+              </button>
+              <div class="account__card-panel" id="accountPanelGroom">
+                <div class="account__card-panel-inner">
+                  <ul class="account__list" role="list" data-account-list="groom"></ul>
+                </div>
+              </div>
+            </article>
+
+            <!-- ── 신부측 ─────────────────────────────────────── -->
+            <article class="account__card" data-account-side="bride" data-reveal-item>
+              <button class="account__card-head"
+                      type="button"
+                      data-account-toggle
+                      aria-expanded="false"
+                      aria-controls="accountPanelBride">
+                <span class="account__card-mark" aria-hidden="true">
+                  <svg viewBox="0 0 16 16" focusable="false">
+                    <g fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="round">
+                      <path d="M8 2.5 L13.5 8 L8 13.5 L2.5 8 Z" />
+                    </g>
+                    <circle cx="8" cy="8" r="1.3" fill="currentColor" />
+                  </svg>
+                </span>
+                <span class="account__card-label" data-account-card-label>마음 전하실 곳<span class="account__card-label-sep" aria-hidden="true">:</span> 신부측</span>
+                <span class="account__card-toggle" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </span>
+              </button>
+              <div class="account__card-panel" id="accountPanelBride">
+                <div class="account__card-panel-inner">
+                  <ul class="account__list" role="list" data-account-list="bride"></ul>
+                </div>
+              </div>
+            </article>
+
+          </div>
+
+          <!-- Bottom mirrored ornament — closes the section. -->
+          <div class="account__ornament account__ornament--bottom" data-reveal="fade-up" aria-hidden="true">
+            <svg viewBox="0 0 120 64" xmlns="http://www.w3.org/2000/svg" role="img" focusable="false">
+              <g fill="none" stroke="currentColor" stroke-width="0.9"
+                 stroke-linecap="round" stroke-linejoin="round"
+                 class="account__ornament-strokes">
+                <path d="M60 58 C 60 46 60 30 60 6" />
+                <path d="M60 46 C 52 49 44 50 34 48 C 42 44 50 43 60 42" />
+                <path d="M60 46 C 68 49 76 50 86 48 C 78 44 70 43 60 42" />
+                <path d="M60 34 C 50 35 42 32 32 26 C 42 26 52 28 60 30" />
+                <path d="M60 34 C 70 35 78 32 88 26 C 78 26 68 28 60 30" />
+                <path d="M60 22 C 54 22 48 19 44 14 C 50 14 56 16 60 18" />
+                <path d="M60 22 C 66 22 72 19 76 14 C 70 14 64 16 60 18" />
+              </g>
+              <g fill="currentColor" class="account__ornament-dots">
                 <circle cx="60" cy="6" r="1.2" />
                 <circle cx="60" cy="58" r="1.2" />
               </g>
@@ -808,7 +951,7 @@
   </div>
 
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script defer src="assets/js/config.js?v=d2bbd870ba983f6c"></script>
+  <script defer src="assets/js/config.js?v=db64067c35a45295"></script>
   <script defer src="assets/data/photos.js?v=8416e6a81f26adc4"></script>
   <script defer src="assets/js/firefly.js?v=ed683e49147d4f7e"></script>
   <script defer src="assets/js/hero-animations.js?v=457763702cad7b3b"></script>
@@ -816,6 +959,7 @@
   <script defer src="assets/js/calendar.js?v=0b8827c171cf5830"></script>
   <script defer src="assets/js/gallery.js?v=769101a63c728897"></script>
   <script defer src="assets/js/location.js?v=80fec7483d6a44ab"></script>
+  <script defer src="assets/js/account.js?v=c8a492179bd087bd"></script>
   <script defer src="assets/js/main.js?v=e9c59dd3dc313188"></script>
 </body>
 </html>

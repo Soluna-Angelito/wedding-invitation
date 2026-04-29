@@ -501,20 +501,19 @@
 
 
 /* ══════════════════════════════════════════════════════════════════════
-   Transit / Parking — senior-friendly card stack
+   Transit / Parking — editorial minimal list
    ──────────────────────────────────────────────────────────────────────
-   Editorial brief:
-     • Replace the old <dl> "table" layout with a vertical stack of
-       four white paper cards — same DNA as the polaroid map card so
-       the section reads as one consistent photo book spread.
-     • Each card has two rows:
-         ① Header   — coloured icon disk + Korean transit title.
-         ② Body     — primary line with route badges + venue, then a
-                      muted meta line below.
-     • Larger fonts (≈17px primary / ≈14.5px meta / ≈19px title) so
-       the section stays legible at arm's length for senior guests.
-     • A subtle hairline divider between header & body provides the
-       eye anchor that the previous accent rule used to give.
+   Design brief (matches the reference shared by the user):
+     • No card chrome — no backgrounds, borders, or shadows. Whitespace
+       carries the structure.
+     • Each row is a horizontal pair: a thin outlined-circle icon on
+       the left, a vertical typography stack on the right.
+     • Right column reads top-down as bold title → detail line → muted
+       meta. Same family + tone as the rest of the section.
+     • Large, comfortable type (~17px detail / ~15px meta) for senior
+       readability without sacrificing sophistication.
+     • Generous gap between items (≈24-32px) gives the section the
+       same airy editorial feel as the letter / calendar pages.
    ══════════════════════════════════════════════════════════════════════ */
 
 .location__transit {
@@ -523,144 +522,82 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: clamp(10px, 2.4vw, 14px);
+  gap: clamp(20px, 5vw, 30px);
   text-align: left;
 }
 
-.location__transit-card {
-  position: relative;
-  background: var(--location-paper);
-  border: 1px solid var(--location-line-soft);
-  border-radius: clamp(10px, 2.4vw, 14px);
-  padding: clamp(14px, 3.6vw, 20px) clamp(16px, 4vw, 22px);
-  box-shadow:
-    0 14px 30px -22px rgba(60, 48, 36, 0.35),
-    0 4px 10px -8px rgba(60, 48, 36, 0.16);
-  transition:
-    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 0.4s ease;
-}
-
-.location__transit-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--location-line);
-  box-shadow:
-    0 20px 40px -22px rgba(60, 48, 36, 0.42),
-    0 6px 14px -10px rgba(60, 48, 36, 0.20);
-}
-
-/* ── Header: icon disk + Korean transit title ──────────────────────── */
-.location__transit-head {
+.location__transit-item {
   display: flex;
-  align-items: center;
-  gap: clamp(10px, 2.6vw, 14px);
-  padding-bottom: clamp(10px, 2.6vw, 14px);
-  border-bottom: 1px solid var(--location-line-soft);
-  margin-bottom: clamp(10px, 2.6vw, 14px);
+  align-items: flex-start;
+  gap: clamp(14px, 3.6vw, 18px);
 }
 
+/* Thin outlined-circle icon — colour and stroke kept light so the
+   typography stays the dominant element. */
 .location__transit-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: clamp(38px, 9.4vw, 46px);
-  height: clamp(38px, 9.4vw, 46px);
-  border-radius: 50%;
+  width: clamp(44px, 10.8vw, 52px);
+  height: clamp(44px, 10.8vw, 52px);
   flex-shrink: 0;
-  background: var(--location-paper-soft);
+  border-radius: 50%;
+  border: 1.2px solid var(--location-accent);
   color: var(--location-accent-deep);
+  background: transparent;
+  /* Optical alignment: lift the icon by ~1-2px so its visual centre
+     sits at the cap-height of the title rather than its x-height. */
+  margin-top: 1px;
 }
 
 .location__transit-icon svg {
-  width: 56%;
-  height: 56%;
+  width: 52%;
+  height: 52%;
   display: block;
+}
+
+.location__transit-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2px, 0.5vw, 4px);
+  /* Tiny optical nudge so the title's baseline reads aligned with the
+     icon's centre. */
+  padding-top: clamp(2px, 0.6vw, 4px);
 }
 
 .location__transit-title {
   font-family: 'Sun Batang', 'Noto Serif KR', serif;
-  font-size: clamp(16px, 4.2vw, 19px);
-  font-weight: 500;
-  letter-spacing: 0.04em;
+  font-size: clamp(15.5px, 4vw, 17.5px);
+  font-weight: 600;
+  letter-spacing: 0.02em;
   color: var(--location-ink);
-  margin: 0;
-  line-height: 1.3;
+  line-height: 1.35;
+  margin: 0 0 clamp(3px, 0.8vw, 5px);
 }
 
-/* ── Body: primary line + muted meta ───────────────────────────────── */
-.location__transit-body {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(4px, 1.2vw, 6px);
-}
-
-.location__transit-line {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px clamp(6px, 1.6vw, 8px);
+.location__transit-detail {
   font-family: 'Sun Batang', 'Noto Serif KR', serif;
-  font-size: clamp(15px, 4vw, 17px);
+  font-size: clamp(14.5px, 3.8vw, 16px);
   font-weight: 400;
-  line-height: 1.55;
-  color: var(--location-ink);
-  letter-spacing: 0.01em;
+  line-height: 1.65;
+  color: var(--location-ink-soft);
+  letter-spacing: 0.005em;
   margin: 0;
   word-break: keep-all;
-}
-
-.location__transit-line strong {
-  font-weight: 600;
-  color: var(--location-ink);
-}
-
-.location__transit-place {
-  font-weight: 500;
-}
-
-.location__transit-sep {
-  color: var(--location-accent);
-  font-weight: 300;
-  user-select: none;
 }
 
 .location__transit-meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px clamp(6px, 1.6vw, 8px);
   font-family: 'Sun Batang', 'Noto Serif KR', serif;
-  font-size: clamp(13.5px, 3.4vw, 15px);
+  font-size: clamp(13px, 3.4vw, 14.5px);
   font-weight: 300;
-  line-height: 1.55;
+  line-height: 1.6;
   color: var(--location-muted);
-  letter-spacing: 0.01em;
+  letter-spacing: 0.005em;
   margin: 0;
   word-break: keep-all;
 }
-
-/* ── Coloured pill badges (line / bus / shuttle / exit) ────────────── */
-.location__badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: clamp(26px, 6vw, 32px);
-  padding: 2px 9px;
-  border-radius: 999px;
-  font-family: 'Sorts Mill Goudy', 'Noto Serif KR', serif;
-  font-size: clamp(12.5px, 3.2vw, 13.5px);
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  color: #fff;
-  line-height: 1.4;
-}
-
-.location__badge--line-3   { background: var(--location-line-3); }
-.location__badge--bus-blue { background: var(--location-bus-blue); }
-.location__badge--bus-green{ background: var(--location-bus-green); }
-.location__badge--exit     { background: var(--location-ink); }
-.location__badge--shuttle  { background: var(--location-shuttle); }
 
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -896,7 +833,7 @@ body.location-map-modal-open {
 .location--animated .location__actions.is-visible .location__action:nth-child(3) { transition-delay: 0.21s; }
 .location--animated .location__actions.is-visible .location__action:nth-child(4) { transition-delay: 0.29s; }
 
-.location--animated .location__transit .location__transit-card {
+.location--animated .location__transit .location__transit-item {
   opacity: 0;
   transform: translateY(10px);
   transition:
@@ -904,15 +841,14 @@ body.location-map-modal-open {
     transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.location--animated .location__transit.is-visible .location__transit-card {
+.location--animated .location__transit.is-visible .location__transit-item {
   opacity: 1;
   transform: translateY(0);
 }
 
-.location--animated .location__transit.is-visible .location__transit-card:nth-child(1) { transition-delay: 0.04s; }
-.location--animated .location__transit.is-visible .location__transit-card:nth-child(2) { transition-delay: 0.10s; }
-.location--animated .location__transit.is-visible .location__transit-card:nth-child(3) { transition-delay: 0.16s; }
-.location--animated .location__transit.is-visible .location__transit-card:nth-child(4) { transition-delay: 0.22s; }
+.location--animated .location__transit.is-visible .location__transit-item:nth-child(1) { transition-delay: 0.04s; }
+.location--animated .location__transit.is-visible .location__transit-item:nth-child(2) { transition-delay: 0.10s; }
+.location--animated .location__transit.is-visible .location__transit-item:nth-child(3) { transition-delay: 0.16s; }
 
 /* Petal divider scaleX-in. */
 .location--animated .location__divider-line {
@@ -940,12 +876,8 @@ body.location-map-modal-open {
 }
 
 @media (max-width: 360px) {
-  .location__transit-card {
-    padding: 14px 14px;
-  }
-  .location__transit-head {
-    gap: 10px;
-  }
+  .location__transit { gap: 22px; }
+  .location__transit-item { gap: 12px; }
   .location__action {
     padding: 8px 12px;
     gap: 6px;
@@ -964,7 +896,7 @@ body.location-map-modal-open {
 @media (prefers-reduced-motion: reduce) {
   .location--animated [data-reveal="fade-up"],
   .location--animated .location__actions .location__action,
-  .location--animated .location__transit .location__transit-card,
+  .location--animated .location__transit .location__transit-item,
   .location--animated .location__divider-line {
     transition: none !important;
     animation: none !important;

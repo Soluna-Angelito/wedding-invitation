@@ -204,6 +204,129 @@
       },
       // ── Toast (after 주소 복사) ───────────────────────────────────
       copyToastMs: 2200
+    },
+    // ── Section 06 · Account (마음 전하실 곳) ───────────────────────
+    // Single source of truth for the gift-account section. The two
+    // sides (`groom` / `bride`) each carry an ordered list of family
+    // members; each member declares the bank `code`, the displayed
+    // bank name, the account number, and (optionally) a Kakao Pay
+    // QR / send link. The renderer uses `code` to look up the brand
+    // colour + initials in the `banks` registry below.
+    //
+    // Replace the placeholder account numbers with the real values
+    // before deploying. Numbers are stored as plain strings so any
+    // formatting (hyphens / spaces) the user keys in is preserved
+    // verbatim in the rendered display AND in the clipboard payload.
+    account: {
+      // Scroll-reveal tuning — matches the letter / location feel.
+      rootMargin: '0px 0px -10% 0px',
+      threshold: 0.14,
+      // Reuses `#locationToast` for the "계좌번호가 복사되었습니다" pill
+      // so we don't introduce a second toast surface on the page.
+      copyToastMs: 2200,
+      // Editorial copy shown above the two cards. The lines read as a
+      // quiet apology/notice — appropriate gravitas for a section about
+      // money. `soft` is intentionally empty so no smaller secondary
+      // line is rendered beneath the main paragraph.
+      intro: {
+        eyebrow: 'WITH HEART',
+        title: '마음 전하실 곳',
+        lines: [
+          '참석 못하시는 분들의 요청으로',
+          '부득이하게 계좌번호 올려드림을',
+          '널리 양해 부탁드립니다.'
+        ],
+        soft: ''
+      },
+      // Closing line below the two cards. Empty = no closing rendered.
+      closing: '',
+      // ── Bank registry ────────────────────────────────────────────
+      // The renderer reads each member's `bank` code and looks up the
+      // displayed `name` here. The `bg` / `ink` / `initials` fields
+      // are no longer painted (the brand-coloured chip was removed
+      // in favour of an editorial typographic layout), but they are
+      // kept for forward compatibility in case a future variant
+      // wants to reintroduce a brand mark.
+      banks: {
+        kb:        { name: 'KB국민은행',  bg: '#ffbc00', ink: '#2f2824', initials: 'KB' },
+        shinhan:   { name: '신한은행',    bg: '#0046ff', ink: '#ffffff', initials: '신한' },
+        woori:     { name: '우리은행',    bg: '#0067ac', ink: '#ffffff', initials: '우리' },
+        hana:      { name: '하나은행',    bg: '#008c95', ink: '#ffffff', initials: '하나' },
+        nonghyup:  { name: '농협은행',    bg: '#04aa6d', ink: '#ffffff', initials: 'NH' },
+        ibk:       { name: 'IBK기업은행', bg: '#00a0e9', ink: '#ffffff', initials: 'IBK' },
+        kakaobank: { name: '카카오뱅크',  bg: '#ffe600', ink: '#2c1e1e', initials: 'kakao' },
+        toss:      { name: '토스뱅크',    bg: '#0064ff', ink: '#ffffff', initials: 'toss' },
+        kbank:     { name: '케이뱅크',    bg: '#1c5cf3', ink: '#ffffff', initials: 'K' },
+        sc:        { name: 'SC제일은행',  bg: '#0473ea', ink: '#ffffff', initials: 'SC' },
+        post:      { name: '우체국',      bg: '#e7261d', ink: '#ffffff', initials: '우체' },
+        saemaul:   { name: '새마을금고',  bg: '#005baa', ink: '#ffffff', initials: 'MG' },
+        suhyup:    { name: '수협은행',    bg: '#005bac', ink: '#ffffff', initials: '수협' },
+        citi:      { name: '한국씨티',    bg: '#003b71', ink: '#ffffff', initials: 'C'  }
+      },
+      // ── 신랑측 ───────────────────────────────────────────────────
+      groom: {
+        // Editorial label printed across the card head when collapsed.
+        // The card head is a single typographic line (no coloured pill,
+        // no second name) so this is the only string the head shows.
+        // The colon is rendered tight against "곳" (no leading space)
+        // and only breathes after, matching standard Korean typography.
+        headLabel: '마음 전하실 곳: 신랑측',
+        // Members are rendered top-down. Each row is fully self-
+        // contained (no inheritance) so the user can mix banks across
+        // the family without surprises.
+        members: [
+          {
+            role: '신랑',
+            name: '정성문',
+            bank: 'kakaobank',
+            number: '3333-00-0000000',
+            // Optional Kakao Pay QR send-link. When present the row
+            // shows a "송금" pill button next to "계좌번호 복사".
+            kakaopay: ''
+          },
+          {
+            role: '신랑측 아버님',
+            name: '정인복',
+            bank: 'nonghyup',
+            number: '352-0000-0000-00',
+            kakaopay: ''
+          },
+          {
+            role: '신랑측 어머님',
+            name: '전명자',
+            bank: 'kb',
+            number: '000000-00-000000',
+            kakaopay: ''
+          }
+        ]
+      },
+      // ── 신부측 ───────────────────────────────────────────────────
+      bride: {
+        headLabel: '마음 전하실 곳: 신부측',
+        members: [
+          {
+            role: '신부',
+            name: '송나은',
+            bank: 'toss',
+            number: '1000-0000-0000',
+            kakaopay: ''
+          },
+          {
+            role: '신부측 아버님',
+            name: '송점수',
+            bank: 'shinhan',
+            number: '110-000-000000',
+            kakaopay: ''
+          },
+          {
+            role: '신부측 어머님',
+            name: '이혜경',
+            bank: 'hana',
+            number: '000-000000-00000',
+            kakaopay: ''
+          }
+        ]
+      }
     }
   };
 
