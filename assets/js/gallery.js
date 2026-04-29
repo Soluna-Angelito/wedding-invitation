@@ -644,15 +644,19 @@
     var isOpen = false;
     var lastFocused = null;
     var preloadCache = new Map();
+    /* Guards re-entrancy during the swipe / arrow-key slide so a second
+       gesture can't fight an in-flight transition and leave the image in
+       a stuck inline-style state. */
+    var isAnimating = false;
     /* Tracks whether we pushed a history entry when opening the lightbox
        so we know whether to pop it back when closing programmatically. */
     var historyPushed = false;
 
     function onKey(e) {
       if (!isOpen) { return; }
-      if (e.key === 'Escape')      { close();    e.preventDefault(); }
-      else if (e.key === 'ArrowLeft')  { go(-1);  e.preventDefault(); }
-      else if (e.key === 'ArrowRight') { go(+1);  e.preventDefault(); }
+      if (e.key === 'Escape')          { close();   e.preventDefault(); }
+      else if (e.key === 'ArrowLeft')  { go(-1);    e.preventDefault(); }
+      else if (e.key === 'ArrowRight') { go(+1);    e.preventDefault(); }
     }
 
     var touchStartX = 0;
@@ -660,29 +664,121 @@
     var touchTracking = false;
     var swipeThreshold = 50;
 
-    /* Animate the current image off-screen in the swipe direction,
-       then load the next photo. Replaces the previous behaviour where
-       the image snapped back to the center on release before loading
-       — which made the navigation look like the frame "jumped back". */
-    function flyOutAndAdvance(navDir) {
-      var stageWidth = (stage && stage.clientWidth) || global.innerWidth || 800;
-      var exitX = -navDir * stageWidth * 0.55;
+    /* ── Carousel-style navigation ──────────────────────────────────
+       Three-phase slide:
+         1. EXIT   — current image leaves in the swipe direction.
+         2. SNAP   — with transitions disabled the same <img> is parked
+                     off-screen on the opposite side and its `src` is
+                     swapped. This is invisible because opacity stays 0.
+         3. ENTER  — transitions re-enabled, inline transform cleared:
+                     the `is-loaded` rule pulls the photo back to centre
+                     so the new image appears to come *from the other
+                     side*, never from where the previous one exited.
+       ─────────────────────────────────────────────────────────────── */
+    function navigate(navDir) {
+      if (isAnimating) { return; }
+      if (sources.length <= 1) { return; }
+      if (navDir !== 1 && navDir !== -1) { return; }
 
+      isAnimating = true;
+
+      var stageWidth = (stage && stage.clientWidth) || global.innerWidth || 800;
+      var travel  = stageWidth * 0.55;
+      var exitX   = -navDir * travel;
+      var entryX  =  navDir * travel;
+
+      var n = sources.length;
+      var nextIdx = ((index + navDir) % n + n) % n;
+      var data = sources[nextIdx];
+
+      /* Begin preloading immediately so the swap can happen the instant
+         the exit animation finishes. */
+      var loaderImage = preloadCache.get(data.src) || new Image();
+      preloadCache.set(data.src, loaderImage);
+      var alreadyLoaded = loaderImage.complete && loaderImage.naturalWidth > 0;
+      if (!alreadyLoaded && !loaderImage.src) {
+        loaderImage.src = data.src;
+      }
+
+      /* ── Phase 1: exit ──────────────────────────────────────────── */
       imgEl.classList.remove('is-swiping');
-      /* Inline transition overrides the long 0.55s default so the exit
-         is brisk; it's cleared as soon as `show()` reasserts control. */
       imgEl.style.transition =
-        'transform 0.22s cubic-bezier(0.45, 0.05, 0.55, 0.95),' +
-        ' opacity 0.18s ease-out';
+        'transform 0.26s cubic-bezier(0.4, 0, 0.6, 1),' +
+        ' opacity 0.22s ease-out';
       imgEl.style.transform = 'translateX(' + exitX.toFixed(1) + 'px) scale(0.94)';
       imgEl.style.opacity = '0';
 
       global.setTimeout(function () {
-        imgEl.style.transition = '';
-        imgEl.style.transform = '';
-        imgEl.style.opacity = '';
-        go(navDir);
-      }, 200);
+        /* If the user closed the lightbox during the exit phase, abort —
+           close() has already cleared the inline styles and reset state. */
+        if (!isOpen) {
+          isAnimating = false;
+          return;
+        }
+
+        index = nextIdx;
+        if (counterEl) { counterEl.textContent = String(nextIdx + 1); }
+        if (captionEl) { captionEl.textContent = data.caption || ''; }
+        updateNav();
+
+        function swapAndSlideIn() {
+          lb.classList.remove('is-loading');
+
+          /* Phase 2: park off-screen on the entry side without animating. */
+          imgEl.classList.remove('is-loaded');
+          imgEl.style.transition = 'none';
+          imgEl.style.transform =
+            'translateX(' + entryX.toFixed(1) + 'px) scale(0.94)';
+          imgEl.style.opacity = '0';
+          imgEl.src = data.src;
+          imgEl.alt = data.caption || '';
+          /* Force a reflow so the next paint actually starts from the
+             entry position — without this the browser may collapse the
+             two style mutations and skip the slide-in animation. */
+          void imgEl.offsetWidth;
+
+          /* Phase 3: enable transitions, clear inline overrides. The
+             `.is-loaded` rule (scale 1 / opacity 1) drives the photo
+             back to the centre. */
+          global.requestAnimationFrame(function () {
+            imgEl.style.transition =
+              'transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),' +
+              ' opacity 0.34s ease-out';
+            imgEl.style.transform = '';
+            imgEl.style.opacity = '';
+            imgEl.classList.add('is-loaded');
+
+            global.setTimeout(function () {
+              /* Drop the inline transition so future open/close cycles
+                 fall back to the CSS-defined zoom-in transition. */
+              imgEl.style.transition = '';
+              isAnimating = false;
+            }, 460);
+          });
+        }
+
+        if (loaderImage.complete && loaderImage.naturalWidth > 0) {
+          swapAndSlideIn();
+        } else {
+          lb.classList.add('is-loading');
+          loaderImage.onload = function () {
+            /* Guard against late onload firing after a close(). */
+            if (!isOpen || index !== nextIdx) {
+              isAnimating = false;
+              return;
+            }
+            swapAndSlideIn();
+          };
+          loaderImage.onerror = function () {
+            lb.classList.remove('is-loading');
+            isAnimating = false;
+          };
+          if (!loaderImage.src) { loaderImage.src = data.src; }
+        }
+
+        preload(nextIdx + 1);
+        preload(nextIdx - 1);
+      }, 230);
     }
 
     function snapBackToCenter() {
@@ -692,6 +788,7 @@
     }
 
     function onTouchStart(e) {
+      if (isAnimating) { return; }
       if (e.touches.length !== 1) { return; }
       touchTracking = true;
       touchStartX = e.touches[0].clientX;
@@ -720,7 +817,7 @@
       touchTracking = false;
 
       if (Math.abs(dx) > swipeThreshold && sources.length > 1) {
-        flyOutAndAdvance(dx < 0 ? +1 : -1);
+        navigate(dx < 0 ? +1 : -1);
       } else {
         snapBackToCenter();
       }
@@ -730,6 +827,7 @@
     var pointerStartX = 0;
 
     function onPointerDownStage(e) {
+      if (isAnimating) { return; }
       if (e.pointerType === 'touch') { return; }
       if (e.target !== imgEl) { return; }
       pointerDown = true;
@@ -740,7 +838,7 @@
       pointerDown = false;
       var dx = e.clientX - pointerStartX;
       if (Math.abs(dx) > swipeThreshold && sources.length > 1) {
-        flyOutAndAdvance(dx < 0 ? +1 : -1);
+        navigate(dx < 0 ? +1 : -1);
       }
     }
 
@@ -813,7 +911,12 @@
     }
 
     function go(delta) {
-      show(index + delta);
+      if (sources.length <= 1 || delta === 0) { return; }
+      /* Route every navigation (arrows, buttons, swipe) through the
+         same carousel slide so the new photo always enters from the
+         opposite side of the screen rather than the side the previous
+         photo just exited. */
+      navigate(delta > 0 ? 1 : -1);
     }
 
     /* Browser back-button (and Android system back gesture) handler.
@@ -871,11 +974,15 @@
     function close() {
       if (!isOpen) { return; }
       isOpen = false;
+      /* Drop any in-flight slide so the next open() can start cleanly. */
+      isAnimating = false;
+      touchTracking = false;
+      pointerDown = false;
 
       lb.classList.remove('is-open', 'is-loading');
       lb.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('gallery-lightbox-open');
-      imgEl.classList.remove('is-loaded');
+      imgEl.classList.remove('is-loaded', 'is-swiping');
       /* Clear any inline styles left over from a swipe-in-progress so
          the next open() starts in a clean state. */
       imgEl.style.transition = '';

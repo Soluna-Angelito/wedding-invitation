@@ -36,7 +36,7 @@
   <link rel="stylesheet" href="assets/css/letter.css?v=36a25ed08d0dcede" />
   <link rel="stylesheet" href="assets/css/calendar.css?v=dc2deb8abad7d99a" />
   <link rel="stylesheet" href="assets/css/gallery.css?v=ee5a670876b1e4cb" />
-  <link rel="stylesheet" href="assets/css/location.css?v=b920edd1ffc9b17a" />
+  <link rel="stylesheet" href="assets/css/location.css?v=bd6ae9e8075af67f" />
 </head>
 <body>
   <main class="invitation" id="invitationRoot">
@@ -514,7 +514,6 @@
               <span class="location__divider-line location__divider-line--right"></span>
             </div>
 
-            <p class="location__venue-eng" data-loc-slot="venue-name" data-reveal="fade-up">Crest 72</p>
             <h3 class="location__venue-kor" data-reveal="fade-up">
               <span data-loc-slot="venue-kor">크레스트 72</span>
               <span class="location__venue-hall" data-loc-slot="venue-hall">글래스홀</span>
@@ -607,14 +606,17 @@
           </div>
 
           <!-- ── Transit + parking ───────────────────────────────────────
-               Editorial single-column list. Each row gets its own
-               domain icon, a soft accent rule, and colour-correct
-               badges so the four transit modes are scannable. -->
-          <dl class="location__transit" data-reveal="fade-up">
-            <div class="location__transit-row">
-              <dt class="location__transit-label">
+               Senior-friendly card stack: each transit mode gets its
+               own white paper card with a large icon-on-tinted-disk
+               header, a hairline rule, and roomy body text with
+               colour-correct route badges. Larger base font sizes
+               (≈17px primary / 14.5px meta) keep the section legible
+               without reading glasses. -->
+          <ul class="location__transit" role="list" data-reveal="fade-up">
+            <li class="location__transit-card">
+              <div class="location__transit-head">
                 <span class="location__transit-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" focusable="false">
                     <rect x="5" y="3" width="14" height="15" rx="3" />
                     <path d="M5 11h14" />
                     <circle cx="9" cy="14.6" r="0.9" fill="currentColor" stroke="none" />
@@ -622,20 +624,22 @@
                     <path d="M8 18l-2 3M16 18l2 3" />
                   </svg>
                 </span>
-                <span>지하철</span>
-              </dt>
-              <dd class="location__transit-text">
-                <span class="location__badge location__badge--line-3">3</span>
-                동대입구역
-                <span class="location__badge location__badge--exit">6번출구</span>
-                <span class="muted">도보 약 15분 · 셔틀버스 운행</span>
-              </dd>
-            </div>
+                <h3 class="location__transit-title">지하철</h3>
+              </div>
+              <div class="location__transit-body">
+                <p class="location__transit-line">
+                  <span class="location__badge location__badge--line-3">3</span>
+                  <span class="location__transit-place">동대입구역</span>
+                  <span class="location__badge location__badge--exit">6번출구</span>
+                </p>
+                <p class="location__transit-meta">도보 약 15분 · 셔틀버스 운행</p>
+              </div>
+            </li>
 
-            <div class="location__transit-row">
-              <dt class="location__transit-label">
+            <li class="location__transit-card">
+              <div class="location__transit-head">
                 <span class="location__transit-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" focusable="false">
                     <path d="M5 5h14v9H5z" />
                     <path d="M5 14v3h2M19 14v3h-2" />
                     <path d="M3 9h2M19 9h2" />
@@ -643,18 +647,24 @@
                     <circle cx="16" cy="17.5" r="1.6" fill="currentColor" stroke="none" />
                   </svg>
                 </span>
-                <span>셔틀버스</span>
-              </dt>
-              <dd class="location__transit-text">
-                동대입구역 6번출구 뒤 · <strong>15분 간격</strong> · 약 10분
-                <span class="muted">예식 시작 1시간 30분 전부터 운행</span>
-              </dd>
-            </div>
+                <h3 class="location__transit-title">셔틀버스</h3>
+              </div>
+              <div class="location__transit-body">
+                <p class="location__transit-line">
+                  <span class="location__transit-place">동대입구역 6번출구 뒤</span>
+                  <span class="location__transit-sep" aria-hidden="true">·</span>
+                  <strong>15분 간격</strong>
+                  <span class="location__transit-sep" aria-hidden="true">·</span>
+                  약 10분
+                </p>
+                <p class="location__transit-meta">예식 시작 1시간 30분 전부터 운행</p>
+              </div>
+            </li>
 
-            <div class="location__transit-row">
-              <dt class="location__transit-label">
+            <li class="location__transit-card">
+              <div class="location__transit-head">
                 <span class="location__transit-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" focusable="false">
                     <path d="M4 7c0-1.7 1.3-3 3-3h10c1.7 0 3 1.3 3 3v10H4V7z" />
                     <path d="M4 11h16" />
                     <path d="M9 17v2H7v-2M17 17v2h-2v-2" />
@@ -662,33 +672,40 @@
                     <circle cx="16" cy="14.5" r="1" fill="currentColor" stroke="none" />
                   </svg>
                 </span>
-                <span>시내버스</span>
-              </dt>
-              <dd class="location__transit-text">
-                국립극장 앞 정류장
-                <span class="muted">
-                  <span class="location__badge location__badge--bus-blue">420</span>간선 ·
+                <h3 class="location__transit-title">시내버스</h3>
+              </div>
+              <div class="location__transit-body">
+                <p class="location__transit-line">
+                  <span class="location__transit-place">국립극장 앞 정류장</span>
+                </p>
+                <p class="location__transit-meta">
+                  <span class="location__badge location__badge--bus-blue">420</span>간선
+                  <span class="location__transit-sep" aria-hidden="true">·</span>
                   <span class="location__badge location__badge--bus-green">01</span>남산순환
-                </span>
-              </dd>
-            </div>
+                </p>
+              </div>
+            </li>
 
-            <div class="location__transit-row">
-              <dt class="location__transit-label">
+            <li class="location__transit-card">
+              <div class="location__transit-head">
                 <span class="location__transit-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" focusable="false">
                     <rect x="4" y="4" width="16" height="16" rx="3" />
                     <path d="M9 17V8h4.4a2.6 2.6 0 0 1 0 5.2H9" />
                   </svg>
                 </span>
-                <span>주차</span>
-              </dt>
-              <dd class="location__transit-text">
-                반얀트리 옆 · 800대 규모
-                <span class="muted">정문 · 후문 모두 이용 가능</span>
-              </dd>
-            </div>
-          </dl>
+                <h3 class="location__transit-title">주차</h3>
+              </div>
+              <div class="location__transit-body">
+                <p class="location__transit-line">
+                  <span class="location__transit-place">반얀트리 옆</span>
+                  <span class="location__transit-sep" aria-hidden="true">·</span>
+                  <strong>800대 규모</strong>
+                </p>
+                <p class="location__transit-meta">정문 · 후문 모두 이용 가능</p>
+              </div>
+            </li>
+          </ul>
 
           <!-- Bottom mirrored ornament — closes the section. -->
           <div class="location__ornament location__ornament--bottom" data-reveal="fade-up" aria-hidden="true">
@@ -797,8 +814,8 @@
   <script defer src="assets/js/hero-animations.js?v=457763702cad7b3b"></script>
   <script defer src="assets/js/letter.js?v=5ab953a6d26c3e5d"></script>
   <script defer src="assets/js/calendar.js?v=0b8827c171cf5830"></script>
-  <script defer src="assets/js/gallery.js?v=8e1e446938ebbbe1"></script>
-  <script defer src="assets/js/location.js?v=53e965e3cb79ab1b"></script>
+  <script defer src="assets/js/gallery.js?v=769101a63c728897"></script>
+  <script defer src="assets/js/location.js?v=80fec7483d6a44ab"></script>
   <script defer src="assets/js/main.js?v=e9c59dd3dc313188"></script>
 </body>
 </html>

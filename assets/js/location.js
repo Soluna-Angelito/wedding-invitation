@@ -6,10 +6,10 @@
 //   1. Hydrate the editorial header (eyebrow + script title + venue +
 //      addresses + tel) from `WeddingConfig.location.venue`.
 //   2. Wire the four action chips:
+//        · 지도 보기   — opens the hand-drawn map.jpg in a modal
+//        · 네이버지도  — `nmap://` deep-link → web map fallback
+//        · 티맵        — `tmap://` deep-link → install-page fallback
 //        · 주소 복사   — clipboard with execCommand → prompt fallback
-//        · 카카오맵    — kakao map deep-link
-//        · 네이버지도  — naver map deep-link
-//        · 티맵        — tmap:// deep-link with install fallback
 //   3. IntersectionObserver-driven `.is-visible` reveals + a static
 //      fallback for `prefers-reduced-motion`.
 //
@@ -50,7 +50,6 @@
   function populateVenue(locationEl, config) {
     var venue = (config && config.venue) || {};
 
-    setText(locationEl.querySelector('[data-loc-slot="venue-name"]'), venue.name || '');
     setText(locationEl.querySelector('[data-loc-slot="venue-kor"]'),  venue.nameKor || '크레스트 72');
     setText(locationEl.querySelector('[data-loc-slot="venue-hall"]'), venue.hall || '');
     setText(locationEl.querySelector('[data-loc-slot="addr-road"]'),  venue.addressRoad || '');
@@ -58,34 +57,137 @@
 
 
   /* ══════════════════════════════════════════════════════════════════
-     Map-app deep links — Kakao / Naver / Tmap
+     Map-app deep links — Naver / Tmap
+     ──────────────────────────────────────────────────────────────────
+     UX contract (matches example_2's pattern, hardened for both OSes):
+       · On a phone (Android or iOS) tapping 네이버지도 / 티맵 should
+         open the corresponding *native app* — not a web map page.
+       · If the app isn't installed, after ~1.5s we redirect the user
+         to a sensible web fallback (Naver web map for Naver, the
+         official Tmap install short-URL for Tmap).
+       · On desktop a tap simply opens a web URL in a new tab.
+
+     Implementation strategy:
+       · Build the deep-link URL with `nmap://` / `tmap://` schemes.
+       · `tryAppLink()` triggers the deep link, then arms a fallback
+         timer. If `visibilitychange` fires (app switched in front) the
+         timer is cancelled — proven the app launched. Otherwise the
+         page navigates to the fallback URL.
      ══════════════════════════════════════════════════════════════════ */
 
   function buildMapUrls(venue) {
-    var name = encodeURIComponent(venue.name || '');
-    var lat = venue.lat;
-    var lng = venue.lng;
+    var name = venue.name || '';
+    var lat  = venue.lat;
+    var lng  = venue.lng;
+    var encName = encodeURIComponent(name);
+    // App-name token Naver Map requires for iOS deep-links. We use the
+    // current host so the param is unique per deployment without
+    // exposing internal identifiers.
+    var appName = encodeURIComponent(global.location && global.location.hostname || 'wedding-invitation');
+
     return {
-      // `link/to/<name>,<lat>,<lng>` opens directions inside Kakao Map.
-      kakaoRoute: 'https://map.kakao.com/link/to/'  + name + ',' + lat + ',' + lng,
-      // Naver's web-walking-directions URL with `destination` pinned.
-      naverRoute: 'https://map.naver.com/p/directions/-/-/-/-/walk?destination=' +
-                  name + ',' + lat + ',' + lng,
-      // Tmap: deep-link first, fallback to the install short-URL.
-      tmapDeep:    'tmap://route?goalname=' + name + '&goalx=' + lng + '&goaly=' + lat,
+      // ── Naver ──
+      // Native scheme — works on both Android & iOS when the app is
+      // installed. `route/car` reflects the most common attendee mode.
+      naverDeep: 'nmap://route/car?dlat=' + lat + '&dlng=' + lng +
+                 '&dname=' + encName + '&appname=' + appName,
+      // Web fallback — also the desktop default. `place` opens a pin
+      // for the venue name so users can scan the location even without
+      // the app.
+      naverWeb: 'https://map.naver.com/p/search/' + encName,
+
+      // ── Tmap ──
+      // Deep-link launches the SK Tmap app directly to a route preview
+      // with the wedding venue pre-filled as the destination.
+      tmapDeep: 'tmap://route?goalname=' + encName +
+                '&goalx=' + lng + '&goaly=' + lat,
+      // Tmap install short-URL — same one used by example_2's
+      // 카카오/티맵 implementations as a reliable App Store / Play
+      // Store redirector.
       tmapInstall: 'https://surl.tmobiapi.com/3a839f5a'
     };
   }
 
-  function attachExternalLink(btn, href) {
-    if (!btn) { return; }
-    btn.setAttribute('href', href);
-    btn.setAttribute('target', '_blank');
-    btn.setAttribute('rel', 'noopener noreferrer');
+  function isAndroid() {
+    return /android/i.test(global.navigator.userAgent || '');
+  }
+
+  function isIOS() {
+    var ua = global.navigator.userAgent || '';
+    return /iphone|ipad|ipod/i.test(ua);
   }
 
   function isMobile() {
-    return /android|iphone|ipad|ipod|mobile/i.test(global.navigator.userAgent || '');
+    return isAndroid() || isIOS() ||
+           /mobile/i.test(global.navigator.userAgent || '');
+  }
+
+  /**
+   * Best-effort attempt to launch a custom-scheme deep link with a
+   * graceful fallback when the target app isn't installed.
+   *
+   * The trick: arm a timer immediately *before* navigating. If the
+   * OS hands the URL off to a real app the page goes background
+   * (`visibilitychange` fires) and we cancel the timer. If nothing
+   * happens we land in the fallback URL ~1.5s later.
+   */
+  function tryAppLink(deepUrl, fallbackUrl, opts) {
+    var timeoutMs = (opts && opts.timeoutMs) || 1500;
+    var fired = false;
+
+    var timer = global.setTimeout(function () {
+      if (fired) { return; }
+      fired = true;
+      cleanup();
+      if (fallbackUrl) {
+        global.location.href = fallbackUrl;
+      }
+    }, timeoutMs);
+
+    function cancel() {
+      if (fired) { return; }
+      fired = true;
+      cleanup();
+    }
+
+    function onVisibilityChange() {
+      if (document.visibilityState === 'hidden') { cancel(); }
+    }
+
+    function cleanup() {
+      global.clearTimeout(timer);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+      global.removeEventListener('pagehide', cancel);
+      global.removeEventListener('blur', cancel);
+    }
+
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    global.addEventListener('pagehide', cancel, { once: true });
+    global.addEventListener('blur', cancel, { once: true });
+
+    // Kick off the navigation. iOS Safari handles `location.href`
+    // smoothly for registered URL schemes; Android Chrome does too.
+    // (An `<iframe src>` workaround used to be needed for older
+    // Android WebView builds but is no longer required here.)
+    try {
+      global.location.href = deepUrl;
+    } catch (_) {
+      cancel();
+      if (fallbackUrl) { global.location.href = fallbackUrl; }
+    }
+  }
+
+  function attachNaverButton(btn, urls) {
+    if (!btn) { return; }
+    btn.setAttribute('href', urls.naverWeb);
+    btn.setAttribute('target', '_blank');
+    btn.setAttribute('rel', 'noopener noreferrer');
+
+    btn.addEventListener('click', function (e) {
+      if (!isMobile()) { return; }
+      e.preventDefault();
+      tryAppLink(urls.naverDeep, urls.naverWeb);
+    });
   }
 
   function attachTmapButton(btn, urls) {
@@ -97,18 +199,7 @@
     btn.addEventListener('click', function (e) {
       if (!isMobile()) { return; }
       e.preventDefault();
-
-      // Try the deep link; if the OS doesn't switch apps within 1.5s
-      // we assume Tmap isn't installed and route the user to the
-      // store install page instead.
-      var fallbackTimer = global.setTimeout(function () {
-        global.location.href = urls.tmapInstall;
-      }, 1500);
-      var cancel = function () { global.clearTimeout(fallbackTimer); };
-      global.addEventListener('pagehide', cancel, { once: true });
-      global.addEventListener('blur', cancel, { once: true });
-
-      global.location.href = urls.tmapDeep;
+      tryAppLink(urls.tmapDeep, urls.tmapInstall);
     });
   }
 
@@ -262,10 +353,11 @@
     var threshold  = (config && config.threshold != null) ? config.threshold : 0.12;
 
     // Elements that should reveal *in lock-step* with the map card.
-    // Without this binding the actions row (and the transit table beneath
-    // it) animate in a beat later because they sit slightly below the
-    // viewport when the map first enters — which feels disjointed since
-    // the buttons are conceptually part of the map widget.
+    // Without this binding the actions row (and the transit card stack
+    // beneath it) animate in a beat later because they sit slightly
+    // below the viewport when the map first enters — which feels
+    // disjointed since the buttons are conceptually part of the map
+    // widget.
     var mapCard = locationEl.querySelector('.location__map-card');
     var coupledSelectors = [
       '.location__actions',
@@ -328,7 +420,7 @@
     populateVenue(locationEl, config);
 
     var urls = buildMapUrls(venue);
-    attachExternalLink(locationEl.querySelector('[data-loc-navi="naver"]'), urls.naverRoute);
+    attachNaverButton(locationEl.querySelector('[data-loc-navi="naver"]'), urls);
     attachTmapButton(locationEl.querySelector('[data-loc-navi="tmap"]'), urls);
 
     setupMapViewer(locationEl);
