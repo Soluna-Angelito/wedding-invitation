@@ -242,6 +242,177 @@
 
 
 /* ══════════════════════════════════════════════════════════════════════
+   Share row — secondary actions placed beneath the primary Pulitzer CTA
+   ──────────────────────────────────────────────────────────────────────
+   Layout:
+     · An eyebrow strip ("── SHARE ──") that echoes the section's
+       hairline-and-mark vocabulary while clearly demoting the row from
+       primary to secondary.
+     · A single quiet caption underneath, then two equally-weighted pill
+       buttons sitting side-by-side.
+     · Each pill keeps the same height, radius, and spring as the
+       Pulitzer CTA so the whole stack reads as one editorial unit.
+       The KakaoTalk pill carries Kakao's official brand yellow + label
+       brown for instant recognition; the 링크 복사 pill is a paper
+       ghost so the row reads as "primary brand action + companion
+       neutral action" rather than two competing buttons.
+   ══════════════════════════════════════════════════════════════════════ */
+.snapshot__share {
+  margin-top: clamp(20px, 5vw, 28px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(10px, 2.4vw, 14px);
+  width: 100%;
+}
+
+.snapshot__share-eyebrow-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 2vw, 12px);
+  width: 100%;
+  max-width: clamp(220px, 70vw, 300px);
+  color: var(--snapshot-accent-deep);
+}
+.snapshot__share-eyebrow-line {
+  flex: 1 1 auto;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.55;
+  transform-origin: center;
+}
+.snapshot__share-eyebrow-text {
+  flex: 0 0 auto;
+  font-family: 'Sorts Mill Goudy', serif;
+  font-size: clamp(10px, 2.4vw, 11.5px);
+  font-weight: 400;
+  letter-spacing: 0.42em;
+  text-indent: 0.42em;
+  text-transform: uppercase;
+  color: var(--snapshot-eyebrow);
+  line-height: 1;
+}
+
+.snapshot__share-caption {
+  margin: 0;
+  font-family: 'Sun Batang', 'Noto Serif KR', serif;
+  font-size: clamp(12.5px, 3.2vw, 13.5px);
+  font-weight: 300;
+  line-height: 1.7;
+  color: var(--snapshot-muted);
+  letter-spacing: 0.01em;
+  word-break: keep-all;
+  text-align: center;
+}
+
+.snapshot__share-buttons {
+  display: flex;
+  gap: clamp(8px, 2vw, 12px);
+  width: 100%;
+  max-width: clamp(280px, 86vw, 360px);
+  flex-wrap: nowrap;
+}
+
+.snapshot__share-btn {
+  flex: 1 1 0;
+  min-width: 0;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(6px, 1.6vw, 8px);
+  height: clamp(42px, 10vw, 48px);
+  padding: 0 clamp(10px, 3vw, 18px);
+  border-radius: 999px;
+  font-family: 'Sun Batang', 'Noto Serif KR', serif;
+  font-size: clamp(12.5px, 3.2vw, 13.5px);
+  font-weight: 600;
+  letter-spacing: 0.10em;
+  cursor: pointer;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+  transition:
+    background 0.4s ease,
+    border-color 0.4s ease,
+    color 0.4s ease,
+    box-shadow 0.4s ease,
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.snapshot__share-btn:active { transform: translateY(0) scale(0.98); }
+.snapshot__share-btn:focus-visible { outline: none; }
+
+.snapshot__share-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  width: clamp(15px, 3.8vw, 17px);
+  height: clamp(15px, 3.8vw, 17px);
+}
+.snapshot__share-btn-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.snapshot__share-btn-label { flex: 0 1 auto; }
+
+/* ── KakaoTalk pill ── Kakao brand yellow #fee500 + label brown #3c1e1e
+   for the speech-bubble glyph so the mark reads correctly even when
+   surrounded by the section's warm cream parchment. */
+.snapshot__share-btn--kakao {
+  background: #fee500;
+  border: 1px solid #f5d900;
+  color: #3c1e1e;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.40),
+    0 8px 18px -10px rgba(60, 48, 36, 0.30);
+}
+.snapshot__share-btn--kakao:hover,
+.snapshot__share-btn--kakao:focus-visible {
+  background: #ffd900;
+  border-color: #e5c500;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.50),
+    0 12px 22px -12px rgba(60, 48, 36, 0.40);
+  transform: translateY(-1px);
+}
+
+/* ── 링크 복사 ghost pill ── matches the section's paper / ink palette
+   so the secondary action whispers next to the bright brand button. */
+.snapshot__share-btn--link {
+  background: var(--snapshot-paper);
+  border: 1px solid var(--snapshot-line);
+  color: var(--snapshot-ink-soft);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.50),
+    0 6px 14px -10px rgba(60, 48, 36, 0.20);
+}
+.snapshot__share-btn--link:hover,
+.snapshot__share-btn--link:focus-visible {
+  background: #fffefa;
+  border-color: rgba(138, 110, 88, 0.42);
+  color: var(--snapshot-ink);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.60),
+    0 12px 22px -12px rgba(60, 48, 36, 0.28);
+  transform: translateY(-1px);
+}
+
+/* Icon swap — default link rings → success check on `.is-copied`. */
+.snapshot__share-btn--link .snapshot__share-icon-success { display: none; }
+.snapshot__share-btn--link.is-copied .snapshot__share-icon-default { display: none; }
+.snapshot__share-btn--link.is-copied .snapshot__share-icon-success { display: block; }
+.snapshot__share-btn--link.is-copied {
+  background: var(--snapshot-success-soft);
+  border-color: rgba(47, 107, 79, 0.40);
+  color: var(--snapshot-success);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
    Scroll-Reveal Animations — applied only when JS adds .snapshot--animated
    ══════════════════════════════════════════════════════════════════════ */
 .snapshot--animated [data-reveal="fade-up"] {
@@ -1044,6 +1215,20 @@
   .pulitzer-drop__btn { min-width: 0; flex: 1 1 100%; }
   .pq-item { grid-template-columns: 48px 1fr auto; gap: 10px; }
   .pq-item__thumb { width: 48px; height: 48px; }
+
+  /* Share row — tighten letter-spacing + padding so both pills fit
+     side-by-side on the smallest phones without wrapping. */
+  .snapshot__share-btn {
+    height: 40px;
+    padding: 0 10px;
+    font-size: 12.5px;
+    letter-spacing: 0.06em;
+    gap: 6px;
+  }
+  .snapshot__share-btn-icon {
+    width: 14px;
+    height: 14px;
+  }
 }
 
 
@@ -1064,6 +1249,7 @@
   }
 
   .snapshot__btn,
+  .snapshot__share-btn,
   .pulitzer-modal__dialog,
   .pulitzer-modal__backdrop,
   .pulitzer-modal__close,

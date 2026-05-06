@@ -381,6 +381,37 @@
       cta: {
         label: '사진 보내러 가기'
       }
+    },
+    // ── Section 07 · Share row (KakaoTalk 공유 + 링크 복사) ─────────
+    // Single source of truth for the secondary "Share this invitation"
+    // controls placed beneath the Pulitzer CTA. The two buttons are
+    // wired in `assets/js/share.js`:
+    //   · 카카오톡 공유 — `Kakao.Share.sendScrap({ requestUrl })`. Kakao
+    //     scrapes the page's OG meta tags (set in <head> of index.html)
+    //     so the shared preview matches what attendees see in browsers.
+    //   · 링크 복사    — `navigator.clipboard.writeText(requestUrl)`
+    //     with an `execCommand('copy')` fallback for older browsers.
+    //
+    // The Kakao JavaScript key below was issued for the deployed origin
+    // (`https://soluna-angelito.github.io/wedding-invitation/`). When
+    // testing locally either:
+    //   (a) register `http://localhost:5500` (or the dev origin) as an
+    //       allowed Web Domain in the Kakao Developers console, or
+    //   (b) accept the inline error toast — `링크 복사` still works.
+    share: {
+      // JavaScript key from the Kakao Developers app (see Kakao/Info).
+      kakaoJavascriptKey: '59318e8dd655e8e94edbf544691c9a00',
+      // Canonical share URL — also embedded as `og:url` in <head>.
+      requestUrl: 'https://soluna-angelito.github.io/wedding-invitation/',
+      // OG image previously uploaded to Kakao CDN via
+      // Kakao/upload-image.html. Mirrored in <head> as `og:image`.
+      ogImageUrl: 'http://k.kakaocdn.net/dn/bhJw7g/dJMb997meRa/eTLebPRgUrs7prw1xM2d90/kakaolink40_original.png',
+      // Toast feedback (copies and errors). Reuses `#locationToast` so
+      // we don't introduce a third toast surface on the page.
+      toastMs: 2200,
+      copyToastText:    '링크가 복사되었습니다',
+      kakaoErrorText:   '카카오톡 공유에 실패했어요. 잠시 후 다시 시도해 주세요.',
+      sdkUnavailableText: '카카오톡 공유 모듈을 불러오지 못했어요.'
     }
   };
 

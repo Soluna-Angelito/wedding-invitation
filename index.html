@@ -6,6 +6,30 @@
   <meta name="description" content="정성문 그리고 송나은의 모바일 청첩장입니다." />
   <meta name="theme-color" content="#eeeae5" />
   <title>Seong Mun &amp; Na Eun Wedding Invitation</title>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       Open Graph / Twitter Card meta — drives the rich preview when the
+       invitation is shared on KakaoTalk (`Kakao.Share.sendScrap`), Twitter,
+       Facebook, iMessage, etc. The image URL is the Kakao CDN object
+       previously uploaded via `Kakao/upload-image.html`. Update the URL in
+       `WeddingConfig.share` if either the image or the deployment URL
+       moves; these tags are the canonical static fallback so a non-JS
+       crawler still sees the correct preview.
+       ──────────────────────────────────────────────────────────────── -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="정성문 ❤︎ 송나은 결혼합니다" />
+  <meta property="og:description" content="2026.07.12 SUN 12:00 PM · Crest 72 글래스홀" />
+  <meta property="og:url" content="https://soluna-angelito.github.io/wedding-invitation/" />
+  <meta property="og:image" content="http://k.kakaocdn.net/dn/bhJw7g/dJMb997meRa/eTLebPRgUrs7prw1xM2d90/kakaolink40_original.png" />
+  <meta property="og:image:width" content="800" />
+  <meta property="og:image:height" content="1200" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:site_name" content="Seong Mun & Na Eun Wedding Invitation" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="정성문 ❤︎ 송나은 결혼합니다" />
+  <meta name="twitter:description" content="2026.07.12 SUN 12:00 PM · Crest 72 글래스홀" />
+  <meta name="twitter:image" content="http://k.kakaocdn.net/dn/bhJw7g/dJMb997meRa/eTLebPRgUrs7prw1xM2d90/kakaolink40_original.png" />
+
   <script>document.documentElement.classList.add('js');</script>
 
   <!-- Fonts -->
@@ -38,7 +62,7 @@
   <link rel="stylesheet" href="assets/css/gallery.css?v=ee5a670876b1e4cb" />
   <link rel="stylesheet" href="assets/css/location.css?v=1bd14fda5803a209" />
   <link rel="stylesheet" href="assets/css/account.css?v=51732878fb3e564b" />
-  <link rel="stylesheet" href="assets/css/snapshot.css?v=7da31c60f83b8fb4" />
+  <link rel="stylesheet" href="assets/css/snapshot.css?v=0403c20b2fe0e165" />
 </head>
 <body>
   <main class="invitation" id="invitationRoot">
@@ -989,6 +1013,68 @@
             </button>
           </div>
 
+          <!-- ────────────────────────────────────────────────────────
+               Share row — secondary actions paired beneath the
+               primary 사진 보내러 가기 CTA. Two pills:
+                 · 카카오톡 공유 — `Kakao.Share.sendScrap()` (auto-builds
+                   the preview from the page's OG meta tags above).
+                 · 링크 복사    — clipboard with progressive fallback,
+                   reuses the global `#locationToast` for feedback.
+               The wiring lives in the share controller (loaded just
+               before main.js); labels and icons are static so the
+               section reads correctly
+               even if JS is delayed. The eyebrow + hairline above
+               keeps the same paper-book vocabulary as the rest of
+               Section 7.
+               ──────────────────────────────────────────────────── -->
+          <div class="snapshot__share" data-reveal="fade-up">
+            <div class="snapshot__share-eyebrow-row" aria-hidden="true">
+              <span class="snapshot__share-eyebrow-line"></span>
+              <span class="snapshot__share-eyebrow-text">SHARE</span>
+              <span class="snapshot__share-eyebrow-line"></span>
+            </div>
+
+            <p class="snapshot__share-caption">
+              이 청첩장을 가족과 친구에게 전해주세요
+            </p>
+
+            <div class="snapshot__share-buttons">
+              <button class="snapshot__share-btn snapshot__share-btn--kakao"
+                      type="button"
+                      id="shareKakaoBtn"
+                      aria-label="카카오톡으로 청첩장 공유">
+                <span class="snapshot__share-btn-icon" aria-hidden="true">
+                  <!-- KakaoTalk speech-bubble glyph — rendered in Kakao
+                       "label brown" (#3c1e1e) on the brand-yellow pill so
+                       it reads as the official mark even on systems that
+                       block the SDK's image fetch. -->
+                  <svg viewBox="0 0 24 24" focusable="false">
+                    <path fill="currentColor" d="M12 3.6c-5.07 0-9.18 3.27-9.18 7.31 0 2.59 1.67 4.86 4.2 6.16l-.86 3.16c-.07.27.22.49.46.34l3.78-2.49c.52.07 1.05.11 1.6.11 5.07 0 9.18-3.27 9.18-7.28 0-4.04-4.11-7.31-9.18-7.31z" />
+                  </svg>
+                </span>
+                <span class="snapshot__share-btn-label">카카오톡 공유</span>
+              </button>
+
+              <button class="snapshot__share-btn snapshot__share-btn--link"
+                      type="button"
+                      id="shareCopyLinkBtn"
+                      aria-label="청첩장 링크 복사">
+                <span class="snapshot__share-btn-icon" aria-hidden="true">
+                  <!-- Two interlocked link rings — flips to a check
+                       glyph on success via the `.is-copied` class. -->
+                  <svg class="snapshot__share-icon-default" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                    <path d="M10 13.5a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1" />
+                    <path d="M14 10.5a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1" />
+                  </svg>
+                  <svg class="snapshot__share-icon-success" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                    <polyline points="5 13 10 18 20 6" />
+                  </svg>
+                </span>
+                <span class="snapshot__share-btn-label">링크 복사</span>
+              </button>
+            </div>
+          </div>
+
           <!-- Bottom mirrored ornament — closes Section 7 and the
                photo-book story established at Section 02. -->
           <div class="snapshot__ornament snapshot__ornament--bottom" data-reveal="fade-up" aria-hidden="true">
@@ -1227,7 +1313,12 @@
   </div>
 
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script defer src="assets/js/config.js?v=da49302536156cb6"></script>
+  <!-- Kakao JavaScript SDK — powers `Kakao.Share.sendScrap()` in share.js.
+       `defer` lets it load in parallel with the other deferred scripts
+       and stay in document order so share.js can rely on `window.Kakao`
+       being present at DOMContentLoaded. -->
+  <script defer src="https://t1.kakaocdn.net/kakao_js_sdk/2.8.1/kakao.min.js" crossorigin="anonymous"></script>
+  <script defer src="assets/js/config.js?v=e32ae2fc22907134"></script>
   <script defer src="assets/data/photos.js?v=9521f8ac86a62c1e"></script>
   <script defer src="assets/js/firefly.js?v=ed683e49147d4f7e"></script>
   <script defer src="assets/js/hero-animations.js?v=457763702cad7b3b"></script>
@@ -1237,6 +1328,7 @@
   <script defer src="assets/js/location.js?v=80fec7483d6a44ab"></script>
   <script defer src="assets/js/account.js?v=c8a492179bd087bd"></script>
   <script defer src="assets/js/snapshot.js?v=fe6cfe04f3650da4"></script>
+  <script defer src="assets/js/share.js?v=4c7c998963ac8cc4"></script>
   <script defer src="assets/js/main.js?v=e9c59dd3dc313188"></script>
 </body>
 </html>
