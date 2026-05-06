@@ -765,6 +765,51 @@
 
 
 /* ══════════════════════════════════════════════════════════════════════
+   Account → Snapshot wave separator
+   ──────────────────────────────────────────────────────────────────────
+   Lives at the BOTTOM of the account section, mirroring the letter /
+   calendar / gallery / location wave drapes. The snapshot section's
+   cream (#faf6f0) drapes UPWARD into the account section's cream
+   (#eeeae5), continuing the photo-book section-flow story all the
+   way to Section 7.
+   ══════════════════════════════════════════════════════════════════════ */
+
+.account {
+  position: relative;
+  background: var(--account-bg);
+  padding: clamp(48px, 10vw, 88px) 0 clamp(80px, 17vw, 144px);
+}
+
+.account__wave {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  z-index: 1;
+  overflow: hidden;
+  line-height: 0;
+  pointer-events: none;
+}
+
+.account__wave svg {
+  display: block;
+  width: 100%;
+  min-width: 100%;
+  height: clamp(30px, 15vh, 40px);
+}
+
+.account__wave .parallax > use {
+  animation: waveMove 25s cubic-bezier(0.55, 0.5, 0.45, 0.5) infinite;
+  will-change: transform;
+}
+
+.account__wave .parallax > use:nth-child(1) { animation-delay: -2s; animation-duration: 7s;  }
+.account__wave .parallax > use:nth-child(2) { animation-delay: -3s; animation-duration: 10s; }
+.account__wave .parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 13s; }
+.account__wave .parallax > use:nth-child(4) { animation-delay: -5s; animation-duration: 20s; }
+
+
+/* ══════════════════════════════════════════════════════════════════════
    Scroll-Reveal Animations — applied only when JS adds .account--animated.
    Without JS the section remains fully visible and readable.
    ══════════════════════════════════════════════════════════════════════ */
@@ -914,4 +959,5 @@
   }
 
   .location__wave .parallax > use { animation: none !important; }
+  .account__wave .parallax > use { animation: none !important; }
 }

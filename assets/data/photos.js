@@ -35,33 +35,13 @@
      설명은 한국어/영어 어느 쪽이든 자유롭게 적어 주세요.            */
 
   var registry = {
-    'IMG_0002.webp': '우리의 시작',
-    'IMG_0014.webp': '첫 약속',
-    'IMG_0026.webp': '마주 본 시간',
-    'IMG_0103.webp': '같은 곳을 바라보며',
-    'IMG_0464.webp': '햇살 속에서',
-    'IMG_0509.webp': '우리의 어느 봄날',
-    'IMG_0619.webp': '조용한 오후',
-    'IMG_0711.webp': '작은 미소',
-    'IMG_0732.webp': '둘만의 거리',
-    'IMG_0819.webp': '별 헤는 밤',
-    'IMG_0852.webp': '봄날의 약속',
-    'IMG_0949.webp': '햇살 아래',
-    'IMG_1099.webp': '함께한 하루',
-    'IMG_1160.webp': '너와 나',
-    'IMG_1191.webp': '두 손 모아',
-    'IMG_1319.webp': '잊지 못할 눈빛',
-
-    /* ── 새로 추가된 사진 (설명 자유롭게 수정해 주세요) ── */
-    'IMG_1376.webp': '나란히 걷는 길',
-    'IMG_1416.webp': '여름의 꿈',
-    'IMG_1528.webp': '한 걸음 더',
-    'IMG_1625.webp': '맞잡은 손',
-    'IMG_1775.webp': '서로의 빛',
-    'IMG_1842.webp': '깊어지는 마음',
-    'IMG_2006.webp': '같은 하늘 아래',
-    'IMG_2086.webp': '우리의 길',
-    'IMG_2192.webp': '영원의 약속'
+    'IMG_0003-0.webp': '우리의 시작',
+    'IMG_0140-0.webp': '우리의 시작',
+    'IMG_0626-0.webp': '우리의 시작',
+    'IMG_0952-0.webp': '우리의 시작',
+    'IMG_1228-0.webp': '우리의 시작',
+    'IMG_1607-0.webp': '우리의 시작',
+    'IMG_2169-0.webp': '영원의 약속'
   };
 
 
@@ -77,19 +57,19 @@
   var layout = {
 
     /*  메인 상단(히어로) 사진  */
-    hero: 'IMG_0002.webp',
+    hero: 'IMG_0003-0.webp',
 
     /*  갤러리 섹션 맨 위의 시네마틱 사진  */
-    featured: 'IMG_0509.webp',
+    featured: 'IMG_0626-0.webp',
 
     /*  중간 모자이크 — 3개의 그룹으로 자유 구성              
         layout: 'duo'  → 세로 사진 2장
         layout: 'mixed' → 큰 세로 1장 + 작은 가로 2장
         layout: 'trio' → 정방형 3장                              */
     mosaics: [
-      { layout: 'duo',   photos: ['IMG_0014.webp', 'IMG_0026.webp'] },
-      { layout: 'mixed', photos: ['IMG_0464.webp', 'IMG_0103.webp', 'IMG_0619.webp'] },
-      { layout: 'trio',  photos: ['IMG_0711.webp', 'IMG_0732.webp', 'IMG_0819.webp'] }
+      { layout: 'duo',   photos: ['IMG_0952-0.webp', 'IMG_1228-0.webp'] },
+      { layout: 'mixed', photos: ['IMG_2169-0.webp', 'IMG_1607-0.webp', 'IMG_0140-0.webp'] },
+      { layout: 'trio',  photos: ['IMG_0003-0.webp', 'IMG_0003-0.webp', 'IMG_0003-0.webp'] }
     ],
 
     /*  하단 폴라로이드 필름 스트립

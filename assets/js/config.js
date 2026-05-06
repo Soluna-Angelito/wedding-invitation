@@ -327,6 +327,60 @@
           }
         ]
       }
+    },
+    // ── Section 07 · Pulitzer (오늘은 내가 퓰리처) ─────────────────
+    // Single source of truth for the guest-photo upload section. The
+    // CTA opens an inline modal (rendered at the end of <body>); the
+    // controller in assets/js/snapshot.js posts each selected file
+    // sequentially to the Apps Script `/exec` endpoint defined below
+    // (matching `doPost(e)` in `Google Apps Script/code.gs`). The
+    // originals land in the couple's private Drive folder.
+    //
+    // After deploying the Apps Script as a web app:
+    //   1. Paste the deployed `/exec` URL into `webAppBaseUrl` below.
+    //   2. Make sure `uploadKey` matches the `UPLOAD_KEY` constant
+    //      defined inside `Google Apps Script/code.gs`.
+    // The renderer POSTs `multipart/form-data` requests directly to
+    // `webAppBaseUrl` (no query-string key — the secret rides inside
+    // the form body so it isn't logged in HTTP referrers).
+    snapshot: {
+      rootMargin: '0px 0px -10% 0px',
+      threshold: 0.14,
+      // ── Web app URL (Google Apps Script `/exec` endpoint) ─────────
+      // Replace with the deployed URL after publishing the script as
+      // a web app ("Anyone with the link" execution access).
+      webAppBaseUrl: 'https://script.google.com/macros/s/REPLACE_WITH_DEPLOYMENT_ID/exec',
+      // Must match `UPLOAD_KEY` inside Google Apps Script/code.gs.
+      uploadKey: 'Wedding_20260712_Pulitzer',
+      // ── Upload limits ─────────────────────────────────────────────
+      // Mirrors the server-side cap inside code.gs. The per-photo MB
+      // ceiling is enforced client-side BEFORE the file is queued so
+      // an over-size pick is rejected with a quiet inline message —
+      // never with a network error.
+      maxPhotos: 40,
+      maxBytesPerPhoto: 15 * 1024 * 1024,
+      // Allowed image MIME types + extensions. The dropzone uses
+      // `accept="image/*"` (mobile-friendly), and these arrays are
+      // the second-line defence inside `validateFile()`.
+      allowedMimeTypes: [
+        'image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif',
+        'image/heic', 'image/heif', 'image/tiff', 'image/tif'
+      ],
+      allowedExtensions: [
+        'jpg', 'jpeg', 'png', 'webp', 'gif', 'heic', 'heif', 'tif', 'tiff'
+      ],
+      // Editorial copy printed across the section header (eyebrow +
+      // title + subtitle). Rendered with a <br> between the subtitle
+      // lines — keep each line ≤ ~30 Korean characters for breath.
+      eyebrow: "TODAY'S PULITZER",
+      title: '오늘은 내가 퓰리처',
+      subtitle: [
+        '신랑 신부가 놓친 오늘의 명장면을 여러분의 카메라로 남겨주세요.',
+        '예쁜 사진도, 웃긴 사진도, 흔들린 사진도 소중히 간직하겠습니다.'
+      ],
+      cta: {
+        label: '사진 보내러 가기'
+      }
     }
   };
 
