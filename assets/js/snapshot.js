@@ -235,6 +235,13 @@
       lastFocus:   null
     };
 
+    /* Tracks whether `open()` successfully pushed a sentinel history entry
+       so close() knows whether it must call `history.back()` to clean up,
+       or whether the close was *already* triggered by the browser popping
+       that entry (i.e. the user pressed the device/system back button).
+       Mirrors the pattern in gallery.js#open/close. */
+    var historyPushed = false;
+
     /* ── Inject runtime labels ────────────────────────────────────── */
     setAllText(els.maxPhotosLabels, String(maxPhotos));
     setAllText(els.maxMbLabels,     String(maxMbPerPhoto));
@@ -285,6 +292,8 @@
        ══════════════════════════════════════════════════════════════ */
 
     function open() {
+      if (els.modal.classList.contains('is-open')) { return; }
+
       if (!endpointReady) {
         setStatus('업로드 링크가 아직 준비 중입니다. 잠시 후 다시 시도해 주세요.', 'error');
       }
@@ -294,6 +303,20 @@
       document.documentElement.classList.add('pulitzer-scroll-lock');
       document.body.classList.add('pulitzer-scroll-lock');
       document.addEventListener('keydown', onKeydown);
+
+      /* Push a sentinel history entry so the device back button (and the
+         browser's back arrow) closes this modal instead of navigating
+         the whole invitation away. The state object lets us identify
+         our own entry on popstate. Mirrors gallery.js. */
+      if (global.history && typeof global.history.pushState === 'function') {
+        try {
+          global.history.pushState({ pulitzerModal: true }, '');
+          historyPushed = true;
+        } catch (_) {
+          historyPushed = false;
+        }
+      }
+      global.addEventListener('popstate', onPopState);
 
       // Defer focus so the dialog's transform/opacity transitions before we steal focus.
       setTimeout(function () {
@@ -305,6 +328,8 @@
     }
 
     function close() {
+      if (!els.modal.classList.contains('is-open')) { return; }
+
       if (state.isUploading) {
         setStatus('전송이 끝나면 닫을 수 있어요.', 'info');
         return;
@@ -314,6 +339,16 @@
       document.documentElement.classList.remove('pulitzer-scroll-lock');
       document.body.classList.remove('pulitzer-scroll-lock');
       document.removeEventListener('keydown', onKeydown);
+      global.removeEventListener('popstate', onPopState);
+
+      /* Pop our pushed entry so closing via ✕ / Esc / backdrop click
+         doesn't leave a stale entry behind. When close() was invoked
+         *because of* popstate, `historyPushed` is already false and
+         we skip this. */
+      if (historyPushed && global.history && typeof global.history.back === 'function') {
+        historyPushed = false;
+        try { global.history.back(); } catch (_) {}
+      }
 
       if (state.lastFocus && typeof state.lastFocus.focus === 'function') {
         try { state.lastFocus.focus({ preventScroll: true }); }
@@ -327,6 +362,32 @@
         e.preventDefault();
         close();
       }
+    }
+
+    /* Browser back-button (and Android system back gesture) handler.
+       Without this, pressing back while the modal is open closes the
+       whole invitation. We treat any popstate while open as
+       "the user wants to close the modal". If an upload is in progress
+       we instead re-push the sentinel so the modal stays put — closing
+       mid-batch would lose the round. */
+    function onPopState() {
+      if (!els.modal.classList.contains('is-open')) { return; }
+
+      if (state.isUploading) {
+        if (global.history && typeof global.history.pushState === 'function') {
+          try {
+            global.history.pushState({ pulitzerModal: true }, '');
+            historyPushed = true;
+          } catch (_) { /* ignore — we'll just exit gracefully on next back */ }
+        }
+        setStatus('전송이 끝나면 닫을 수 있어요.', 'info');
+        return;
+      }
+
+      /* Browser already removed our entry, so suppress the cleanup
+         history.back() inside close(). */
+      historyPushed = false;
+      close();
     }
 
 
