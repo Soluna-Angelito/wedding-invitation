@@ -349,7 +349,7 @@
       // ── Web app URL (Google Apps Script `/exec` endpoint) ─────────
       // Replace with the deployed URL after publishing the script as
       // a web app ("Anyone with the link" execution access).
-      webAppBaseUrl: 'https://script.google.com/macros/s/REPLACE_WITH_DEPLOYMENT_ID/exec',
+      webAppBaseUrl: 'https://script.google.com/macros/s/AKfycbw2cnkFnic5zZwebldZGaLhAh-NcGyzoEsweCDS2xCPkU9s9hhdg-0ZgvoW1Ivc--m9AQ/exec',
       // Must match `UPLOAD_KEY` inside Google Apps Script/code.gs.
       uploadKey: 'Wedding_20260712_Pulitzer',
       // ── Upload limits ─────────────────────────────────────────────
