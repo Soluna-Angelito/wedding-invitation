@@ -185,8 +185,8 @@
         // Coordinates (WGS84) for 한국자유총연맹 / 자유센터 — used by
         // every `link/to` URL that pre-fills the route destination in
         // Kakao Map, Naver Map, and Tmap.
-        lat: 37.5547,
-        lng: 127.0048
+        lat: 37.551145,
+        lng: 127.002813
       },
       // ── Kakao "RoughMap" embed (no API key required) ──────────────
       // Generated once via https://apis.map.kakao.com/web/sample/jsMapLink/
