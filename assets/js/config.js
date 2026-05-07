@@ -406,6 +406,17 @@
       // OG image previously uploaded to Kakao CDN via
       // Kakao/upload-image.html. Mirrored in <head> as `og:image`.
       ogImageUrl: 'http://k.kakaocdn.net/dn/bhJw7g/dJMb997meRa/eTLebPRgUrs7prw1xM2d90/kakaolink40_original.png',
+      // ── SDK loader knobs ─────────────────────────────────────────
+      // The static <script> in index.html is pinned with SRI; if it
+      // is blocked (carrier filters, content blockers, captive Wi-Fi)
+      // share.js dynamically re-injects this URL without integrity so
+      // the runtime path stays reachable. Keep this in sync with the
+      // <script src=…> in index.html.
+      sdkUrl: 'https://t1.kakaocdn.net/kakao_js_sdk/2.8.1/kakao.min.js',
+      // Per-attempt ceiling for both the static and the fallback
+      // injections. 8s comfortably covers cold mobile networks
+      // without making a stalled CDN feel like the page is dead.
+      sdkLoadTimeoutMs: 8000,
       // Toast feedback (copies and errors). Reuses `#locationToast` so
       // we don't introduce a third toast surface on the page.
       toastMs: 2200,

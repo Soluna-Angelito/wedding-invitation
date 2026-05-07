@@ -62,7 +62,7 @@
   <link rel="stylesheet" href="assets/css/gallery.css?v=ee5a670876b1e4cb" />
   <link rel="stylesheet" href="assets/css/location.css?v=1bd14fda5803a209" />
   <link rel="stylesheet" href="assets/css/account.css?v=51732878fb3e564b" />
-  <link rel="stylesheet" href="assets/css/snapshot.css?v=0403c20b2fe0e165" />
+  <link rel="stylesheet" href="assets/css/snapshot.css?v=883722834fe7c02e" />
 </head>
 <body>
   <main class="invitation" id="invitationRoot">
@@ -1313,12 +1313,25 @@
   </div>
 
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <!-- Kakao JavaScript SDK — powers `Kakao.Share.sendScrap()` in share.js.
-       `defer` lets it load in parallel with the other deferred scripts
-       and stay in document order so share.js can rely on `window.Kakao`
-       being present at DOMContentLoaded. -->
-  <script defer src="https://t1.kakaocdn.net/kakao_js_sdk/2.8.1/kakao.min.js" crossorigin="anonymous"></script>
-  <script defer src="assets/js/config.js?v=e32ae2fc22907134"></script>
+  <!-- ────────────────────────────────────────────────────────────────
+       Kakao JavaScript SDK — powers `Kakao.Share.sendScrap()` in share.js.
+       Pinned with the official SHA-384 SRI hash so the script can be
+       served via CORS (`crossorigin="anonymous"`) AND verified against
+       on-the-wire tampering. The `onerror` hook flips a global flag
+       and logs the failure so share.js can detect a blocked CDN (some
+       carrier networks / privacy extensions block *.kakaocdn.net) and
+       fall back to a runtime re-injection. `defer` keeps the load in
+       parallel with our own modules but preserves document order so
+       share.js sees a definitive load result by the time it runs.
+       ──────────────────────────────────────────────────────────────── -->
+  <script defer
+          id="kakaoSdkScript"
+          src="https://t1.kakaocdn.net/kakao_js_sdk/2.8.1/kakao.min.js"
+          integrity="sha384-OL+ylM/iuPLtW5U3XcvLSGhE8JzReKDank5InqlHGWPhb4140/yrBw0bg0y7+C9J"
+          crossorigin="anonymous"
+          onload="window.__kakaoSdkStatus='loaded';"
+          onerror="window.__kakaoSdkStatus='error';(window.console&&console.error&&console.error('[Kakao SDK] CDN load failed'));"></script>
+  <script defer src="assets/js/config.js?v=03942fcd064f989e"></script>
   <script defer src="assets/data/photos.js?v=9521f8ac86a62c1e"></script>
   <script defer src="assets/js/firefly.js?v=ed683e49147d4f7e"></script>
   <script defer src="assets/js/hero-animations.js?v=457763702cad7b3b"></script>
@@ -1328,7 +1341,7 @@
   <script defer src="assets/js/location.js?v=80fec7483d6a44ab"></script>
   <script defer src="assets/js/account.js?v=c8a492179bd087bd"></script>
   <script defer src="assets/js/snapshot.js?v=fe6cfe04f3650da4"></script>
-  <script defer src="assets/js/share.js?v=4c7c998963ac8cc4"></script>
+  <script defer src="assets/js/share.js?v=195f24874d7fc678"></script>
   <script defer src="assets/js/main.js?v=e9c59dd3dc313188"></script>
 </body>
 </html>
