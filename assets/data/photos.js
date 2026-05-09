@@ -41,7 +41,11 @@
     'IMG_0952-0.webp': '우리의 시작',
     'IMG_1228-0.webp': '우리의 시작',
     'IMG_1607-0.webp': '우리의 시작',
-    'IMG_2169-0.webp': '영원의 약속'
+    'IMG_2169-0.webp': '영원의 약속',
+    'IMG_3471.webp': '우리의 시작',
+    'IMG_3472.webp': '우리의 시작',
+    'IMG_3473.webp': '우리의 시작',
+    'IMG_3474.webp': '영원의 약속',
   };
 
 
@@ -69,7 +73,7 @@
     mosaics: [
       { layout: 'duo',   photos: ['IMG_0952-0.webp', 'IMG_1228-0.webp'] },
       { layout: 'mixed', photos: ['IMG_2169-0.webp', 'IMG_1607-0.webp', 'IMG_0140-0.webp'] },
-      { layout: 'trio',  photos: ['IMG_0003-0.webp', 'IMG_0003-0.webp', 'IMG_0003-0.webp'] }
+      { layout: 'trio',  photos: ['IMG_3472.webp', 'IMG_3473.webp', 'IMG_3474.webp'] }
     ],
 
     /*  하단 폴라로이드 필름 스트립
