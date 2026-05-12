@@ -39,6 +39,15 @@
   --location-bus-green: #4a9c5a;    /* 순환·지선 */
   --location-shuttle: #8d6f4a;
   --location-pin: #c0392b;
+  /* ── Transit list (refined editorial palette) ────────────────────
+     The badge ring + glyph carry a warm rust/burgundy that pairs with
+     the section's gold (`--location-gold #c8a86a`) and cream tones —
+     same colour family, deeper saturation, so the transit row reads
+     as a deliberate accent rather than a foreign hue. */
+  --location-transit-mark:       #7e3f33;
+  --location-transit-mark-soft:  rgba(126, 63, 51, 0.55);
+  --location-transit-chip-bg:    #fffaf0;
+  --location-transit-chip-shadow: 0 4px 12px -8px rgba(126, 63, 51, 0.45);
   --location-shadow:
     0 22px 48px -28px rgba(60, 48, 36, 0.45),
     0 6px 14px -10px rgba(60, 48, 36, 0.18);
@@ -426,17 +435,6 @@
   display: block;
 }
 
-.location__action-chip--tmap {
-  background: #ffffff;
-}
-
-.location__action-chip--tmap img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  border-radius: inherit;
-}
-
 .location__action-label {
   font-size: clamp(11px, 2.8vw, 12.5px);
   font-weight: 400;
@@ -501,88 +499,202 @@
 
 
 /* ══════════════════════════════════════════════════════════════════════
-   Transit / Parking — editorial minimal list
+   Transit / Parking — editorial three-column list
    ──────────────────────────────────────────────────────────────────────
    Design brief (matches the reference shared by the user):
-     • No card chrome — no backgrounds, borders, or shadows. Whitespace
-       carries the structure.
-     • Each row is a horizontal pair: a thin outlined-circle icon on
-       the left, a vertical typography stack on the right.
-     • Right column reads top-down as bold title → detail line → muted
-       meta. Same family + tone as the rest of the section.
-     • Large, comfortable type (~17px detail / ~15px meta) for senior
-       readability without sacrificing sophistication.
-     • Generous gap between items (≈24-32px) gives the section the
-       same airy editorial feel as the letter / calendar pages.
+     • A small floral divider sits above the list to bookend it with
+       the section header's petal divider — same visual vocabulary,
+       smaller scale, quieter tone.
+     • Each row reads left → right as three columns:
+         (1) circular badge — lightly tinted ring + filled glyph,
+             with a distinct tone for subway / bus / parking.
+         (2) Korean label — 지하철 / 버 스 / 주 차. The 2-character
+             words sit in the same fixed-width label column, with
+             explicit spacing for the two-character labels.
+         (3) detail column — primary line in dark ink + smaller meta
+             line in a muted tone. No bold title separating them.
+     • No card chrome — generous whitespace between rows + the badge
+       carries the only colour, so the typography stays primary.
+     • Body type continues to run ≈15-17px so senior guests read it
+       comfortably without sacrificing sophistication.
    ══════════════════════════════════════════════════════════════════════ */
 
+/* Small floral divider that introduces the transit block — quiet
+   echo of the section header's petal divider so the list doesn't
+   feel grafted onto the action row above. */
+.location__transit-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 2.2vw, 12px);
+  margin: clamp(2px, 1.2vw, 8px) 0 clamp(20px, 4.8vw, 30px);
+  color: var(--location-accent);
+}
+
+.location__transit-divider-line {
+  display: block;
+  width: clamp(74px, 23vw, 140px);
+  height: 1px;
+  background: currentColor;
+  opacity: 0.62;
+}
+
+.location__transit-divider-mark {
+  width: clamp(24px, 6vw, 32px);
+  height: auto;
+  flex-shrink: 0;
+  color: var(--location-transit-mark-soft);
+}
+
 .location__transit {
+  --transit-icon-size: clamp(40px, 10vw, 48px);
+  --transit-label-width: clamp(58px, 14vw, 76px);
+  --transit-col-gap: clamp(9px, 2.6vw, 16px);
+  --transit-line-start: calc(
+    var(--transit-icon-size) +
+    var(--transit-col-gap) +
+    var(--transit-label-width) +
+    var(--transit-col-gap)
+  );
+
   list-style: none;
   margin: 0 0 clamp(14px, 3.2vw, 22px);
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: clamp(20px, 5vw, 30px);
+  gap: clamp(17px, 4.2vw, 24px);
   text-align: left;
 }
 
 .location__transit-item {
-  display: flex;
-  align-items: flex-start;
-  gap: clamp(14px, 3.6vw, 18px);
+  --transit-color: #8d6f4a;
+  --transit-ring: rgba(141, 111, 74, 0.40);
+  --transit-surface: rgba(255, 250, 240, 0.66);
+
+  position: relative;
+  display: grid;
+  grid-template-columns:
+    var(--transit-icon-size)
+    var(--transit-label-width)
+    minmax(0, 1fr);
+  align-items: center;
+  column-gap: var(--transit-col-gap);
 }
 
-/* Thin outlined-circle icon — colour and stroke kept light so the
-   typography stays the dominant element. */
+.location__transit-item:nth-child(1) {
+  --transit-color: #7f956b;
+  --transit-ring: rgba(127, 149, 107, 0.44);
+  --transit-surface: rgba(248, 251, 240, 0.70);
+}
+
+.location__transit-item:nth-child(2) {
+  --transit-color: #bd8178;
+  --transit-ring: rgba(189, 129, 120, 0.42);
+  --transit-surface: rgba(255, 247, 244, 0.72);
+}
+
+.location__transit-item:nth-child(3) {
+  --transit-color: #8b8175;
+  --transit-ring: rgba(139, 129, 117, 0.45);
+  --transit-surface: rgba(250, 247, 241, 0.72);
+}
+
+.location__transit-item + .location__transit-item::before {
+  content: '';
+  position: absolute;
+  top: calc(-1 * clamp(8px, 2.1vw, 12px));
+  left: var(--transit-line-start);
+  right: 0;
+  height: 1px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(120, 100, 80, 0.16) 0,
+    rgba(120, 100, 80, 0.16) 3px,
+    transparent 3px,
+    transparent 7px
+  );
+}
+
+/* ── Column 1 · soft circular badge ───────────────────────────────── */
 .location__transit-icon {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: clamp(44px, 10.8vw, 52px);
-  height: clamp(44px, 10.8vw, 52px);
+  width: var(--transit-icon-size);
+  height: var(--transit-icon-size);
   flex-shrink: 0;
   border-radius: 50%;
-  border: 1.2px solid var(--location-accent);
-  color: var(--location-accent-deep);
-  background: transparent;
-  /* Optical alignment: lift the icon by ~1-2px so its visual centre
-     sits at the cap-height of the title rather than its x-height. */
-  margin-top: 1px;
+  background: var(--transit-surface);
+  /* A thin ring and faint shadow keep the badge close to the sample's
+     light printed-icon treatment. */
+  border: 1px solid var(--transit-ring);
+  color: var(--transit-color);
+  box-shadow: 0 5px 13px -12px rgba(60, 48, 36, 0.38);
+  /* Subtle inset highlight to suggest a slightly raised paper button. */
+}
+
+.location__transit-icon::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  pointer-events: none;
+  /* Inner highlight keeps the small mark from flattening into the
+     cream background. */
+  border: 1px solid rgba(255, 255, 255, 0.62);
 }
 
 .location__transit-icon svg {
-  width: 52%;
-  height: 52%;
+  width: 64%;
+  height: 64%;
   display: block;
+  position: relative;
+  z-index: 1;
+  opacity: 0.94;
 }
 
+/* ── Column 2 · Korean label ──────────────────────────────────────── */
+/* The 3-character label (지하철) sets the visual rhythm. 2-character
+   labels (버스, 주차) carry an explicit `&nbsp;&nbsp;` between the
+   characters in the markup — same Korean editorial convention shown
+   in the reference, where "버 스" and "주 차" are visibly spaced. The
+   modifier class trims their letter-spacing slightly so the two
+   approaches converge on the same visual width. */
+.location__transit-label {
+  font-family: 'Sun Batang', 'Noto Serif KR', serif;
+  font-size: clamp(15.5px, 4vw, 17.5px);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--location-ink);
+  line-height: 1.3;
+  display: inline-block;
+  width: var(--transit-label-width);
+  white-space: nowrap;
+  text-align: center;
+}
+
+.location__transit-label--two {
+  /* 2-char labels already carry double-space between glyphs, so the
+     base tracking is a touch tighter — keeps the visual width of all
+     three labels aligned with 지하철. */
+  letter-spacing: 0.04em;
+}
+
+/* ── Column 3 · detail + meta ─────────────────────────────────────── */
 .location__transit-info {
-  flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
   gap: clamp(2px, 0.5vw, 4px);
-  /* Tiny optical nudge so the title's baseline reads aligned with the
-     icon's centre. */
-  padding-top: clamp(2px, 0.6vw, 4px);
-}
-
-.location__transit-title {
-  font-family: 'Sun Batang', 'Noto Serif KR', serif;
-  font-size: clamp(15.5px, 4vw, 17.5px);
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: var(--location-ink);
-  line-height: 1.35;
-  margin: 0 0 clamp(3px, 0.8vw, 5px);
 }
 
 .location__transit-detail {
   font-family: 'Sun Batang', 'Noto Serif KR', serif;
-  font-size: clamp(14.5px, 3.8vw, 16px);
+  font-size: clamp(13px, 3.35vw, 14.5px);
   font-weight: 400;
-  line-height: 1.65;
-  color: var(--location-ink-soft);
+  line-height: 1.58;
+  color: #4a4039;
   letter-spacing: 0.005em;
   margin: 0;
   word-break: keep-all;
@@ -590,9 +702,9 @@
 
 .location__transit-meta {
   font-family: 'Sun Batang', 'Noto Serif KR', serif;
-  font-size: clamp(13px, 3.4vw, 14.5px);
+  font-size: clamp(11.8px, 3vw, 13px);
   font-weight: 300;
-  line-height: 1.6;
+  line-height: 1.55;
   color: var(--location-muted);
   letter-spacing: 0.005em;
   margin: 0;
@@ -862,6 +974,22 @@ body.location-map-modal-open {
   transform: scaleX(1);
 }
 
+/* Transit divider — small floral mark introducing the transit list.
+   Both hairlines draw outward from the central mark in the same beat
+   as the petal divider above, but slightly quicker so the list feels
+   "introduced" rather than ceremonial. */
+.location--animated .location__transit-divider-line {
+  transform: scaleX(0);
+  transform-origin: center right;
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.location--animated .location__transit-divider-line:last-child {
+  transform-origin: center left;
+}
+.location--animated .location__transit-divider.is-visible .location__transit-divider-line {
+  transform: scaleX(1);
+}
+
 
 /* ══════════════════════════════════════════════════════════════════════
    Responsive Refinements
@@ -876,8 +1004,21 @@ body.location-map-modal-open {
 }
 
 @media (max-width: 360px) {
-  .location__transit { gap: 22px; }
-  .location__transit-item { gap: 12px; }
+  .location__transit {
+    --transit-icon-size: 38px;
+    --transit-label-width: 52px;
+    --transit-col-gap: 8px;
+
+    gap: 18px;
+  }
+  .location__transit-label {
+    font-size: 14px;
+    letter-spacing: 0.12em;
+  }
+  .location__transit-label--two { letter-spacing: 0.02em; }
+  .location__transit-detail { font-size: 12.8px; }
+  .location__transit-meta   { font-size: 11.5px; }
+  .location__transit-divider-line { width: 64px; }
   .location__action {
     padding: 8px 12px;
     gap: 6px;
@@ -897,7 +1038,8 @@ body.location-map-modal-open {
   .location--animated [data-reveal="fade-up"],
   .location--animated .location__actions .location__action,
   .location--animated .location__transit .location__transit-item,
-  .location--animated .location__divider-line {
+  .location--animated .location__divider-line,
+  .location--animated .location__transit-divider-line {
     transition: none !important;
     animation: none !important;
     opacity: 1 !important;

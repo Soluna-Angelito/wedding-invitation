@@ -35,17 +35,17 @@
      설명은 한국어/영어 어느 쪽이든 자유롭게 적어 주세요.            */
 
   var registry = {
-    'IMG_0003-0.webp': '우리의 시작',
-    'IMG_0140-0.webp': '우리의 시작',
-    'IMG_0626-0.webp': '우리의 시작',
-    'IMG_0952-0.webp': '우리의 시작',
-    'IMG_1228-0.webp': '우리의 시작',
-    'IMG_1607-0.webp': '우리의 시작',
-    'IMG_2169-0.webp': '영원의 약속',
-    'IMG_3471.webp': '우리의 시작',
-    'IMG_3472.webp': '우리의 시작',
-    'IMG_3473.webp': '우리의 시작',
-    'IMG_3474.webp': '영원의 약속',
+    'IMG_0003-0.webp': '함께, 시작',
+    'IMG_0140-0.webp': '베일 아래',
+    'IMG_0626-0.webp': '마주 본 미소',
+    'IMG_0952-0.webp': '분홍빛 하루',
+    'IMG_1228-0.webp': '결혼합니다',
+    'IMG_1607-0.webp': '촛불 그리고 소원',
+    'IMG_2169-0.webp': '밤빛 아래',
+    'IMG_3471.webp': '또 다른 꽃',
+    'IMG_3472.webp': '부케 곁의 눈빛',
+    'IMG_3473.webp': '도시의 밤',
+    'IMG_3474.webp': '꽃 사이에서',
   };
 
 
@@ -72,8 +72,8 @@
         layout: 'trio' → 정방형 3장                              */
     mosaics: [
       { layout: 'duo',   photos: ['IMG_0952-0.webp', 'IMG_1228-0.webp'] },
-      { layout: 'mixed', photos: ['IMG_2169-0.webp', 'IMG_1607-0.webp', 'IMG_0140-0.webp'] },
-      { layout: 'trio',  photos: ['IMG_3472.webp', 'IMG_3473.webp', 'IMG_3474.webp'] }
+      { layout: 'mixed', photos: ['IMG_2169-0.webp', 'IMG_1607-0.webp', 'IMG_3474.webp'] },
+      { layout: 'trio',  photos: ['IMG_3472.webp', 'IMG_3473.webp', 'IMG_0140-0.webp'] }
     ],
 
     /*  하단 폴라로이드 필름 스트립

@@ -61,28 +61,38 @@
   padding: 0 clamp(24px, 6vw, 40px);
 }
 
-/* ── Botanical Ornament ────────────────────────────────────────────── */
+/* ── Botanical Ornament ──────────────────────────────────────────────
+   Inline SVG hand-drawn botanical spray. Each path is individually
+   dash-drawn by `.is-drawn` (see Animated States below), so the
+   ornament traces itself into view as the letter card reveals.
+   The taupe `color: #c2b5a4` is inherited by `currentColor` on both
+   the stroke paths and the seed-dot circles. */
 
 .letter__ornament {
   display: flex;
   justify-content: center;
-  margin-bottom: clamp(20px, 4.5vw, 36px);
+  margin-bottom: clamp(20px, 4vw, 32px);
   color: #c2b5a4;
+}
+
+.letter__ornament--bottom {
+  margin-top: clamp(28px, 6vw, 44px);
+  margin-bottom: 0;
 }
 
 .letter__ornament svg {
   width: clamp(80px, 24vw, 120px);
   height: auto;
-  overflow: visible;
-}
-
-.letter__ornament--bottom {
-  margin-top: clamp(28px, 5.5vw, 44px);
-  margin-bottom: 0;
+  display: block;
 }
 
 .letter__ornament-strokes path {
   stroke-dasharray: 200;
+  stroke-dashoffset: 0;
+}
+
+.letter__ornament-dots circle {
+  opacity: 0.9;
 }
 
 /* ── Eyebrow ───────────────────────────────────────────────────────── */
@@ -253,12 +263,19 @@
   pointer-events: none;
 }
 
+/* The corner SVG now carries the exact same warm taupe (#b8a898) as
+   `.letter__eyebrow` (see assets/svg/corner.svg). At 0.42 opacity the
+   tint collapsed to a washed-out gray; lifting to 0.95 lets the taupe
+   ink read cleanly so the corner ornament harmonises with the
+   eyebrow word "INVITATION" above and the eyebrow family as a whole.
+   A touch under 1.0 keeps the ornament reading as a quiet
+   page-corner accent rather than competing with the typography. */
 .letter__corner--tl {
   top: -8px;
   left: -6px;
   width: clamp(80px, 24vw, 130px);
   height: auto;
-  opacity: 0.15;
+  opacity: 0.95;
 }
 
 .letter__corner--br {
@@ -266,7 +283,7 @@
   right: -6px;
   width: clamp(80px, 24vw, 130px);
   height: auto;
-  opacity: 0.15;
+  opacity: 0.95;
   transform: scale(-1, -1);
 }
 
@@ -320,32 +337,40 @@
   transform: translateY(0);
 }
 
-/* ── Ornament stroke drawing ───────────────────────────────────────── */
+/* ── Ornament reveal ───────────────────────────────────────────────
+   When letter.js adds `.is-drawn` to the ornament, each path traces
+   itself by tweening `stroke-dashoffset` from 200 → 0, while the
+   seed-dot circles fade in. Per-path delays cascade in source order
+   so the central stem draws first, then the side fronds branch out.
+   The mirrored bottom ornament reuses the same selectors via the
+   shared `.letter__ornament-strokes`/`.letter__ornament-dots` hooks. */
 
 .letter--animated .letter__ornament-strokes path {
+  stroke-dasharray: 200;
   stroke-dashoffset: 200;
-  transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: stroke-dashoffset 1.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .letter--animated .letter__ornament.is-drawn .letter__ornament-strokes path {
   stroke-dashoffset: 0;
 }
 
-.letter--animated .letter__ornament-strokes path:nth-child(1) { transition-delay: 0.00s; }
-.letter--animated .letter__ornament-strokes path:nth-child(2) { transition-delay: 0.15s; }
-.letter--animated .letter__ornament-strokes path:nth-child(3) { transition-delay: 0.15s; }
-.letter--animated .letter__ornament-strokes path:nth-child(4) { transition-delay: 0.30s; }
-.letter--animated .letter__ornament-strokes path:nth-child(5) { transition-delay: 0.30s; }
-.letter--animated .letter__ornament-strokes path:nth-child(6) { transition-delay: 0.45s; }
-.letter--animated .letter__ornament-strokes path:nth-child(7) { transition-delay: 0.45s; }
+.letter--animated .letter__ornament.is-drawn .letter__ornament-strokes path:nth-child(1) { transition-delay: 0.00s; }
+.letter--animated .letter__ornament.is-drawn .letter__ornament-strokes path:nth-child(2) { transition-delay: 0.18s; }
+.letter--animated .letter__ornament.is-drawn .letter__ornament-strokes path:nth-child(3) { transition-delay: 0.18s; }
+.letter--animated .letter__ornament.is-drawn .letter__ornament-strokes path:nth-child(4) { transition-delay: 0.32s; }
+.letter--animated .letter__ornament.is-drawn .letter__ornament-strokes path:nth-child(5) { transition-delay: 0.32s; }
+.letter--animated .letter__ornament.is-drawn .letter__ornament-strokes path:nth-child(6) { transition-delay: 0.46s; }
+.letter--animated .letter__ornament.is-drawn .letter__ornament-strokes path:nth-child(7) { transition-delay: 0.46s; }
 
 .letter--animated .letter__ornament-dots circle {
   opacity: 0;
-  transition: opacity 0.7s ease 0.6s;
+  transition: opacity 0.6s ease;
+  transition-delay: 0.85s;
 }
 
 .letter--animated .letter__ornament.is-drawn .letter__ornament-dots circle {
-  opacity: 1;
+  opacity: 0.9;
 }
 
 /* ── Divider animation ─────────────────────────────────────────────── */
@@ -413,6 +438,10 @@
     opacity: 1 !important;
     transform: none !important;
     stroke-dashoffset: 0 !important;
+  }
+
+  .letter--animated .letter__ornament-dots circle {
+    opacity: 0.9 !important;
   }
 
   .letter__wave .parallax > use {

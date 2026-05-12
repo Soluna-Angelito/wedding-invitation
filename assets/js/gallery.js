@@ -93,7 +93,11 @@
             }
             break;
           case 'trio':
-            fig.classList.add('gallery__tile--square');
+            /* Trio cells are taller than they are wide so subjects don't
+               get cramped into a square. 4:5 matches the duo mosaic and
+               the polaroids, giving every photo tile in the gallery the
+               same portrait DNA. */
+            fig.classList.add('gallery__tile--portrait');
             break;
           case 'duo':
           default:
@@ -101,7 +105,16 @@
             break;
         }
 
-        fig.appendChild(makeGalleryImg(photos, file));
+        /* Inner photo mat — wraps the <img> so the polaroid-style paper
+           frame (`.gallery__tile` padding + border + paper bg) can clip
+           the photo separately from the frame itself. The mat owns the
+           `overflow: hidden`, so a hover-zoom transform on the inner
+           image never bleeds across the paper border. */
+        var photoBox = document.createElement('div');
+        photoBox.className = 'gallery__tile-photo';
+        photoBox.appendChild(makeGalleryImg(photos, file));
+        fig.appendChild(photoBox);
+
         mosaic.appendChild(fig);
       });
 

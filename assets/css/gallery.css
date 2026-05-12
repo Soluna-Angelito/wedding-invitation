@@ -129,13 +129,11 @@
   flex-shrink: 0;
 }
 
-.gallery__subtitle {
-  font-family: 'Sun Batang', 'Noto Serif KR', serif;
-  font-size: clamp(13px, 3.2vw, 16px);
-  font-weight: 300;
-  color: var(--gallery-ink-soft);
-  letter-spacing: 0.02em;
-  line-height: 1.9;
+/* `.gallery__subtitle` was removed — the divider now flows directly into
+   the featured photo. The divider keeps its own bottom margin so the
+   header still breathes. */
+
+.gallery__divider {
   margin-bottom: clamp(36px, 8vw, 56px);
 }
 
@@ -158,7 +156,9 @@
   position: relative;
   aspect-ratio: 16 / 10;
   overflow: hidden;
-  background: #1f1a17;
+  /* See `.gallery__tile-photo`: matching the cream paper here keeps any
+     sub-pixel seam between the photo and the paper matte invisible. */
+  background: var(--gallery-paper);
   cursor: zoom-in;
 }
 
@@ -189,6 +189,9 @@
   width: 100%;
   height: calc(100% + 48px);
   object-fit: cover;
+  /* 25% crop anchor — midway between top and centre — keeps faces
+     visible without the harsh head-pinned look of a hard `top` crop. */
+  object-position: 50% 25%;
   /* Use individual transform properties so JS-driven `translate` (parallax,
      no transition) coexists with the CSS-driven `scale` reveal (1.6s ease).
      Falls back to no animation in browsers that lack support — image
@@ -237,43 +240,74 @@
 }
 .gallery__mosaic--mixed > .gallery__tile:nth-child(1) { grid-row: 1 / span 2; }
 
+/* ── Gallery tile (mosaic cell) ────────────────────────────────────
+   Each tile is now framed like the cinematic `.gallery__featured` card:
+   cream paper background, a faint hairline border, a printed-photo drop
+   shadow, and a tiny inset paper "matte" around the photo. The actual
+   photo lives inside an inner `.gallery__tile-photo` wrapper (rendered
+   by gallery.js) so the wrapper alone owns `overflow: hidden`; the
+   hover-zoom transform on the image therefore stays neatly inside the
+   photo opening and never bleeds across the paper border. */
 .gallery__tile {
   position: relative;
-  overflow: hidden;
   border-radius: var(--gallery-radius);
-  background: #1f1a17;
+  padding: clamp(5px, 1.4vw, 8px);
+  background: var(--gallery-paper);
+  border: 1px solid var(--gallery-frame-faint);
   box-shadow: var(--gallery-shadow);
   cursor: zoom-in;
   isolation: isolate;
+}
+
+/* Tile aspect-ratio modifiers were previously applied to `.gallery__tile`
+   when the image was a direct child. Now that the image lives inside the
+   inner mat, the easiest way to keep the same outer geometry is to let
+   the inner mat keep its aspect ratio and the figure's padding ring
+   simply absorb the difference. We achieve this by letting the figure
+   size itself from the mat (no fixed aspect on the figure) and moving
+   the aspect-ratio rules below to the wrapper. */
+
+.gallery__tile-photo {
+  position: relative;
+  width: 100%;
+  /* Fall back to filling the figure's content-box if the figure already
+     has an explicit aspect-ratio modifier; the per-modifier rules below
+     set this wrapper's own aspect ratio for the new wrapper-based path. */
+  height: 100%;
+  overflow: hidden;
+  border-radius: calc(var(--gallery-radius) - 1px);
+  /* The wrapper background used to be a near-black placeholder (#1f1a17).
+     Because the wrapper's border-radius is computed as
+     `calc(var(--gallery-radius) - 1px)` while the figure has its own
+     border-radius + 1px frame border, sub-pixel rounding leaves a 1px
+     dark hairline visible between the photo and the cream paper matte —
+     it reads as a "black border around the photo". Matching the paper
+     colour here makes any such seam blend cleanly into the cream frame
+     while still acting as a sane backdrop for lazy-loading images. */
+  background: var(--gallery-paper);
 }
 
 .gallery__tile img {
   display: block;
   width: 100%;
   height: 100%;
+  /* Crop anchor sits midway between the top edge (0%) and the centre
+     (50%) — i.e. 25%. Hard-`top` cropping read as awkwardly head-pinned;
+     25% keeps faces comfortably above centre while still dropping the
+     irrelevant bottom of tall portraits. */
   object-fit: cover;
+  object-position: 50% 25%;
   transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
               filter 0.9s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
 }
 
-.gallery__tile::after {
-  /* Soft warm glaze on top of every tile so photos feel print-like
-     instead of glossy/digital. */
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: linear-gradient(180deg,
-              rgba(60, 48, 36, 0) 60%,
-              rgba(60, 48, 36, 0.18) 100%);
-  opacity: 0.6;
-  transition: opacity 0.5s ease;
-}
-
-.gallery__tile:hover::after,
-.gallery__tile:focus-visible::after { opacity: 0.25; }
+/* The previous `::after` warm-glaze gradient was producing a noticeable
+   dark band along the bottom edge of every tile (the gradient terminated
+   at rgba(60,48,36,0.18) and read as a "black border" against the cream
+   paper frame). It has been removed so each photo sits cleanly inside its
+   paper-frame matte. If a subtle print-like tint is wanted later, prefer a
+   `filter: saturate(0.96)` on the image itself rather than a dark overlay. */
 
 .gallery__tile:hover img,
 .gallery__tile:focus-visible img {
@@ -448,6 +482,10 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* 25% crop anchor — midway between top and centre — so faces stay
+     comfortably above the polaroid's vertical centre without feeling
+     forced to the very top edge. */
+  object-position: 50% 25%;
   filter: saturate(0.94);
   transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
   /* Hint to the compositor: the image will be transformed (hover zoom).

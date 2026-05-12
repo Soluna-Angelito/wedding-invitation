@@ -278,8 +278,8 @@
           {
             role: '신랑',
             name: '정성문',
-            bank: 'kakaobank',
-            number: '3333-00-0000000',
+            bank: 'shinhan',
+            number: '110-601-832099',
             // Optional Kakao Pay QR send-link. When present the row
             // shows a "송금" pill button next to "계좌번호 복사".
             kakaopay: ''
@@ -287,15 +287,15 @@
           {
             role: '신랑측 아버님',
             name: '정인복',
-            bank: 'nonghyup',
-            number: '352-0000-0000-00',
+            bank: 'woori',
+            number: '1002-843-454953',
             kakaopay: ''
           },
           {
             role: '신랑측 어머님',
             name: '전명자',
             bank: 'kb',
-            number: '000000-00-000000',
+            number: '054-21-0716-652',
             kakaopay: ''
           }
         ]
@@ -307,22 +307,22 @@
           {
             role: '신부',
             name: '송나은',
-            bank: 'toss',
-            number: '1000-0000-0000',
+            bank: 'shinhan',
+            number: '110-386-222088',
             kakaopay: ''
           },
           {
             role: '신부측 아버님',
             name: '송점수',
-            bank: 'shinhan',
-            number: '110-000-000000',
+            bank: 'hana',
+            number: '364-810291-43307',
             kakaopay: ''
           },
           {
             role: '신부측 어머님',
             name: '이혜경',
-            bank: 'hana',
-            number: '000-000000-00000',
+            bank: 'kb',
+            number: '510002-01-106095',
             kakaopay: ''
           }
         ]

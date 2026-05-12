@@ -64,6 +64,9 @@
 
 .snapshot__inner {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   max-width: 460px;
   margin: 0 auto;
   padding: 0 clamp(22px, 5.5vw, 36px);
@@ -95,6 +98,7 @@
    Editorial Header — eyebrow + script title + film-strip divider + sub
    ══════════════════════════════════════════════════════════════════════ */
 .snapshot__eyebrow {
+  order: 1;
   font-family: 'Sorts Mill Goudy', serif;
   font-size: clamp(10px, 2.5vw, 13px);
   font-weight: 400;
@@ -102,45 +106,86 @@
   text-indent: 0.42em;
   text-transform: uppercase;
   color: var(--snapshot-eyebrow);
-  margin: 0 0 clamp(8px, 2vw, 12px);
+  margin: 0 0 clamp(10px, 2.4vw, 14px);
 }
 
 .snapshot__title {
+  order: 3;
   font-family: 'munche_seuki_jung', 'Sun Batang', 'Noto Serif KR', serif;
-  font-size: clamp(26px, 6.6vw, 38px);
+  font-size: clamp(28px, 8.8vw, 48px);
   font-weight: 400;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.04em;
   color: var(--snapshot-ink);
-  line-height: 1.32;
-  margin: 0 0 clamp(14px, 3.2vw, 22px);
+  line-height: 1.18;
+  margin: 0 0 clamp(8px, 2.2vw, 13px);
+  word-break: keep-all;
 }
 
 .snapshot__divider {
+  order: 2;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(8px, 2vw, 14px);
-  margin: 0 auto clamp(18px, 4vw, 26px);
-  color: var(--snapshot-accent-deep);
+  gap: clamp(9px, 2.3vw, 14px);
+  margin: 0 auto clamp(16px, 3.8vw, 24px);
+  color: var(--snapshot-accent);
 }
 .snapshot__divider-line {
   display: block;
-  width: clamp(34px, 10vw, 56px);
+  width: clamp(42px, 12vw, 68px);
   height: 1px;
   background: currentColor;
-  opacity: 0.7;
+  opacity: 0.82;
 }
 .snapshot__divider-line--left  { transform-origin: right center; }
 .snapshot__divider-line--right { transform-origin: left center; }
 .snapshot__divider-mark {
-  width: clamp(28px, 7vw, 36px);
-  height: clamp(14px, 3.5vw, 18px);
+  width: clamp(10px, 2.8vw, 13px);
+  height: clamp(9px, 2.4vw, 11px);
   flex-shrink: 0;
   color: var(--snapshot-accent-deep);
-  opacity: 0.95;
+  opacity: 0.72;
+}
+
+.snapshot__camera {
+  order: 4;
+  position: relative;
+  width: clamp(106px, 27vw, 142px);
+  margin: 0 auto clamp(18px, 4.2vw, 26px);
+  transform-origin: center;
+}
+.snapshot__camera::before,
+.snapshot__camera::after {
+  content: "";
+  position: absolute;
+  top: 58%;
+  width: clamp(76px, 22vw, 122px);
+  height: clamp(10px, 3vw, 16px);
+  border-top: 1px solid rgba(158, 129, 104, 0.20);
+  pointer-events: none;
+}
+.snapshot__camera::before {
+  right: calc(100% - 12px);
+  border-radius: 100% 0 0 0;
+  transform: translateY(-3px) rotate(-4deg);
+}
+.snapshot__camera::after {
+  left: calc(100% - 12px);
+  border-radius: 0 100% 0 0;
+  transform: translateY(1px) rotate(4deg);
+}
+.snapshot__camera img {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: auto;
+  transform: rotate(-9deg);
+  opacity: 1;
 }
 
 .snapshot__subtitle {
+  order: 5;
   margin: 0 auto clamp(28px, 6vw, 36px);
   max-width: 32ch;
   font-family: 'Sun Batang', 'Noto Serif KR', serif;
@@ -157,6 +202,7 @@
    CTA — single primary pill that opens the inline upload modal
    ══════════════════════════════════════════════════════════════════════ */
 .snapshot__cta {
+  order: 6;
   margin: 0 auto clamp(8px, 2vw, 12px);
   display: flex;
   flex-direction: column;
@@ -252,13 +298,19 @@
        buttons sitting side-by-side.
      · Each pill keeps the same height, radius, and spring as the
        Pulitzer CTA so the whole stack reads as one editorial unit.
-       The KakaoTalk pill carries Kakao's official brand yellow + label
-       brown for instant recognition; the 링크 복사 pill is a paper
-       ghost so the row reads as "primary brand action + companion
-       neutral action" rather than two competing buttons.
+       The KakaoTalk action keeps the same wiring but now uses the same
+       quiet paper vocabulary as the link-copy pill so the row does not
+       compete with the primary photo-upload CTA.
    ══════════════════════════════════════════════════════════════════════ */
 .snapshot__share {
-  margin-top: clamp(20px, 5vw, 28px);
+  order: 7;
+  /* The previous 20–28px gap to the primary `.snapshot__btn` above read
+     as crowded — the SHARE eyebrow line hugged the upload CTA and the
+     two zones lost their primary/secondary hierarchy. Roughly doubling
+     the top margin gives the SHARE strip the breathing room it needs
+     to register as a deliberate secondary action, not a continuation
+     of the upload CTA. */
+  margin-top: clamp(40px, 9vw, 60px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -387,29 +439,34 @@
 }
 .snapshot__share-btn-label { flex: 0 1 auto; }
 
-/* ── KakaoTalk pill ── Kakao brand yellow #fee500 + label brown #3c1e1e
-   for the speech-bubble glyph so the mark reads correctly even when
-   surrounded by the section's warm cream parchment. */
+/* ── KakaoTalk pill ── quiet paper-plane treatment
+   paper-plane glyph and warm outline replace the brand treatment,
+   kept muted here so it does not compete with the photo-upload CTA. */
 .snapshot__share-btn--kakao {
-  background: #fee500;
-  border: 1px solid #f5d900;
-  color: #3c1e1e;
+  background: rgba(255, 252, 246, 0.72);
+  border: 1px solid rgba(142, 122, 96, 0.28);
+  color: #7e7165;
+  font-weight: 400;
+  letter-spacing: 0.08em;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.40),
-    0 8px 18px -10px rgba(60, 48, 36, 0.30);
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    0 8px 18px -14px rgba(60, 48, 36, 0.32);
+}
+.snapshot__share-btn--kakao .snapshot__share-btn-icon {
+  color: #9a8b78;
 }
 .snapshot__share-btn--kakao:hover,
 .snapshot__share-btn--kakao:focus-visible {
-  background: #ffd900;
-  border-color: #e5c500;
+  background: rgba(255, 250, 242, 0.92);
+  border-color: rgba(142, 122, 96, 0.42);
+  color: var(--snapshot-ink-soft);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.50),
-    0 12px 22px -12px rgba(60, 48, 36, 0.40);
+    inset 0 1px 0 rgba(255, 255, 255, 0.82),
+    0 12px 24px -16px rgba(60, 48, 36, 0.40);
   transform: translateY(-1px);
 }
 
-/* ── 링크 복사 ghost pill ── matches the section's paper / ink palette
-   so the secondary action whispers next to the bright brand button. */
+/* ── 링크 복사 ghost pill ── matches the section's paper / ink palette. */
 .snapshot__share-btn--link {
   background: var(--snapshot-paper);
   border: 1px solid var(--snapshot-line);

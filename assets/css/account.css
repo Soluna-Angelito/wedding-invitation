@@ -285,12 +285,11 @@
   z-index: 0;
 }
 
-
 /* ── Card head (the colour-blocked button) ──────────────────────────
    Filled with the side's accent colour. White typography across the
    head — label, ornament mark, chevron — gives the closed state a
    confident "envelope band" presence. A subtle inset top-highlight
-   keeps the surface from reading flat. */
+   and a nested hairline keep the surface from reading flat. */
 
 .account__card-head {
   position: relative;
@@ -312,9 +311,24 @@
   transition: background 0.45s ease, box-shadow 0.45s ease;
 }
 
+.account__card-head::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border: 1px solid rgba(255, 255, 255, 0.30);
+  border-radius: calc(clamp(6px, 1.6vw, 10px) - 1px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10);
+  pointer-events: none;
+}
+
 .account__card-head:hover {
   background: var(--card-accent-deep);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.account__card-head:hover::before,
+.account__card-head:focus-visible::before {
+  border-color: rgba(255, 255, 255, 0.38);
 }
 
 .account__card-head:focus-visible {
@@ -440,26 +454,6 @@
 .account__card-panel-inner {
   overflow: hidden;
   min-height: 0;
-}
-
-/* Faint hairline that appears between the head and the body when
-   the card opens — sells the "envelope flap unfolds" feel. */
-.account__card-panel-inner::before {
-  content: '';
-  display: block;
-  height: 1px;
-  margin: 0 clamp(16px, 4vw, 22px);
-  background: linear-gradient(90deg,
-    rgba(120, 100, 80, 0) 0%,
-    rgba(120, 100, 80, 0.18) 50%,
-    rgba(120, 100, 80, 0) 100%);
-  transform: scaleX(0);
-  transform-origin: center;
-  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.1s;
-}
-
-.account__card.is-open .account__card-panel-inner::before {
-  transform: scaleX(1);
 }
 
 .account__list {
@@ -952,7 +946,6 @@
   .account__card,
   .account__card-toggle,
   .account__card-panel,
-  .account__card-panel-inner::before,
   .account__item,
   .account__btn {
     transition: none !important;
