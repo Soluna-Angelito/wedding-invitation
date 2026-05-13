@@ -53,6 +53,30 @@
 
   var imageBase = './assets/img/';
 
+  var responsiveFiles = {
+    'IMG_0003-0.webp': true,
+    'IMG_0140-0.webp': true,
+    'IMG_0626-0.webp': true,
+    'IMG_0952-0.webp': true,
+    'IMG_1228-0.webp': true,
+    'IMG_1607-0.webp': true,
+    'IMG_2169-0.webp': true,
+    'IMG_3471.webp': true,
+    'IMG_3472.webp': true,
+    'IMG_3473.webp': true,
+    'IMG_3474.webp': true,
+  };
+
+  var responsiveWidths = [480, 800, 1200];
+
+  function hasResponsiveFile(file) {
+    return !!responsiveFiles[file];
+  }
+
+  function responsivePathFor(file, width) {
+    return imageBase + 'gallery-' + width + '/' + file;
+  }
+
 
   /* ── 3) 갤러리 레이아웃 ───────────────────────────────────────
      아래 항목에서 사용하는 파일명은 모두 `registry`에 등록되어
@@ -101,6 +125,22 @@
     /*  파일명 → 전체 경로  */
     pathFor: function (file) {
       return imageBase + file;
+    },
+
+    previewPathFor: function (file, width) {
+      if (!hasResponsiveFile(file)) {
+        return this.pathFor(file);
+      }
+      return responsivePathFor(file, width || 800);
+    },
+
+    srcsetFor: function (file) {
+      if (!hasResponsiveFile(file)) {
+        return '';
+      }
+      return responsiveWidths.map(function (width) {
+        return responsivePathFor(file, width) + ' ' + width + 'w';
+      }).join(', ');
     },
 
     /*  registry에 등록된 모든 파일명을 등록 순서대로 반환  */

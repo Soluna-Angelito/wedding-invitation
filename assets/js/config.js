@@ -405,7 +405,7 @@
       requestUrl: 'https://soluna-angelito.github.io/wedding-invitation/',
       // OG image previously uploaded to Kakao CDN via
       // Kakao/upload-image.html. Mirrored in <head> as `og:image`.
-      ogImageUrl: 'http://k.kakaocdn.net/dn/bhJw7g/dJMb997meRa/eTLebPRgUrs7prw1xM2d90/kakaolink40_original.png',
+      ogImageUrl: 'http://k.kakaocdn.net/dn/FZ3jY/dJMcai4jgVk/qDKCFSPjT6etyvhMUVZp10/kakaolink40_original.png',
       // ── SDK loader knobs ─────────────────────────────────────────
       // The static <script> in index.html is pinned with SRI; if it
       // is blocked (carrier filters, content blockers, captive Wi-Fi)

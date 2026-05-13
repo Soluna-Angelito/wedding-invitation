@@ -16,6 +16,132 @@
     return global.matchMedia && global.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
 
+  var FEATURED_IMAGE_SIZES = '(min-width: 1024px) 640px, (min-width: 768px) 560px, calc(100vw - 40px)';
+  var MOSAIC_IMAGE_SIZES = '(min-width: 1024px) 310px, (min-width: 768px) 270px, calc((100vw - 56px) / 2)';
+  var FILMSTRIP_IMAGE_SIZES = '(min-width: 1024px) 220px, 42vw';
+  var galleryPreloadsStarted = false;
+  var galleryPreloadRefs = [];
+
+  function setFetchPriority(el, priority) {
+    if (!priority) {
+      return;
+    }
+    try {
+      el.fetchPriority = priority;
+    } catch (_) {}
+    el.setAttribute('fetchpriority', priority);
+  }
+
+  function previewPathFor(photos, file, width) {
+    return (typeof photos.previewPathFor === 'function')
+      ? photos.previewPathFor(file, width)
+      : photos.pathFor(file);
+  }
+
+  function srcsetFor(photos, file) {
+    return (typeof photos.srcsetFor === 'function')
+      ? photos.srcsetFor(file)
+      : '';
+  }
+
+  function pushPreloadItem(items, seen, photos, file, sizes, fetchPriority) {
+    if (!file || !photos || typeof photos.pathFor !== 'function') {
+      return;
+    }
+
+    var fullSrc = photos.pathFor(file);
+    if (seen[fullSrc]) {
+      return;
+    }
+    seen[fullSrc] = true;
+
+    items.push({
+      src: previewPathFor(photos, file, 800),
+      srcset: srcsetFor(photos, file),
+      sizes: sizes,
+      fetchPriority: fetchPriority || 'auto'
+    });
+  }
+
+  function warmImage(item) {
+    var img = new Image();
+    setFetchPriority(img, item.fetchPriority);
+    img.decoding = 'async';
+    if (item.sizes) {
+      img.sizes = item.sizes;
+    }
+    if (item.srcset) {
+      img.srcset = item.srcset;
+    }
+    img.src = item.src;
+    galleryPreloadRefs.push(img);
+  }
+
+  function preloadImage(item) {
+    if (!document.head) {
+      warmImage(item);
+      return;
+    }
+
+    var link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'image';
+    link.href = item.src;
+    setFetchPriority(link, item.fetchPriority);
+    if (item.srcset) {
+      link.setAttribute('imagesrcset', item.srcset);
+    }
+    if (item.sizes) {
+      link.setAttribute('imagesizes', item.sizes);
+    }
+    document.head.appendChild(link);
+    galleryPreloadRefs.push(link);
+  }
+
+  function startGalleryPreloads(photos, config) {
+    if (!photos || galleryPreloadsStarted) {
+      return;
+    }
+    galleryPreloadsStarted = true;
+
+    var layout = photos.layout || {};
+    var seen = Object.create(null);
+    var immediate = [];
+    var deferred = [];
+
+    pushPreloadItem(immediate, seen, photos, layout.featured, FEATURED_IMAGE_SIZES, 'high');
+
+    if (Array.isArray(layout.mosaics)) {
+      layout.mosaics.forEach(function (group) {
+        if (!group || !Array.isArray(group.photos)) {
+          return;
+        }
+        group.photos.forEach(function (file) {
+          pushPreloadItem(immediate, seen, photos, file, MOSAIC_IMAGE_SIZES, 'auto');
+        });
+      });
+    }
+
+    resolveFilmstripFiles(photos).forEach(function (file) {
+      pushPreloadItem(deferred, seen, photos, file, FILMSTRIP_IMAGE_SIZES, 'low');
+    });
+
+    immediate.forEach(preloadImage);
+
+    function startDeferred() {
+      deferred.forEach(warmImage);
+    }
+
+    if (deferred.length === 0) {
+      return;
+    }
+    if ('requestIdleCallback' in global) {
+      global.requestIdleCallback(startDeferred, { timeout: (config && config.galleryPreloadIdleTimeoutMs) || 1800 });
+    } else {
+      global.setTimeout(startDeferred, (config && config.galleryPreloadIdleTimeoutMs) || 1800);
+    }
+  }
+
 
   /* ══════════════════════════════════════════════════════════════════
      Data-Driven Render
@@ -31,14 +157,25 @@
     opts = opts || {};
     var caption = photos.captionFor(file);
     var src = photos.pathFor(file);
+    var previewSrc = previewPathFor(photos, file, opts.previewWidth);
+    var srcset = srcsetFor(photos, file);
+    var loading = opts.loading || (opts.eager ? 'eager' : 'lazy');
 
     var img = document.createElement('img');
-    img.src = src;
+    if (opts.sizes) {
+      img.setAttribute('sizes', opts.sizes);
+    }
+    if (srcset) {
+      img.setAttribute('srcset', srcset);
+    }
+    img.src = previewSrc;
     img.setAttribute('data-gallery-src', src);
+    img.setAttribute('data-gallery-preview-src', previewSrc);
     img.setAttribute('data-gallery-caption', caption);
     img.setAttribute('alt', opts.alt != null ? opts.alt : caption);
-    img.setAttribute('loading', opts.eager ? 'eager' : 'lazy');
+    img.setAttribute('loading', loading);
     img.setAttribute('decoding', 'async');
+    setFetchPriority(img, opts.fetchPriority);
     return img;
   }
 
@@ -54,7 +191,12 @@
     var frame = slot.querySelector('.gallery__featured-frame');
     if (frame) {
       frame.innerHTML = '';
-      frame.appendChild(makeGalleryImg(photos, file));
+      frame.appendChild(makeGalleryImg(photos, file, {
+        loading: 'eager',
+        fetchPriority: 'high',
+        sizes: FEATURED_IMAGE_SIZES,
+        previewWidth: 1200
+      }));
     }
 
     var cap = slot.querySelector('.gallery__featured-caption');
@@ -112,7 +254,12 @@
            image never bleeds across the paper border. */
         var photoBox = document.createElement('div');
         photoBox.className = 'gallery__tile-photo';
-        photoBox.appendChild(makeGalleryImg(photos, file));
+        photoBox.appendChild(makeGalleryImg(photos, file, {
+          loading: 'eager',
+          fetchPriority: 'auto',
+          sizes: MOSAIC_IMAGE_SIZES,
+          previewWidth: 800
+        }));
         fig.appendChild(photoBox);
 
         mosaic.appendChild(fig);
@@ -166,7 +313,12 @@
 
       var photoBox = document.createElement('div');
       photoBox.className = 'gallery__polaroid-photo';
-      photoBox.appendChild(makeGalleryImg(photos, file));
+      photoBox.appendChild(makeGalleryImg(photos, file, {
+        loading: 'lazy',
+        fetchPriority: 'low',
+        sizes: FILMSTRIP_IMAGE_SIZES,
+        previewWidth: 480
+      }));
       fig.appendChild(photoBox);
 
       var cap = document.createElement('figcaption');
@@ -1113,6 +1265,7 @@
     }
 
     var config = getConfig();
+    startGalleryPreloads(getPhotos(), config);
 
     /* Render photos from the data file FIRST so the lightbox, reveals
        and reduced-motion fallback all see real DOM. */
@@ -1175,6 +1328,7 @@
   /* ── Public API ──────────────────────────────────────────────────── */
 
   app.initGallery = init;
+  startGalleryPreloads(getPhotos(), getConfig());
 
   document.addEventListener('DOMContentLoaded', function () {
     app.galleryController = init();
