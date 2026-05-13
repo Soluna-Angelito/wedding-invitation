@@ -16,9 +16,6 @@
     return global.matchMedia && global.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
 
-  var FEATURED_IMAGE_SIZES = '(min-width: 1024px) 640px, (min-width: 768px) 560px, calc(100vw - 40px)';
-  var MOSAIC_IMAGE_SIZES = '(min-width: 1024px) 310px, (min-width: 768px) 270px, calc((100vw - 56px) / 2)';
-  var FILMSTRIP_IMAGE_SIZES = '(min-width: 1024px) 220px, 42vw';
   var galleryPreloadsStarted = false;
   var galleryPreloadRefs = [];
 
@@ -32,19 +29,7 @@
     el.setAttribute('fetchpriority', priority);
   }
 
-  function previewPathFor(photos, file, width) {
-    return (typeof photos.previewPathFor === 'function')
-      ? photos.previewPathFor(file, width)
-      : photos.pathFor(file);
-  }
-
-  function srcsetFor(photos, file) {
-    return (typeof photos.srcsetFor === 'function')
-      ? photos.srcsetFor(file)
-      : '';
-  }
-
-  function pushPreloadItem(items, seen, photos, file, sizes, fetchPriority) {
+  function pushPreloadItem(items, seen, photos, file, fetchPriority) {
     if (!file || !photos || typeof photos.pathFor !== 'function') {
       return;
     }
@@ -56,9 +41,7 @@
     seen[fullSrc] = true;
 
     items.push({
-      src: previewPathFor(photos, file, 800),
-      srcset: srcsetFor(photos, file),
-      sizes: sizes,
+      src: fullSrc,
       fetchPriority: fetchPriority || 'auto'
     });
   }
@@ -67,12 +50,6 @@
     var img = new Image();
     setFetchPriority(img, item.fetchPriority);
     img.decoding = 'async';
-    if (item.sizes) {
-      img.sizes = item.sizes;
-    }
-    if (item.srcset) {
-      img.srcset = item.srcset;
-    }
     img.src = item.src;
     galleryPreloadRefs.push(img);
   }
@@ -88,12 +65,6 @@
     link.as = 'image';
     link.href = item.src;
     setFetchPriority(link, item.fetchPriority);
-    if (item.srcset) {
-      link.setAttribute('imagesrcset', item.srcset);
-    }
-    if (item.sizes) {
-      link.setAttribute('imagesizes', item.sizes);
-    }
     document.head.appendChild(link);
     galleryPreloadRefs.push(link);
   }
@@ -109,7 +80,7 @@
     var immediate = [];
     var deferred = [];
 
-    pushPreloadItem(immediate, seen, photos, layout.featured, FEATURED_IMAGE_SIZES, 'high');
+    pushPreloadItem(immediate, seen, photos, layout.featured, 'high');
 
     if (Array.isArray(layout.mosaics)) {
       layout.mosaics.forEach(function (group) {
@@ -117,13 +88,13 @@
           return;
         }
         group.photos.forEach(function (file) {
-          pushPreloadItem(immediate, seen, photos, file, MOSAIC_IMAGE_SIZES, 'auto');
+          pushPreloadItem(immediate, seen, photos, file, 'auto');
         });
       });
     }
 
     resolveFilmstripFiles(photos).forEach(function (file) {
-      pushPreloadItem(deferred, seen, photos, file, FILMSTRIP_IMAGE_SIZES, 'low');
+      pushPreloadItem(deferred, seen, photos, file, 'low');
     });
 
     immediate.forEach(preloadImage);
@@ -157,20 +128,11 @@
     opts = opts || {};
     var caption = photos.captionFor(file);
     var src = photos.pathFor(file);
-    var previewSrc = previewPathFor(photos, file, opts.previewWidth);
-    var srcset = srcsetFor(photos, file);
     var loading = opts.loading || (opts.eager ? 'eager' : 'lazy');
 
     var img = document.createElement('img');
-    if (opts.sizes) {
-      img.setAttribute('sizes', opts.sizes);
-    }
-    if (srcset) {
-      img.setAttribute('srcset', srcset);
-    }
-    img.src = previewSrc;
+    img.src = src;
     img.setAttribute('data-gallery-src', src);
-    img.setAttribute('data-gallery-preview-src', previewSrc);
     img.setAttribute('data-gallery-caption', caption);
     img.setAttribute('alt', opts.alt != null ? opts.alt : caption);
     img.setAttribute('loading', loading);
@@ -193,9 +155,7 @@
       frame.innerHTML = '';
       frame.appendChild(makeGalleryImg(photos, file, {
         loading: 'eager',
-        fetchPriority: 'high',
-        sizes: FEATURED_IMAGE_SIZES,
-        previewWidth: 1200
+        fetchPriority: 'high'
       }));
     }
 
@@ -256,9 +216,7 @@
         photoBox.className = 'gallery__tile-photo';
         photoBox.appendChild(makeGalleryImg(photos, file, {
           loading: 'eager',
-          fetchPriority: 'auto',
-          sizes: MOSAIC_IMAGE_SIZES,
-          previewWidth: 800
+          fetchPriority: 'auto'
         }));
         fig.appendChild(photoBox);
 
@@ -315,9 +273,7 @@
       photoBox.className = 'gallery__polaroid-photo';
       photoBox.appendChild(makeGalleryImg(photos, file, {
         loading: 'lazy',
-        fetchPriority: 'low',
-        sizes: FILMSTRIP_IMAGE_SIZES,
-        previewWidth: 480
+        fetchPriority: 'low'
       }));
       fig.appendChild(photoBox);
 
