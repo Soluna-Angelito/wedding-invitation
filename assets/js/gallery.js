@@ -78,39 +78,19 @@
     var layout = photos.layout || {};
     var seen = Object.create(null);
     var immediate = [];
-    var deferred = [];
 
     pushPreloadItem(immediate, seen, photos, layout.featured, 'high');
 
-    if (Array.isArray(layout.mosaics)) {
-      layout.mosaics.forEach(function (group) {
-        if (!group || !Array.isArray(group.photos)) {
-          return;
-        }
-        group.photos.forEach(function (file) {
-          pushPreloadItem(immediate, seen, photos, file, 'auto');
-        });
+    /* Keep iPhone/Safari memory pressure low. The first mosaic row is the
+       only gallery content close enough to need proactive loading; the
+       rest should stay native-lazy instead of being decoded all at once. */
+    if (Array.isArray(layout.mosaics) && layout.mosaics[0] && Array.isArray(layout.mosaics[0].photos)) {
+      layout.mosaics[0].photos.forEach(function (file) {
+        pushPreloadItem(immediate, seen, photos, file, 'auto');
       });
     }
 
-    resolveFilmstripFiles(photos).forEach(function (file) {
-      pushPreloadItem(deferred, seen, photos, file, 'low');
-    });
-
     immediate.forEach(preloadImage);
-
-    function startDeferred() {
-      deferred.forEach(warmImage);
-    }
-
-    if (deferred.length === 0) {
-      return;
-    }
-    if ('requestIdleCallback' in global) {
-      global.requestIdleCallback(startDeferred, { timeout: (config && config.galleryPreloadIdleTimeoutMs) || 1800 });
-    } else {
-      global.setTimeout(startDeferred, (config && config.galleryPreloadIdleTimeoutMs) || 1800);
-    }
   }
 
 
@@ -173,11 +153,12 @@
 
     slot.innerHTML = '';
 
-    photos.layout.mosaics.forEach(function (group) {
+    photos.layout.mosaics.forEach(function (group, groupIdx) {
       if (!group || !Array.isArray(group.photos) || group.photos.length === 0) {
         return;
       }
 
+      var eagerGroup = groupIdx === 0;
       var mosaic = document.createElement('div');
       mosaic.className = 'gallery__mosaic gallery__mosaic--' + (group.layout || 'duo');
       mosaic.setAttribute('data-reveal', 'fade-up');
@@ -215,8 +196,8 @@
         var photoBox = document.createElement('div');
         photoBox.className = 'gallery__tile-photo';
         photoBox.appendChild(makeGalleryImg(photos, file, {
-          loading: 'eager',
-          fetchPriority: 'auto'
+          loading: eagerGroup ? 'eager' : 'lazy',
+          fetchPriority: eagerGroup ? 'auto' : 'low'
         }));
         fig.appendChild(photoBox);
 
@@ -345,23 +326,110 @@
   function setupReveals(galleryEl, config) {
     var rootMargin = config.rootMargin || '0px 0px -10% 0px';
     var threshold  = (config.threshold != null) ? config.threshold : 0.12;
+    var reveals = galleryEl.querySelectorAll('[data-reveal]');
 
-    var observer = new IntersectionObserver(function (entries) {
+    if (!('IntersectionObserver' in global)) {
+      showStatic(galleryEl);
+      return null;
+    }
+
+    var observer = null;
+
+    function revealElement(el) {
+      if (!el || el.classList.contains('is-visible')) {
+        return;
+      }
+      el.classList.add('is-visible');
+      if (observer) {
+        try { observer.unobserve(el); } catch (_) {}
+      }
+    }
+
+    observer = new IntersectionObserver(function (entries) {
       for (var i = 0; i < entries.length; i++) {
         if (!entries[i].isIntersecting) {
           continue;
         }
-        entries[i].target.classList.add('is-visible');
-        observer.unobserve(entries[i].target);
+        revealElement(entries[i].target);
       }
     }, { rootMargin: rootMargin, threshold: threshold });
 
-    var reveals = galleryEl.querySelectorAll('[data-reveal]');
     for (var i = 0; i < reveals.length; i++) {
       observer.observe(reveals[i]);
     }
 
-    return observer;
+    /* iOS Safari can occasionally miss an IntersectionObserver delivery
+       while large images are decoding or the page is restoring scroll. A
+       tiny scroll/resize fallback makes visible rows fail open instead of
+       leaving fully-loaded photos stuck at opacity: 0. */
+    var fallbackTimerId = null;
+    var fallbackFrameId = null;
+    var fallbackFrameType = null;
+    var fallbackBaseMargin = config.revealFallbackMarginPx != null
+      ? config.revealFallbackMarginPx
+      : 160;
+    var fallbackDelay = config.revealFallbackMs != null
+      ? config.revealFallbackMs
+      : 900;
+
+    function revealNearViewport() {
+      fallbackFrameId = null;
+      fallbackFrameType = null;
+
+      var vh = global.innerHeight || document.documentElement.clientHeight || 0;
+      var margin = Math.max(fallbackBaseMargin, vh * 0.25);
+
+      for (var j = 0; j < reveals.length; j++) {
+        if (reveals[j].classList.contains('is-visible')) {
+          continue;
+        }
+        var rect = reveals[j].getBoundingClientRect();
+        if (rect.top < vh + margin && rect.bottom > -margin) {
+          revealElement(reveals[j]);
+        }
+      }
+    }
+
+    function queueRevealCheck() {
+      if (fallbackFrameId != null) {
+        return;
+      }
+      if (global.requestAnimationFrame) {
+        fallbackFrameType = 'raf';
+        fallbackFrameId = global.requestAnimationFrame(revealNearViewport);
+      } else {
+        fallbackFrameType = 'timeout';
+        fallbackFrameId = global.setTimeout(revealNearViewport, 16);
+      }
+    }
+
+    function cancelQueuedRevealCheck() {
+      if (fallbackFrameId == null) {
+        return;
+      }
+      if (fallbackFrameType === 'raf' && global.cancelAnimationFrame) {
+        global.cancelAnimationFrame(fallbackFrameId);
+      } else {
+        global.clearTimeout(fallbackFrameId);
+      }
+      fallbackFrameId = null;
+      fallbackFrameType = null;
+    }
+
+    fallbackTimerId = global.setTimeout(queueRevealCheck, fallbackDelay);
+    global.addEventListener('scroll', queueRevealCheck, { passive: true });
+    global.addEventListener('resize', queueRevealCheck);
+    queueRevealCheck();
+
+    return {
+      disconnect: function () {
+        observer.disconnect();
+        global.clearTimeout(fallbackTimerId);
+        cancelQueuedRevealCheck();
+        global.removeEventListener('scroll', queueRevealCheck);
+        global.removeEventListener('resize', queueRevealCheck);
+      }
+    };
   }
 
 

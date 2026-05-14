@@ -321,7 +321,14 @@
 .gallery__tile--wide      { aspect-ratio: 16 / 9; }
 .gallery__tile--tall      { aspect-ratio: 3 / 4; }
 
-.gallery__tile--span-row  { grid-row: span 2; aspect-ratio: 4 / 5; height: 100%; }
+.gallery__tile--span-row {
+  grid-row: span 2;
+  aspect-ratio: 4 / 5;
+  /* Avoid a WebKit grid sizing loop: `height: 100%` on an auto-sized,
+     row-spanning grid item can make iOS Safari stretch the mixed mosaic
+     to more than a viewport tall, leaving the next photos far below. */
+  height: auto;
+}
 
 
 /* ══════════════════════════════════════════════════════════════════════
