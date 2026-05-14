@@ -54,6 +54,10 @@
     galleryPreloadRefs.push(img);
   }
 
+  function toCssImageUrl(src) {
+    return 'url("' + String(src).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '")';
+  }
+
   function preloadImage(item) {
     if (!document.head) {
       warmImage(item);
@@ -100,8 +104,8 @@
      Reads `window.WeddingPhotos` (assets/data/photos.js) and fills the
      featured frame, mosaic grids, polaroid filmstrip, and "view all"
      count from a single source of truth. Filenames map to captions
-     through the registry, so the same description is reused for the
-     gallery caption, the lightbox description, and the image alt text.
+     through the registry, which remain available for image alt text
+     even though visible photo titles are not rendered.
      ══════════════════════════════════════════════════════════════════ */
 
   function makeGalleryImg(photos, file, opts) {
@@ -111,13 +115,13 @@
     var loading = opts.loading || (opts.eager ? 'eager' : 'lazy');
 
     var img = document.createElement('img');
-    img.src = src;
     img.setAttribute('data-gallery-src', src);
     img.setAttribute('data-gallery-caption', caption);
     img.setAttribute('alt', opts.alt != null ? opts.alt : caption);
     img.setAttribute('loading', loading);
     img.setAttribute('decoding', 'async');
     setFetchPriority(img, opts.fetchPriority);
+    img.src = src;
     return img;
   }
 
@@ -128,7 +132,6 @@
     }
 
     var file = photos.layout.featured;
-    var caption = photos.captionFor(file);
 
     var frame = slot.querySelector('.gallery__featured-frame');
     if (frame) {
@@ -141,7 +144,8 @@
 
     var cap = slot.querySelector('.gallery__featured-caption');
     if (cap) {
-      cap.textContent = caption ? '— ' + caption + ' —' : '';
+      cap.textContent = '';
+      cap.hidden = true;
     }
   }
 
@@ -242,8 +246,6 @@
     var maxTape = config.filmstripTapeMaxDeg != null ? config.filmstripTapeMaxDeg : 5;
 
     files.forEach(function (file, i) {
-      var caption = photos.captionFor(file);
-
       var fig = document.createElement('figure');
       fig.className = 'gallery__polaroid';
       fig.setAttribute('role', 'listitem');
@@ -252,16 +254,12 @@
 
       var photoBox = document.createElement('div');
       photoBox.className = 'gallery__polaroid-photo';
+      photoBox.style.backgroundImage = toCssImageUrl(photos.pathFor(file));
       photoBox.appendChild(makeGalleryImg(photos, file, {
         loading: 'lazy',
         fetchPriority: 'low'
       }));
       fig.appendChild(photoBox);
-
-      var cap = document.createElement('figcaption');
-      cap.className = 'gallery__polaroid-caption';
-      cap.textContent = caption;
-      fig.appendChild(cap);
 
       track.appendChild(fig);
     });
@@ -544,6 +542,44 @@
       ? config.filmstripAutoScrollSpeed
       : 0.35;
     var autoEnabled = autoSpeed !== 0 && !prefersReducedMotion();
+    var filmstripImagesPromoted = false;
+    var preloadObs = null;
+
+    function promoteFilmstripImages() {
+      if (filmstripImagesPromoted) {
+        return;
+      }
+      filmstripImagesPromoted = true;
+
+      /* The strip moves via transform, not native scroll. Browser lazy
+         loading can therefore leave a card blank after it is translated
+         into view. Promote the strip as a group once it is nearby, using
+         normal priority so visible cards are not starved behind unrelated
+         low-priority image work. */
+      var imgs = track.querySelectorAll('img[data-gallery-src]');
+      for (var i = 0; i < imgs.length; i++) {
+        var img = imgs[i];
+        var src = img.getAttribute('data-gallery-src') || img.getAttribute('src');
+        if (!src) {
+          continue;
+        }
+
+        try {
+          img.loading = 'eager';
+        } catch (_) {}
+        img.setAttribute('loading', 'eager');
+        setFetchPriority(img, 'auto');
+
+        if (img.getAttribute('src') !== src) {
+          img.setAttribute('src', src);
+        }
+
+        warmImage({
+          src: src,
+          fetchPriority: 'auto'
+        });
+      }
+    }
 
     function getMaxScroll() {
       return Math.max(0, track.scrollWidth - strip.clientWidth);
@@ -745,6 +781,17 @@
       applyTransform();
     }
 
+    preloadObs = new IntersectionObserver(function (entries) {
+      if (entries[0] && entries[0].isIntersecting) {
+        promoteFilmstripImages();
+        preloadObs.disconnect();
+      }
+    }, {
+      rootMargin: config.filmstripImageLoadRootMargin || '700px 0px',
+      threshold: 0
+    });
+    preloadObs.observe(strip);
+
     var visibilityObs = new IntersectionObserver(function (entries) {
       paused = !entries[0].isIntersecting || dragging;
     }, { threshold: 0 });
@@ -769,6 +816,7 @@
     return function destroy() {
       if (rafId) { global.cancelAnimationFrame(rafId); }
       if (pauseTimerId) { global.clearTimeout(pauseTimerId); }
+      if (preloadObs) { preloadObs.disconnect(); }
       visibilityObs.disconnect();
       track.removeEventListener('pointerdown',   onPointerDown);
       track.removeEventListener('pointermove',   onPointerMove);
@@ -802,6 +850,11 @@
     var closeBtn  = lb.querySelector('.gallery-lightbox__close');
     var prevBtn   = lb.querySelector('.gallery-lightbox__nav--prev');
     var nextBtn   = lb.querySelector('.gallery-lightbox__nav--next');
+
+    if (captionEl) {
+      captionEl.textContent = '';
+      captionEl.hidden = true;
+    }
 
     /* Collect image sources, de-duplicated by URL. Each <img> still gets
        a stable `data-gallery-index` so clicking any instance opens at
@@ -907,7 +960,6 @@
 
         index = nextIdx;
         if (counterEl) { counterEl.textContent = String(nextIdx + 1); }
-        if (captionEl) { captionEl.textContent = data.caption || ''; }
         updateNav();
 
         function swapAndSlideIn() {
@@ -1054,7 +1106,6 @@
       var data = sources[idx];
 
       if (counterEl) { counterEl.textContent = String(idx + 1); }
-      if (captionEl) { captionEl.textContent = data.caption || ''; }
       updateNav();
 
       lb.classList.add('is-loading');

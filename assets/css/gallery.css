@@ -189,9 +189,9 @@
   width: 100%;
   height: calc(100% + 48px);
   object-fit: cover;
-  /* 25% crop anchor — midway between top and centre — keeps faces
-     visible without the harsh head-pinned look of a hard `top` crop. */
-  object-position: 50% 25%;
+  /* Anchor only the featured photo to the top; mosaic and polaroid crops
+     keep their softer 25% anchor below. */
+  object-position: 50% 0%;
   /* Use individual transform properties so JS-driven `translate` (parallax,
      no transition) coexists with the CSS-driven `scale` reveal (1.6s ease).
      Falls back to no animation in browsers that lack support — image
@@ -203,6 +203,7 @@
 }
 
 .gallery__featured-caption {
+  display: none;
   font-family: 'Sorts Mill Goudy', serif;
   font-size: clamp(10px, 2.5vw, 12px);
   letter-spacing: 0.32em;
@@ -429,11 +430,8 @@
   flex: 0 0 auto;
   width: clamp(150px, 42vw, 220px);
   background: #fdfaf3;
-  /* Polaroid frame: classic uneven border (slightly thicker bottom edge
-     for the caption strip, but trimmed from the previous oversized
-     bottom so the empty white area below the photo no longer dwarfs the
-     image). */
-  padding: clamp(8px, 2vw, 12px) clamp(8px, 2vw, 12px) clamp(14px, 3.4vw, 22px);
+  /* Polaroid frame without a visible title strip. */
+  padding: clamp(8px, 2vw, 12px);
   box-shadow: var(--gallery-shadow-deep);
   border-radius: 2px;
   transform: rotate(var(--polaroid-tilt, 0deg)) translateY(0);
@@ -481,6 +479,9 @@
        2. any sub-pixel gap created by the parent's `rotate(...)` tilt
           blends with the surrounding card border invisibly. */
   background: #fdfaf3;
+  background-position: 50% 25%;
+  background-repeat: no-repeat;
+  background-size: cover;
   cursor: zoom-in;
 }
 
@@ -509,6 +510,7 @@
 }
 
 .gallery__polaroid-caption {
+  display: none;
   font-family: 'Sorts Mill Goudy', 'Noto Serif KR', serif;
   font-size: clamp(11px, 2.6vw, 13px);
   letter-spacing: 0.18em;
@@ -880,6 +882,7 @@
 /* ── Caption ──────────────────────────────────────────────────────── */
 
 .gallery-lightbox__caption {
+  display: none;
   position: absolute;
   bottom: max(28px, env(safe-area-inset-bottom));
   left: 50%;
