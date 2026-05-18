@@ -57,7 +57,10 @@
 
   position: relative;
   background: var(--snapshot-bg);
-  padding: clamp(48px, 10vw, 88px) 0 clamp(56px, 12vw, 96px);
+  padding:
+    clamp(48px, 10vw, 88px)
+    0
+    calc(clamp(56px, 12vw, 96px) + max(20px, env(safe-area-inset-bottom)));
   text-align: center;
   overflow: hidden;
 }

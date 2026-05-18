@@ -771,7 +771,7 @@
 .account {
   position: relative;
   background: var(--account-bg);
-  padding: clamp(48px, 10vw, 88px) 0 clamp(80px, 17vw, 144px);
+  padding: clamp(48px, 10vw, 88px) 0 clamp(104px, 22vw, 168px);
 }
 
 .account__wave {

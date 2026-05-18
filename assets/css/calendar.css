@@ -8,7 +8,7 @@
   position: relative;
   /* Wave separator now lives at the bottom of the letter section above,
      so the calendar just needs balanced vertical breathing room. */
-  padding: clamp(56px, 12vw, 100px) 0;
+  padding: clamp(56px, 12vw, 100px) 0 clamp(88px, 17vw, 132px);
   text-align: center;
   /* Soft warm cream parchment — matches example_1 section 2 (greeting) tone. */
   background: #faf6f0;

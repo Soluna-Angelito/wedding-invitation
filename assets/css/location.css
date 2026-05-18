@@ -62,7 +62,7 @@
      wave separator from the gallery already supplies a visible drape,
      so we don't need an additional ~110px of empty cream above the
      ornament — ~36-64px is plenty to let the ornament breathe. */
-  padding: clamp(36px, 8vw, 64px) 0 clamp(40px, 9vw, 72px);
+  padding: clamp(36px, 8vw, 64px) 0 clamp(88px, 18vw, 128px);
   text-align: center;
   overflow: hidden;
 }

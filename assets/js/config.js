@@ -46,6 +46,49 @@
       angleJitterDeg: 2.5,
       maxDevicePixelRatio: 2
     },
+    // Petal effect for section 02 through the last section.
+    // Quick tuning:
+    // - mobileCount / maxCount: density visible in one viewport.
+    // - sizeMin / sizeMax: petal size in CSS pixels.
+    // - opacityMin / opacityMax / canvasOpacity: visual strength.
+    // - edgeBias: higher values keep more petals near the edges.
+    // - centerFadeMin / centerFadeWidth: lower opacity around text-heavy center.
+    // - lowPowerFrameMs: 33 ~= 30fps on weaker devices; 0 = full rAF speed.
+    petals: {
+      seed: 20260712,
+      minCount: 30,
+      mobileCount: 36,
+      maxCount: 78,
+      maxTotalCount: 860,
+      sizeMin: 4,
+      sizeMax: 12,
+      fallSpeedMin: 16,
+      fallSpeedMax: 48,
+      windBase: 10,
+      windRange: 34,
+      swayMin: 16,
+      swayMax: 68,
+      opacityMin: 0.26,
+      opacityMax: 0.68,
+      canvasOpacity: 0.78,
+      fadeMs: 900,
+      centerFadeMin: 0.5,
+      centerFadeWidth: 0.38,
+      edgeBias: 0.58,
+      wrapViewportRatio: 1.05,
+      maxDevicePixelRatio: 1.5,
+      spritePixelRatio: 1.5,
+      spriteSizeSteps: 5,
+      spriteVariants: 3,
+      frameIntervalMs: 0,
+      lowPowerFrameMs: 33,
+      colors: [
+        { fill: '#f8cbd3', highlight: '#fff7f8', shade: '#d9a2aa', vein: 'rgba(143, 87, 91, 0.18)' },
+        { fill: '#ffe5e8', highlight: '#ffffff', shade: '#edbdc4', vein: 'rgba(150, 94, 102, 0.14)' },
+        { fill: '#f1d4c4', highlight: '#fff6ee', shade: '#cfaa98', vein: 'rgba(129, 91, 72, 0.13)' },
+        { fill: '#f7d7df', highlight: '#fff4f8', shade: '#d7a8b8', vein: 'rgba(134, 78, 100, 0.14)' }
+      ]
+    },
     animation: {
       starts: {
         wedding: 0.0,

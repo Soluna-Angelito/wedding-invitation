@@ -39,11 +39,17 @@
       if (typeof app.destroyFirefly === 'function') {
         app.destroyFirefly();
       }
+      if (typeof app.destroyPetals === 'function') {
+        app.destroyPetals();
+      }
       return;
     }
 
     if (typeof app.initFirefly === 'function') {
       app.initFirefly();
+    }
+    if (typeof app.initPetals === 'function') {
+      app.initPetals();
     }
   }
 
@@ -106,6 +112,9 @@
 
       if (typeof app.destroyFirefly === 'function') {
         app.destroyFirefly();
+      }
+      if (typeof app.destroyPetals === 'function') {
+        app.destroyPetals();
       }
 
       if (typeof app.showStaticHero === 'function') {
